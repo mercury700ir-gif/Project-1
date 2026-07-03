@@ -1,68 +1,151 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="صفحه تماس با من؛ راه‌های ارتباط مستقیم با مهبد نادری.">
-  <title>تماس با من</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <header class="site-header">
-    <div class="site-shell nav">
-      <a class="brand" href="about.html" aria-label="صفحه درباره من">
-        <span class="brand-mark">م</span>
-        <span>مهبد نادری</span>
-      </a>
-      <nav class="nav-links" aria-label="ناوبری اصلی">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="تماس با مهبد نادری برای مشاوره رشد دیجیتال، مدیریت بازاریابی و طراحی ساختار دیجیتال مارکتینگ."
+    />
+    <title>تماس با مهبد نادری</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-shell nav">
+        <a class="brand" href="index.html" aria-label="خانه">
+          <img class="brand-logo" src="assets/logo.png" alt="لوگوی مهبد نادری" />
+          <span class="brand-text">
+            <span>مهبد نادری</span>
+            <small>معمار رشد دیجیتال</small>
+          </span>
+        </a>
+        <nav class="nav-links" aria-label="ناوبری اصلی">
+          <a href="index.html">خانه</a>
+          <a href="about.html">درباره من</a>
+          <a href="contact.html" aria-current="page">تماس با من</a>
+        </nav>
+        <button class="menu-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="mobile-menu" aria-label="منوی موبایل">
+      <nav>
+        <a href="index.html">خانه</a>
         <a href="about.html">درباره من</a>
-        <a href="contact.html" aria-current="page">تماس با من</a>
+        <a href="contact.html">تماس با من</a>
       </nav>
     </div>
-  </header>
 
-  <main>
-    <section class="site-shell hero contact-hero">
-      <figure class="portrait-frame">
-        <img src="assets/profile-light.jpeg" alt="پرتره مهبد نادری با کت روشن">
-        <figcaption class="portrait-caption">برای گفتگو، همکاری یا هماهنگی، از مسیر دلخواهتان پیام بدهید.</figcaption>
-      </figure>
+    <main>
+      <section class="site-shell hero compact contact-hero">
+        <figure class="portrait-frame" data-animate>
+          <img src="assets/profile-suit.jpeg" alt="پرتره رسمی مهبد نادری" />
+          <figcaption class="portrait-caption">
+            برای شروع یک همکاری هدفمند، یک پیام کوتاه کافی است.
+          </figcaption>
+        </figure>
 
-      <div class="contact-panel">
-        <p class="kicker">ارتباط مستقیم</p>
-        <h1>خوشحال می‌شوم از شما بشنوم.</h1>
-        <p class="lead">
-          اگر پیشنهادی دارید، می‌خواهید همکاری را شروع کنید یا فقط نیاز به هماهنگی سریع دارید،
-          از دکمه‌های زیر استفاده کنید. مسیر ارتباطی کوتاه و مستقیم است.
-        </p>
+        <div class="contact-panel" data-animate>
+          <p class="kicker">درخواست مشاوره</p>
+          <h1>اگر به رشد دیجیتال منظم‌تر نیاز دارید، بیایید گفتگو را شروع کنیم.</h1>
+          <p class="lead">
+            برای مشاوره، بررسی وضعیت بازاریابی، طراحی ساختار دیجیتال مارکتینگ یا هماهنگی جلسه، از مسیرهای زیر مستقیم با من در ارتباط باشید.
+          </p>
 
-        <div class="contact-actions">
-          <a class="button primary" href="tel:+989122147417" aria-label="تماس تلفنی با مهبد نادری">تماس با من</a>
-          <a class="button" href="mailto:mercury700ir@gmail.com" aria-label="ارسال ایمیل به مهبد نادری">ایمیل به من</a>
-        </div>
+          <div class="contact-actions">
+            <a class="button primary" href="tel:+989122147417" aria-label="تماس تلفنی با مهبد نادری">تماس با من</a>
+            <a class="button" href="mailto:mercury700ir@gmail.com" aria-label="ارسال ایمیل به مهبد نادری">ایمیل به من</a>
+          </div>
 
-        <div class="contact-list" aria-label="اطلاعات تماس">
-          <div class="contact-item">
-            <span class="icon">ت</span>
-            <div>
-              <span>شماره تماس</span>
-              <strong>+98 912 214 7417</strong>
+          <div class="contact-list" aria-label="اطلاعات تماس">
+            <div class="contact-item">
+              <span class="icon">ت</span>
+              <div>
+                <span>شماره تماس</span>
+                <strong>+98 912 214 7417</strong>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="icon">ا</span>
+              <div>
+                <span>ایمیل</span>
+                <strong>mercury700ir@gmail.com</strong>
+              </div>
             </div>
           </div>
-          <div class="contact-item">
-            <span class="icon">ا</span>
-            <div>
-              <span>ایمیل</span>
-              <strong>mercury700ir@gmail.com</strong>
-            </div>
+        </div>
+      </section>
+
+      <section class="site-shell section">
+        <div class="contact-grid">
+          <div class="form-card" data-animate>
+            <p class="kicker">فرم تماس</p>
+            <h2>جزئیات اولیه پروژه یا نیاز مشاوره را بنویسید.</h2>
+            <form class="contact-form">
+              <div class="field-grid">
+                <div class="field">
+                  <label for="name">نام و نام خانوادگی</label>
+                  <input id="name" name="name" type="text" autocomplete="name" required />
+                </div>
+                <div class="field">
+                  <label for="phone">شماره تماس</label>
+                  <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required />
+                </div>
+              </div>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="email">ایمیل</label>
+                  <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required />
+                </div>
+                <div class="field">
+                  <label for="subject">موضوع مشاوره</label>
+                  <select id="subject" name="subject" required>
+                    <option value="">انتخاب کنید</option>
+                    <option>استراتژی رشد دیجیتال</option>
+                    <option>ساختار دیجیتال مارکتینگ</option>
+                    <option>مدیریت بازاریابی</option>
+                    <option>ارزیابی وضعیت فعلی</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="message">شرح کوتاه نیاز شما</label>
+                <textarea id="message" name="message" required></textarea>
+              </div>
+              <button class="button primary" type="submit">ارسال درخواست</button>
+              <p class="form-status" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <div class="process-list" aria-label="موضوعات پیشنهادی تماس">
+            <article class="mini-card" data-animate>
+              <strong>ارزیابی بازاریابی فعلی</strong>
+              <p>اگر کانال‌ها فعال‌اند اما خروجی روشن نیست، می‌توانیم گلوگاه‌ها و فرصت‌های رشد را مشخص کنیم.</p>
+            </article>
+            <article class="mini-card" data-animate>
+              <strong>طراحی سیستم رشد</strong>
+              <p>برای ساخت فرآیند، شاخص، تیم و مسیر اجرایی دیجیتال مارکتینگ، گفتگو را از همین‌جا شروع کنید.</p>
+            </article>
+            <article class="mini-card" data-animate>
+              <strong>همراهی مدیریتی</strong>
+              <p>اگر به نگاه بیرونی، اولویت‌بندی یا تصمیم‌سازی در بازاریابی نیاز دارید، پیام شما نقطه شروع خوبی است.</p>
+            </article>
           </div>
         </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-shell">
+        <a href="index.html">خانه</a> | <a href="about.html">درباره من</a>
       </div>
-    </section>
-  </main>
+    </footer>
 
-  <footer class="site-footer">
-    <div class="site-shell">بازگشت به <a href="about.html">صفحه درباره من</a></div>
-  </footer>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
