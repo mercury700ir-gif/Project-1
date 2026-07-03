@@ -6,6 +6,8 @@
   font-display: swap;
 }
 
+/* contact icons: centered, bold stroke, color rgb(36,80,122) */
+
 @font-face {
   font-family: "IRANSans";
   src: url("assets/fonts/IRANSans-web.woff2") format("woff2");
@@ -57,8 +59,16 @@ body {
   margin: 0;
   direction: rtl;
   background:
-    radial-gradient(circle at 8% 8%, rgba(36, 80, 122, 0.12), transparent 27rem),
-    radial-gradient(circle at 88% 12%, rgba(15, 118, 110, 0.1), transparent 25rem),
+    radial-gradient(
+      circle at 8% 8%,
+      rgba(36, 80, 122, 0.12),
+      transparent 27rem
+    ),
+    radial-gradient(
+      circle at 88% 12%,
+      rgba(15, 118, 110, 0.1),
+      transparent 25rem
+    ),
     linear-gradient(180deg, #fbf8f2 0%, var(--bg) 58%, #efe7dc 100%);
   color: var(--ink);
   font-family: "IRANSans", "Vazirmatn", "Tahoma", system-ui, sans-serif;
@@ -164,7 +174,9 @@ img {
   color: var(--muted);
   font-size: 0.9rem;
   font-weight: 800;
-  transition: background 180ms ease, color 180ms ease;
+  transition:
+    background 180ms ease,
+    color 180ms ease;
 }
 
 .nav-links a[aria-current="page"],
@@ -191,7 +203,9 @@ img {
   margin: 5px auto;
   border-radius: 99px;
   background: var(--ink);
-  transition: transform 240ms ease, opacity 180ms ease;
+  transition:
+    transform 240ms ease,
+    opacity 180ms ease;
 }
 
 .menu-toggle.is-open span:nth-child(1) {
@@ -218,7 +232,10 @@ img {
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
-  transition: opacity 260ms ease, visibility 260ms ease, transform 260ms ease;
+  transition:
+    opacity 260ms ease,
+    visibility 260ms ease,
+    transform 260ms ease;
 }
 
 .mobile-menu.is-open {
@@ -333,7 +350,11 @@ h3 {
   color: var(--ink);
   font-weight: 900;
   box-shadow: 0 12px 26px rgba(23, 26, 31, 0.06);
-  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
 }
 
 .button.primary {
@@ -482,7 +503,11 @@ h3 {
   padding: 30px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(36, 80, 122, 0.1), rgba(255, 252, 246, 0.76));
+  background: linear-gradient(
+    135deg,
+    rgba(36, 80, 122, 0.1),
+    rgba(255, 252, 246, 0.76)
+  );
 }
 
 .feature-band p {
@@ -592,7 +617,10 @@ h3 {
   background: rgba(255, 255, 255, 0.58);
   color: var(--ink);
   outline: none;
-  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
 }
 
 .field input,
@@ -638,7 +666,9 @@ h3 {
 [data-animate] {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 640ms ease, transform 640ms ease;
+  transition:
+    opacity 640ms ease,
+    transform 640ms ease;
 }
 
 [data-animate].is-visible {
