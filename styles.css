@@ -580,6 +580,23 @@ h3 {
   font-size: 0.86rem;
 }
 
+/* Icon styling: center, bold stroke, color rgb(36,80,122) */
+.contact-item .icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: rgb(36, 80, 122);
+}
+
+.contact-item .icon svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 2.2;
+}
+
 .contact-item strong {
   direction: ltr;
   unicode-bidi: plaintext;
