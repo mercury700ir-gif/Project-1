@@ -979,12 +979,20 @@ img.loaded {
   display: none;
 }
 
+.hero-mobile-wrapper {
+  display: none;
+}
+
 @media (min-width: 901px) {
   .hero-swiper {
     display: block;
   }
 
   .hero-mobile {
+    display: none;
+  }
+
+  .hero-mobile-wrapper {
     display: none;
   }
 
