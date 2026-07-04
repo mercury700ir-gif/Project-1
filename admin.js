@@ -161,6 +161,9 @@ document.addEventListener("DOMContentLoaded", function () {
     initSocial();
     initPageEditor();
     initBanners();
+    initUsers();
+    initGallery();
+    initFiles();
     convertNumbersInScope(adminPanel);
     animateCounters();
   }
@@ -1098,6 +1101,217 @@ document.addEventListener("DOMContentLoaded", function () {
         renderBanners();
       });
     });
+  }
+
+  // ════════════════════════════════════════════════
+  //  USERS — Dynamic from localStorage
+  // ════════════════════════════════════════════════
+
+  function initUsers() {
+    renderUsersTable();
+    document.getElementById("btn-new-user").addEventListener("click", function () {
+      showModal("new-user-modal");
+    });
+  }
+
+  function getUsers() {
+    var defaults = [
+      { name: "مدیر سایت", email: "admin@example.com", phone: "09121234567", password: "admin", date: "2024-01-01T00:00:00.000Z" }
+    ];
+    try {
+      var stored = JSON.parse(localStorage.getItem("site_users") || "[]");
+      // Merge: keep defaults if not already present
+      var all = defaults.concat(stored);
+      // Deduplicate by email
+      var seen = {};
+      return all.filter(function (u) {
+        if (seen[u.email]) return false;
+        seen[u.email] = true;
+        return true;
+      });
+    } catch (e) { return defaults; }
+  }
+
+  function renderUsersTable() {
+    var users = getUsers();
+    var tbody = document.getElementById("users-table-body");
+    var empty = document.getElementById("users-empty");
+    if (!users.length) { tbody.innerHTML = ""; empty.style.display = "block"; return; }
+    empty.style.display = "none";
+    tbody.innerHTML = users.map(function (u, i) {
+      return '<tr>' +
+        '<td data-label="نام">' + escapeHTML(u.name) + '</td>' +
+        '<td data-label="ایمیل">' + escapeHTML(u.email) + '</td>' +
+        '<td data-label="شماره">' + escapeHTML(u.phone || "—") + '</td>' +
+        '<td data-label="تاریخ">' + persianDateShort(u.date) + '</td>' +
+        '<td data-label="عملیات">' +
+          '<button class="btn-sm btn-edit-user" data-idx="' + i + '">تغییر رمز</button> ' +
+          '<button class="btn-sm btn-danger btn-delete-user" data-email="' + escapeHTML(u.email) + '">حذف</button>' +
+        '</td></tr>';
+    }).join("");
+
+    tbody.querySelectorAll(".btn-edit-user").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var idx = parseInt(this.getAttribute("data-idx"));
+        var u = users[idx];
+        if (!u) return;
+        var newPass = prompt("رمز جدید برای " + u.name + ":", "");
+        if (newPass && newPass.length >= 6) {
+          // Update in site_users
+          var stored = JSON.parse(localStorage.getItem("site_users") || "[]");
+          var su = stored.find(function (x) { return x.email === u.email; });
+          if (su) { su.password = newPass; localStorage.setItem("site_users", JSON.stringify(stored)); }
+          alert("رمز عبور تغییر کرد.");
+        } else if (newPass !== null) {
+          alert("رمز باید حداقل ۶ کاراکتر باشد.");
+        }
+      });
+    });
+
+    tbody.querySelectorAll(".btn-delete-user").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var email = this.getAttribute("data-email");
+        if (!confirm("آیا از حذف کاربر مطمئن هستید؟")) return;
+        var stored = JSON.parse(localStorage.getItem("site_users") || "[]");
+        stored = stored.filter(function (u) { return u.email !== email; });
+        localStorage.setItem("site_users", JSON.stringify(stored));
+        renderUsersTable();
+      });
+    });
+
+    convertNumbersInScope(tbody);
+  }
+
+  // ════════════════════════════════════════════════
+  //  GALLERY — Lightbox
+  // ════════════════════════════════════════════════
+
+  function initGallery() {
+    // Create lightbox overlay
+    var lb = document.createElement("div");
+    lb.id = "lightbox-overlay";
+    lb.style.cssText = "display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;visibility:hidden;transition:opacity 250ms ease,visibility 250ms ease;";
+    lb.innerHTML = '<img id="lightbox-img" style="max-width:90vw;max-height:90vh;object-fit:contain;border-radius:8px" /><button id="lightbox-close" style="position:absolute;top:16px;left:16px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:1.3rem;cursor:pointer;display:grid;place-items:center">&times;</button>';
+    document.body.appendChild(lb);
+
+    var lbImg = document.getElementById("lightbox-img");
+    var lbClose = document.getElementById("lightbox-close");
+
+    // Click on gallery items
+    document.querySelectorAll(".gallery-item img").forEach(function (img) {
+      img.style.cursor = "pointer";
+      img.addEventListener("click", function (e) {
+        e.stopPropagation();
+        lbImg.src = this.src;
+        lb.style.opacity = "1";
+        lb.style.visibility = "visible";
+        document.body.classList.add("no-scroll");
+      });
+    });
+
+    function closeLightbox() {
+      lb.style.opacity = "0";
+      lb.style.visibility = "hidden";
+      document.body.classList.remove("no-scroll");
+    }
+
+    lb.addEventListener("click", function (e) { if (e.target !== lbImg) closeLightbox(); });
+    lbClose.addEventListener("click", closeLightbox);
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLightbox(); });
+  }
+
+  // ════════════════════════════════════════════════
+  //  FILES — Functional upload/download
+  // ════════════════════════════════════════════════
+
+  var siteFiles = [];
+
+  function initFiles() {
+    try { siteFiles = JSON.parse(localStorage.getItem("site_files") || "[]"); } catch (e) { siteFiles = []; }
+    renderFilesTable();
+
+    var uploadBtn = document.getElementById("file-upload-btn");
+    var fileInput = document.getElementById("file-upload-input");
+    if (uploadBtn && fileInput) {
+      uploadBtn.addEventListener("click", function () { fileInput.click(); });
+      fileInput.addEventListener("change", function () {
+        Array.from(this.files).forEach(function (f) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            siteFiles.push({
+              name: f.name,
+              type: f.type || "application/octet-stream",
+              size: f.size,
+              data: e.target.result,
+              date: new Date().toISOString()
+            });
+            localStorage.setItem("site_files", JSON.stringify(siteFiles));
+            renderFilesTable();
+          };
+          reader.readAsDataURL(f);
+        });
+        this.value = "";
+      });
+    }
+
+    // Drop zone
+    var dropZone = document.getElementById("file-drop-zone");
+    if (dropZone) {
+      dropZone.addEventListener("dragover", function (e) { e.preventDefault(); dropZone.style.borderColor = "var(--admin-primary)"; });
+      dropZone.addEventListener("dragleave", function () { dropZone.style.borderColor = ""; });
+      dropZone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        dropZone.style.borderColor = "";
+        Array.from(e.dataTransfer.files).forEach(function (f) {
+          var reader = new FileReader();
+          reader.onload = function (ev) {
+            siteFiles.push({ name: f.name, type: f.type || "application/octet-stream", size: f.size, data: ev.target.result, date: new Date().toISOString() });
+            localStorage.setItem("site_files", JSON.stringify(siteFiles));
+            renderFilesTable();
+          };
+          reader.readAsDataURL(f);
+        });
+      });
+    }
+  }
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / 1048576).toFixed(1) + " MB";
+  }
+
+  function renderFilesTable() {
+    var tbody = document.querySelector("#tab-files .data-table tbody");
+    if (!tbody) return;
+    if (!siteFiles.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--admin-text-muted);padding:24px">هنوز فایلی آپلود نشده است.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = siteFiles.map(function (f, i) {
+      var typeLabel = f.type.includes("pdf") ? "PDF" : f.type.includes("word") || f.name.endsWith(".docx") ? "Word" : f.type.includes("sheet") || f.name.endsWith(".xlsx") ? "Excel" : f.type.split("/")[1] || "فایل";
+      return '<tr>' +
+        '<td data-label="نام فایل">' + escapeHTML(f.name) + '</td>' +
+        '<td data-label="نوع">' + typeLabel + '</td>' +
+        '<td data-label="حجم">' + formatSize(f.size) + '</td>' +
+        '<td data-label="تاریخ">' + persianDateShort(f.date) + '</td>' +
+        '<td data-label="عملیات">' +
+          '<a class="btn-sm" href="' + f.data + '" download="' + escapeHTML(f.name) + '">دانلود</a> ' +
+          '<button class="btn-sm btn-danger btn-delete-file" data-idx="' + i + '">حذف</button>' +
+        '</td></tr>';
+    }).join("");
+
+    tbody.querySelectorAll(".btn-delete-file").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var idx = parseInt(this.getAttribute("data-idx"));
+        if (!confirm("آیا از حذف فایل مطمئن هستید؟")) return;
+        siteFiles.splice(idx, 1);
+        localStorage.setItem("site_files", JSON.stringify(siteFiles));
+        renderFilesTable();
+      });
+    });
+
+    convertNumbersInScope(tbody);
   }
 
 });

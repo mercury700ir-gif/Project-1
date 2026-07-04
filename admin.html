@@ -303,19 +303,15 @@
           <section id="tab-users" class="tab-pane">
             <div class="tab-header">
               <h3>مدیریت کاربران</h3>
-              <button class="button primary" onclick="showModal('new-user-modal')">+ کاربر جدید</button>
+              <button class="button primary" id="btn-new-user">+ کاربر جدید</button>
             </div>
             <table class="data-table">
               <thead>
-                <tr><th>نام</th><th>ایمیل</th><th>نقش</th><th>تاریخ عضویت</th><th>وضعیت</th><th>عملیات</th></tr>
+                <tr><th>نام</th><th>ایمیل</th><th>شماره</th><th>تاریخ عضویت</th><th>عملیات</th></tr>
               </thead>
-              <tbody>
-                <tr><td data-label="نام">مهبد نادری</td><td data-label="ایمیل">mercury700ir@gmail.com</td><td data-label="نقش"><span class="badge badge-primary">مدیر کل</span></td><td data-label="تاریخ">۱۴۰۳/۰۱/۰۱</td><td data-label="وضعیت"><span class="badge badge-success">فعال</span></td><td data-label="عملیات"><button class="btn-sm">ویرایش</button></td></tr>
-                <tr><td data-label="نام">علی رضایی</td><td data-label="ایمیل">ali@example.com</td><td data-label="نقش"><span class="badge badge-info">ویرایشگر</span></td><td data-label="تاریخ">۱۴۰۴/۰۶/۱۵</td><td data-label="وضعیت"><span class="badge badge-success">فعال</span></td><td data-label="عملیات"><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
-                <tr><td data-label="نام">سارا احمدی</td><td data-label="ایمیل">sara@example.com</td><td data-label="نقش"><span class="badge badge-info">نویسنده</span></td><td data-label="تاریخ">۱۴۰۴/۰۹/۱۰</td><td data-label="وضعیت"><span class="badge badge-success">فعال</span></td><td data-label="عملیات"><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
-                <tr><td data-label="نام">رضا کریمی</td><td data-label="ایمیل">reza@example.com</td><td data-label="نقش"><span class="badge badge-secondary">مشترک</span></td><td data-label="تاریخ">۱۴۰۵/۰۲/۲۰</td><td data-label="وضعیت"><span class="badge badge-warning">غیرفعال</span></td><td data-label="عملیات"><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
-              </tbody>
+              <tbody id="users-table-body"></tbody>
             </table>
+            <div id="users-empty" class="empty-state" style="display:none"><p>هنوز کاربری ثبت‌نام نکرده است.</p></div>
           </section>
 
           <!-- ════ 4. Gallery ════ -->

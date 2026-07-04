@@ -1341,6 +1341,76 @@
     padding: 12px;
     overflow-x: auto;
   }
+
+  /* ── Blog Editor Mobile ── */
+  .editor-title-input {
+    font-size: 1.1rem;
+    padding: 12px 14px;
+  }
+
+  .editor-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #quill-editor {
+    min-height: 200px;
+  }
+
+  .editor-actions {
+    flex-direction: column;
+  }
+
+  .editor-actions .button {
+    width: 100%;
+  }
+
+  /* ── Blog List Mobile ── */
+  .blog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── AI Generator Mobile ── */
+  .ai-generator h3 {
+    font-size: 1rem;
+  }
+
+  .ai-input-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .ai-output-body {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  /* ── Plugins Mobile ── */
+  .plugin-card p {
+    font-size: 0.82rem;
+  }
+
+  .plugin-header h4 {
+    font-size: 0.92rem;
+  }
+
+  /* ── Settings Mobile ── */
+  .settings-card {
+    padding: 18px;
+  }
+
+  .settings-card h4 {
+    font-size: 0.95rem;
+  }
+
+  /* ── Social Schedule Mobile ── */
+  .schedule-form {
+    max-width: 100%;
+  }
+
+  .checkbox-group {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 
 @media (max-width: 480px) {

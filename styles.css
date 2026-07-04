@@ -1052,6 +1052,7 @@ img.loaded {
     font-size: 1.02rem;
     margin-bottom: 0;
     text-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    text-align: right;
   }
 
   .swiper-content .hero-actions {
@@ -1060,14 +1061,16 @@ img.loaded {
 
   .swiper-content .button {
     backdrop-filter: blur(10px);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff !important;
     background: rgba(255, 255, 255, 0.12);
+    font-weight: 800;
   }
 
   .swiper-content .button:hover {
     border-color: rgba(255, 255, 255, 0.45);
     background: rgba(255, 255, 255, 0.22);
+    color: #fff !important;
   }
 
   .swiper-content .button.primary {
