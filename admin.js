@@ -345,13 +345,13 @@ document.addEventListener("DOMContentLoaded", function () {
         ? '<span class="badge badge-success">منتشر</span>'
         : '<span class="badge badge-warning">پیش‌نویس</span>';
       return '<tr>' +
-        '<td>' + escapeHTML(p.title) + '</td>' +
-        '<td>' + escapeHTML(p.author) + '</td>' +
-        '<td>' + persianDateShort(p.date) + '</td>' +
-        '<td>' + escapeHTML(p.category) + '</td>' +
-        '<td>' + statusBadge + '</td>' +
-        '<td>' +
-          '<button class="btn-sm btn-edit" data-id="' + p.id + '">ویرایش</button>' +
+        '<td data-label="عنوان">' + escapeHTML(p.title) + '</td>' +
+        '<td data-label="نویسنده">' + escapeHTML(p.author) + '</td>' +
+        '<td data-label="تاریخ">' + persianDateShort(p.date) + '</td>' +
+        '<td data-label="دسته">' + escapeHTML(p.category) + '</td>' +
+        '<td data-label="وضعیت">' + statusBadge + '</td>' +
+        '<td data-label="عملیات">' +
+          '<button class="btn-sm btn-edit" data-id="' + p.id + '">ویرایش</button> ' +
           '<button class="btn-sm btn-danger btn-delete" data-id="' + p.id + '">حذف</button>' +
         '</td></tr>';
     }).join("");

@@ -1160,11 +1160,185 @@
   .tab-header {
     flex-direction: column;
     gap: 10px;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
-  .data-table {
+  /* ── Tables → Card Layout on Mobile ── */
+  .data-table,
+  .data-table thead,
+  .data-table tbody,
+  .data-table th,
+  .data-table td,
+  .data-table tr {
     display: block;
+  }
+
+  .data-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .data-table tr {
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+    background: var(--admin-card-bg);
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    position: relative;
+  }
+
+  .data-table td {
+    padding: 6px 0;
+    border: none;
+    font-size: 0.88rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--admin-text-muted);
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+
+  .data-table td:last-child {
+    justify-content: flex-start;
+    padding-top: 10px;
+    border-top: 1px solid var(--admin-border);
+    margin-top: 4px;
+  }
+
+  /* ── Sub Tabs Mobile ── */
+  .sub-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sub-tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+  }
+
+  /* ── Upload Zones Mobile ── */
+  .upload-zone {
+    padding: 24px 16px;
+  }
+
+  .upload-zone svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .upload-zone p {
+    font-size: 0.88rem;
+  }
+
+  /* ── Modal Mobile ── */
+  .modal-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .modal-card {
+    max-width: 100%;
+    max-height: 85vh;
+  }
+
+  .modal-content {
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal-body {
+    padding: 18px;
+  }
+
+  .modal-body .field input,
+  .modal-body .field textarea,
+  .modal-body .field select {
+    font-size: 16px;
+  }
+
+  /* ── Plugin Cards Mobile ── */
+  .plugin-card {
+    padding: 16px;
+  }
+
+  .plugin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .plugin-meta {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .plugin-actions {
+    flex-wrap: wrap;
+  }
+
+  /* ── Editor Sections Mobile ── */
+  .editor-section-header {
+    padding: 12px 14px;
+    font-size: 0.85rem;
+  }
+
+  .editor-section-body {
+    padding: 14px;
+  }
+
+  .editor-section-body .field input,
+  .editor-section-body .field textarea {
+    font-size: 16px;
+  }
+
+  /* ── AI Generator Mobile ── */
+  .ai-options {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-generator {
+    padding: 16px;
+  }
+
+  /* ── Banner Actions Mobile ── */
+  .banner-actions {
+    flex-wrap: wrap;
+  }
+
+  /* ── Contact Form Mobile ── */
+  .contact-form .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── Process Cards Mobile ── */
+  .process-card {
+    grid-template-columns: 1fr;
+  }
+
+  .process-card .step,
+  .process-card .icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* ── Code Block Mobile ── */
+  .code-block {
+    font-size: 0.75rem;
+    padding: 12px;
     overflow-x: auto;
   }
 }
