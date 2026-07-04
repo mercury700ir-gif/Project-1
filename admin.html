@@ -64,10 +64,6 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             <span>وبلاگ</span>
           </a>
-          <a href="blog.html" class="sidebar-link" target="_blank" rel="noopener">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            <span>مشاهده وبلاگ</span>
-          </a>
           <a href="#" class="sidebar-link" data-tab="files">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
             <span>فایل‌ها</span>
@@ -196,26 +192,111 @@
 
           <!-- ════ 2. Content Management ════ -->
           <section id="tab-content" class="tab-pane">
-            <div class="tab-header">
-              <h3>مدیریت صفحات و پست‌ها</h3>
-              <button class="button primary" onclick="showModal('new-content-modal')">+ صفحه جدید</button>
+            <div class="sub-tabs">
+              <button class="sub-tab active" data-subtab="content-pages">صفحات</button>
+              <button class="sub-tab" data-subtab="content-banners">بنرها و تصاویر</button>
             </div>
-            <div class="filter-bar">
-              <select class="filter-select"><option>همه انواع</option><option>صفحه</option><option>پست</option></select>
-              <select class="filter-select"><option>همه وضعیت‌ها</option><option>منتشر شده</option><option>پیش‌نویس</option></select>
+
+            <!-- Pages List -->
+            <div id="content-pages" class="sub-pane active">
+              <div class="tab-header">
+                <h3>مدیریت صفحات سایت</h3>
+                <button class="button primary" id="btn-new-page">+ صفحه جدید</button>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr><th>عنوان صفحه</th><th>فایل</th><th>وضعیت</th><th>عملیات</th></tr>
+                </thead>
+                <tbody id="pages-table-body">
+                  <tr data-page="index"><td>صفحه اصلی</td><td>index.html</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm btn-edit-page" data-page="index">ویرایش</button></td></tr>
+                  <tr data-page="about"><td>درباره من</td><td>about.html</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm btn-edit-page" data-page="about">ویرایش</button></td></tr>
+                  <tr data-page="contact"><td>تماس با من</td><td>contact.html</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm btn-edit-page" data-page="contact">ویرایش</button></td></tr>
+                  <tr data-page="blog"><td>نوشته‌ها</td><td>blog.html</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm btn-edit-page" data-page="blog">ویرایش</button></td></tr>
+                </tbody>
+              </table>
             </div>
-            <table class="data-table">
-              <thead>
-                <tr><th>عنوان</th><th>نوع</th><th>نویسنده</th><th>تاریخ</th><th>وضعیت</th><th>عملیات</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>صفحه اصلی</td><td>صفحه</td><td>مدیر</td><td>۱۴۰۵/۰۱/۰۱</td><td><span class="badge badge-success">منتشر</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
-                <tr><td>درباره ما</td><td>صفحه</td><td>مدیر</td><td>۱۴۰۵/۰۱/۰۵</td><td><span class="badge badge-success">منتشر</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
-                <tr><td>تماس با ما</td><td>صفحه</td><td>مدیر</td><td>۱۴۰۵/۰۱/۰۵</td><td><span class="badge badge-success">منتشر</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
-                <tr><td>راهکارهای رشد دیجیتال</td><td>پست</td><td>علی رضایی</td><td>۱۴۰۵/۰۴/۰۱</td><td><span class="badge badge-success">منتشر</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
-                <tr><td>نقش داده در بازاریابی</td><td>پست</td><td>سارا احمدی</td><td>۱۴۰۵/۰۳/۲۸</td><td><span class="badge badge-warning">پیش‌نویس</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
-              </tbody>
-            </table>
+
+            <!-- Page Editor -->
+            <div id="content-editor" class="sub-pane">
+              <div class="tab-header">
+                <h3 id="editor-page-title">ویرایش صفحه</h3>
+                <div style="display:flex;gap:8px">
+                  <button class="button" id="btn-back-pages">بازگشت به لیست</button>
+                  <button class="button primary" id="btn-save-page">ذخیره تغییرات</button>
+                </div>
+              </div>
+
+              <!-- Elementor-like Section Editor -->
+              <div class="page-editor-canvas">
+                <div class="editor-section" data-section="hero">
+                  <div class="editor-section-header">
+                    <span class="editor-section-icon">🎯</span>
+                    <span>بخش Hero / بنر اصلی</span>
+                    <button class="btn-sm btn-toggle-section" data-target="hero-content">ویرایش</button>
+                  </div>
+                  <div class="editor-section-body" id="hero-content" style="display:none">
+                    <div class="field"><label>عنوان اصلی (h1)</label><input type="text" id="page-h1" placeholder="عنوان اصلی صفحه" /></div>
+                    <div class="field"><label>زیرعنوان (lead)</label><textarea rows="2" id="page-lead" placeholder="متن زیرعنوان"></textarea></div>
+                    <div class="field"><label>متن kicker</label><input type="text" id="page-kicker" placeholder="مثلاً: معمار رشد دیجیتال" /></div>
+                    <div class="field"><label>متن دکمه اول</label><input type="text" id="page-btn1-text" placeholder="متن دکمه" /></div>
+                    <div class="field"><label>لینک دکمه اول</label><input type="text" id="page-btn1-link" placeholder="contact.html" /></div>
+                    <div class="field"><label>متن دکمه دوم</label><input type="text" id="page-btn2-text" placeholder="متن دکمه" /></div>
+                    <div class="field"><label>لینک دکمه دوم</label><input type="text" id="page-btn2-link" placeholder="about.html" /></div>
+                  </div>
+                </div>
+
+                <div class="editor-section" data-section="body">
+                  <div class="editor-section-header">
+                    <span class="editor-section-icon">📝</span>
+                    <span>محتوای اصلی صفحه</span>
+                    <button class="btn-sm btn-toggle-section" data-target="body-content">ویرایش</button>
+                  </div>
+                  <div class="editor-section-body" id="body-content" style="display:none">
+                    <div class="field"><label>بخش ۱ — عنوان</label><input type="text" id="page-section1-title" placeholder="عنوان بخش" /></div>
+                    <div class="field"><label>بخش ۱ — محتوا</label><div id="page-body-editor"></div></div>
+                    <div class="field" style="margin-top:16px"><label>بخش ۲ — عنوان</label><input type="text" id="page-section2-title" placeholder="عنوان بخش" /></div>
+                    <div class="field"><label>بخش ۲ — محتوا</label><textarea rows="4" id="page-section2-body" placeholder="متن بخش دوم"></textarea></div>
+                  </div>
+                </div>
+
+                <div class="editor-section" data-section="seo">
+                  <div class="editor-section-header">
+                    <span class="editor-section-icon">🔍</span>
+                    <span>تنظیمات SEO</span>
+                    <button class="btn-sm btn-toggle-section" data-target="seo-content">ویرایش</button>
+                  </div>
+                  <div class="editor-section-body" id="seo-content" style="display:none">
+                    <div class="field"><label>عنوان صفحه (title)</label><input type="text" id="page-seo-title" placeholder="عنوان برای موتور جستجو" /></div>
+                    <div class="field"><label>توضیحات متا (meta description)</label><textarea rows="2" id="page-seo-desc" placeholder="توضیحات برای موتورهای جستجو"></textarea></div>
+                    <div class="field"><label>کلمات کلیدی</label><input type="text" id="page-seo-keywords" placeholder="کلمات کلیدی با کاما" /></div>
+                    <div class="field"><label>آدرس canonical</label><input type="text" id="page-seo-canonical" placeholder="https://mahbodnaderi.com/index.html" dir="ltr" /></div>
+                  </div>
+                </div>
+
+                <div class="editor-section" data-section="image">
+                  <div class="editor-section-header">
+                    <span class="editor-section-icon">🖼️</span>
+                    <span>تصویر بنر / پرتره</span>
+                    <button class="btn-sm btn-toggle-section" data-target="image-content">ویرایش</button>
+                  </div>
+                  <div class="editor-section-body" id="image-content" style="display:none">
+                    <div class="field"><label>آدرس تصویر</label><input type="text" id="page-image" placeholder="assets/profile-formal.jpeg" /></div>
+                    <div class="field"><label>متن جایگزین (alt)</label><input type="text" id="page-image-alt" placeholder="توضیح تصویر" /></div>
+                    <div class="field"><label>کپشن تصویر</label><input type="text" id="page-image-caption" placeholder="متن زیر تصویر" /></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Banner Management -->
+            <div id="content-banners" class="sub-pane">
+              <div class="tab-header">
+                <h3>مدیریت بنرها و تصاویر سایت</h3>
+                <button class="button primary" id="btn-new-banner">+ بنر جدید</button>
+              </div>
+              <div class="banners-grid" id="banners-grid"></div>
+              <div id="banners-empty" class="empty-state" style="display:none"><p>هنوز بنری تعریف نشده است.</p></div>
+            </div>
           </section>
 
           <!-- ════ 3. User Management ════ -->

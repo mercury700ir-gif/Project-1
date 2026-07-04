@@ -96,6 +96,24 @@ function saveSocial(soc) { Store.set("social", soc); }
 function getSchedules() { return Store.get("schedules", DEFAULT_SCHEDULES); }
 function saveSchedules(s) { Store.set("schedules", s); }
 
+// Page content store
+var DEFAULT_PAGES = {
+  index: { title:"صفحه اصلی", h1:"ساختن سیستم رشد برای برندهایی که می‌خواهند تصمیم‌های بازاریابی دقیق‌تری بگیرند.", lead:"مشاور و مدیر بازاریابی با کارشناسی ارشد MBA از دانشگاه کارلتون کانادا و بیش از ۱۰ سال تجربه در طراحی، مدیریت و پیاده‌سازی ساختارهای دیجیتال مارکتینگ.", kicker:"معمار رشد دیجیتال", btn1Text:"درخواست مشاوره", btn1Link:"contact.html", btn2Text:"بیشتر درباره مهبد", btn2Link:"about.html", section1Title:"رویکرد کاری", section1Body:"<p>تمرکز من فقط روی کمپین یا ابزار نیست؛ مسئله اصلی ساختن معماری قابل اتکا برای جذب، تبدیل، نگهداشت و توسعه مشتری است.</p>", section2Title:"حوزه‌های مشاوره", section2Body:"استراتژی رشد دیجیتال، ساختار دیجیتال مارکتینگ، مشاوره مدیریت بازاریابی", seoTitle:"مهبد نادری | معمار رشد دیجیتال", seoDesc:"سایت شخصی مهبد نادری؛ معمار رشد دیجیتال، مشاور بازاریابی و طراح ساختارهای دیجیتال مارکتینگ.", seoKeywords:"بازاریابی دیجیتال, مشاوره, رشد دیجیتال", seoCanonical:"https://mahbodnaderi.com/index.html", image:"assets/profile-formal.jpeg", imageAlt:"پرتره رسمی مهبد نادری", imageCaption:"مشاوره، طراحی ساختار و اجرای سیستم‌های رشد دیجیتال" },
+  about: { title:"درباره من", h1:"من بازاریابی را به شکل یک سیستم رشد می‌بینم؛ نه مجموعه‌ای از فعالیت‌های جدا از هم.", lead:"مهبد نادری هستم؛ معمار رشد دیجیتال، دارای کارشناسی ارشد MBA از دانشگاه کارلتون کانادا و بیش از ۱۰ سال تجربه.", kicker:"درباره من", btn1Text:"گفتگو برای همکاری", btn1Link:"contact.html", btn2Text:"بازگشت به خانه", btn2Link:"index.html", section1Title:"مسیر حرفه‌ای", section1Body:"<p>تجربه من در کنار کسب‌وکارها بر یک اصل ساده بنا شده است: رشد زمانی پایدار می‌شود که تصمیم‌های بازاریابی بر پایه داده، شناخت مشتری، ساختار اجرایی و سنجش مداوم گرفته شوند.</p>", section2Title:"ارزش‌ها", section2Body:"شفافیت، دقت و ساختن خروجی قابل اعتماد", seoTitle:"درباره مهبد نادری", seoDesc:"درباره مهبد نادری؛ معمار رشد دیجیتال، مشاور بازاریابی و فارغ‌التحصیل MBA از دانشگاه کارلتون کانادا.", seoKeywords:"مهبد نادری, معمار رشد دیجیتال, مشاور بازاریابی", seoCanonical:"https://mahbodnaderi.com/about.html", image:"assets/profile-light.jpeg", imageAlt:"پرتره مهبد نادری با کت روشن", imageCaption:"ترکیب نگاه مدیریتی، تجربه اجرایی و شناخت عمیق از رشد دیجیتال" },
+  contact: { title:"تماس با من", h1:"اگر به رشد دیجیتال منظم‌تر نیاز دارید، بیایید گفتگو را شروع کنیم.", lead:"برای مشاوره، بررسی وضعیت بازاریابی، طراحی ساختار دیجیتال مارکتینگ یا هماهنگی جلسه، از مسیرهای زیر مستقیم با من در ارتباط باشید.", kicker:"درخواست مشاوره", btn1Text:"تماس با من", btn1Link:"tel:+989122147417", btn2Text:"ایمیل به من", btn2Link:"mailto:mercury700ir@gmail.com", section1Title:"فرم تماس", section1Body:"<p>جزئیات اولیه پروژه یا نیاز مشاوره را بنویسید.</p>", section2Title:"موضوعات پیشنهادی", section2Body:"ارزیابی بازاریابی فعلی، طراحی سیستم رشد، همراهی مدیریتی", seoTitle:"تماس با مهبد نادری", seoDesc:"تماس با مهبد نادری برای مشاوره رشد دیجیتال، مدیریت بازاریابی و طراحی ساختار دیجیتال مارکتینگ.", seoKeywords:"تماس, مشاوره, رشد دیجیتال", seoCanonical:"https://mahbodnaderi.com/contact.html", image:"assets/profile-suit.jpeg", imageAlt:"پرتره رسمی مهبد نادری", imageCaption:"برای شروع یک همکاری هدفمند، یک پیام کوتاه کافی است." },
+  blog: { title:"نوشته‌ها", h1:"نوشته‌ها", lead:"مقالات، یادداشت‌ها و ویدئوهای آموزشی در حوزه استراتژی رشد دیجیتال و بازاریابی.", kicker:"وبلاگ", btn1Text:"", btn1Link:"", btn2Text:"", btn2Link:"", section1Title:"لیست مقالات", section1Body:"<p>مقالات و نوشته‌ها در حوزه استراتژی رشد دیجیتال و بازاریابی.</p>", section2Title:"", section2Body:"", seoTitle:"نوشته‌ها | مهبد نادری", seoDesc:"نوشته‌ها و مقالات مهبد نادری در حوزه استراتژی رشد دیجیتال، ساختار مارکتینگ و مشاوره مدیریت بازاریابی.", seoKeywords:"وبلاگ, مقالات, استراتژی رشد", seoCanonical:"https://mahbodnaderi.com/blog.html", image:"assets/profile-formal.jpeg", imageAlt:"تصویر وبلاگ", imageCaption:"مقالات و نوشته‌ها" }
+};
+function getPages() { return Store.get("pages", DEFAULT_PAGES); }
+function savePages(pages) { Store.set("pages", pages); }
+
+// Banner store
+var DEFAULT_BANNERS = [
+  { id:"b1", title:"بنر اصلی صفحه نخست", image:"assets/profile-formal.jpeg", link:"contact.html", active:true, position:"hero" },
+  { id:"b2", title:"بنر درباره من", image:"assets/profile-light.jpeg", link:"about.html", active:true, position:"about" }
+];
+function getBanners() { return Store.get("banners", DEFAULT_BANNERS); }
+function saveBanners(b) { Store.set("banners", b); }
+
 // ────────────────── DOM Ready ──────────────────
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -141,6 +159,8 @@ document.addEventListener("DOMContentLoaded", function () {
     adminPanel.style.display = "flex";
     initBlog();
     initSocial();
+    initPageEditor();
+    initBanners();
     convertNumbersInScope(adminPanel);
     animateCounters();
   }
@@ -868,6 +888,216 @@ document.addEventListener("DOMContentLoaded", function () {
         renderScheduleTable();
       }
     }, 30000);
+  }
+
+  // ════════════════════════════════════════════════
+  //  PAGE EDITOR — Elementor-like
+  // ════════════════════════════════════════════════
+
+  var pages = getPages();
+  var editingPage = null;
+  var pageBodyQuill = null;
+
+  function initPageEditor() {
+    pages = getPages();
+
+    // Section toggle
+    document.querySelectorAll(".btn-toggle-section").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var target = document.getElementById(this.getAttribute("data-target"));
+        if (target) {
+          var isOpen = target.style.display !== "none";
+          target.style.display = isOpen ? "none" : "block";
+          this.textContent = isOpen ? "ویرایش" : "بستن";
+        }
+      });
+    });
+
+    // Back to pages list
+    document.getElementById("btn-back-pages").addEventListener("click", function () {
+      document.getElementById("content-pages").classList.add("active");
+      document.getElementById("content-editor").classList.remove("active");
+      editingPage = null;
+    });
+
+    // Save page
+    document.getElementById("btn-save-page").addEventListener("click", function () {
+      if (!editingPage) return;
+      var p = pages[editingPage];
+      if (!p) return;
+      p.h1 = document.getElementById("page-h1").value;
+      p.lead = document.getElementById("page-lead").value;
+      p.kicker = document.getElementById("page-kicker").value;
+      p.btn1Text = document.getElementById("page-btn1-text").value;
+      p.btn1Link = document.getElementById("page-btn1-link").value;
+      p.btn2Text = document.getElementById("page-btn2-text").value;
+      p.btn2Link = document.getElementById("page-btn2-link").value;
+      p.section1Title = document.getElementById("page-section1-title").value;
+      p.section1Body = pageBodyQuill ? pageBodyQuill.root.innerHTML : document.getElementById("page-section1-body").value;
+      p.section2Title = document.getElementById("page-section2-title").value;
+      p.section2Body = document.getElementById("page-section2-body").value;
+      p.seoTitle = document.getElementById("page-seo-title").value;
+      p.seoDesc = document.getElementById("page-seo-desc").value;
+      p.seoKeywords = document.getElementById("page-seo-keywords").value;
+      p.seoCanonical = document.getElementById("page-seo-canonical").value;
+      p.image = document.getElementById("page-image").value;
+      p.imageAlt = document.getElementById("page-image-alt").value;
+      p.imageCaption = document.getElementById("page-image-caption").value;
+      savePages(pages);
+      alert("تغییرات صفحه ذخیره شد.");
+    });
+
+    // Edit page buttons
+    document.querySelectorAll(".btn-edit-page").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var pageKey = this.getAttribute("data-page");
+        openPageEditor(pageKey);
+      });
+    });
+
+    // New page
+    document.getElementById("btn-new-page").addEventListener("click", function () {
+      var name = prompt("نام صفحه جدید (انگلیسی، مثلاً services):");
+      if (!name) return;
+      name = name.toLowerCase().replace(/[^a-z0-9-]/g, "");
+      if (pages[name]) { alert("این نام قبلاً استفاده شده."); return; }
+      pages[name] = { title: name, h1: "", lead: "", kicker: "", btn1Text: "", btn1Link: "", btn2Text: "", btn2Link: "", section1Title: "", section1Body: "", section2Title: "", section2Body: "", seoTitle: "", seoDesc: "", seoKeywords: "", seoCanonical: "", image: "", imageAlt: "", imageCaption: "" };
+      savePages(pages);
+      openPageEditor(name);
+    });
+
+    // Init Quill for page body
+    if (typeof Quill !== "undefined" && document.getElementById("page-body-editor")) {
+      pageBodyQuill = new Quill("#page-body-editor", {
+        theme: "snow",
+        placeholder: "محتوای بخش اصلی...",
+        direction: "rtl",
+        modules: {
+          toolbar: [
+            [{ header: [2, 3, false] }],
+            ["bold", "italic", "underline"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["blockquote", "link", "image"],
+            ["clean"]
+          ]
+        }
+      });
+    }
+  }
+
+  function openPageEditor(key) {
+    editingPage = key;
+    var p = pages[key];
+    if (!p) return;
+
+    document.getElementById("editor-page-title").textContent = "ویرایش: " + (p.title || key);
+    document.getElementById("page-h1").value = p.h1 || "";
+    document.getElementById("page-lead").value = p.lead || "";
+    document.getElementById("page-kicker").value = p.kicker || "";
+    document.getElementById("page-btn1-text").value = p.btn1Text || "";
+    document.getElementById("page-btn1-link").value = p.btn1Link || "";
+    document.getElementById("page-btn2-text").value = p.btn2Text || "";
+    document.getElementById("page-btn2-link").value = p.btn2Link || "";
+    document.getElementById("page-section1-title").value = p.section1Title || "";
+    if (pageBodyQuill) pageBodyQuill.root.innerHTML = p.section1Body || "";
+    document.getElementById("page-section2-title").value = p.section2Title || "";
+    document.getElementById("page-section2-body").value = p.section2Body || "";
+    document.getElementById("page-seo-title").value = p.seoTitle || "";
+    document.getElementById("page-seo-desc").value = p.seoDesc || "";
+    document.getElementById("page-seo-keywords").value = p.seoKeywords || "";
+    document.getElementById("page-seo-canonical").value = p.seoCanonical || "";
+    document.getElementById("page-image").value = p.image || "";
+    document.getElementById("page-image-alt").value = p.imageAlt || "";
+    document.getElementById("page-image-caption").value = p.imageCaption || "";
+
+    // Open first section by default
+    document.querySelectorAll(".editor-section-body").forEach(function (b) { b.style.display = "none"; });
+    document.querySelectorAll(".btn-toggle-section").forEach(function (b) { b.textContent = "ویرایش"; });
+    var first = document.getElementById("hero-content");
+    if (first) { first.style.display = "block"; }
+    var firstBtn = document.querySelector('[data-target="hero-content"]');
+    if (firstBtn) firstBtn.textContent = "بستن";
+
+    document.getElementById("content-pages").classList.remove("active");
+    document.getElementById("content-editor").classList.add("active");
+  }
+
+  // ════════════════════════════════════════════════
+  //  BANNERS — Management
+  // ════════════════════════════════════════════════
+
+  var banners = getBanners();
+
+  function initBanners() {
+    banners = getBanners();
+    renderBanners();
+
+    document.getElementById("btn-new-banner").addEventListener("click", function () {
+      var title = prompt("عنوان بنر جدید:");
+      if (!title) return;
+      var newB = { id: uid(), title: title, image: "", link: "", active: true, position: "custom" };
+      banners.push(newB);
+      saveBanners(banners);
+      renderBanners();
+    });
+  }
+
+  function renderBanners() {
+    var grid = document.getElementById("banners-grid");
+    var empty = document.getElementById("banners-empty");
+    if (!banners.length) { grid.innerHTML = ""; empty.style.display = "block"; return; }
+    empty.style.display = "none";
+
+    grid.innerHTML = banners.map(function (b) {
+      var imgTag = b.image
+        ? '<img src="' + b.image + '" alt="' + escapeHTML(b.title) + '" style="width:100%;height:100%;object-fit:cover" />'
+        : '<div class="banner-preview">بدون تصویر</div>';
+      var statusBadge = b.active
+        ? '<span class="badge badge-success">فعال</span>'
+        : '<span class="badge badge-secondary">غیرفعال</span>';
+      return '<div class="banner-card" data-id="' + b.id + '">' +
+        '<div style="aspect-ratio:16/7;overflow:hidden">' + imgTag + '</div>' +
+        '<div class="banner-info"><h4>' + escapeHTML(b.title) + '</h4><p>' + statusBadge + ' — ' + escapeHTML(b.position || "custom") + '</p></div>' +
+        '<div class="banner-actions">' +
+          '<button class="btn-sm btn-edit-banner" data-id="' + b.id + '">ویرایش</button>' +
+          '<button class="btn-sm btn-toggle-banner" data-id="' + b.id + '">' + (b.active ? 'غیرفعال' : 'فعال') + '</button>' +
+          '<button class="btn-sm btn-danger btn-delete-banner" data-id="' + b.id + '">حذف</button>' +
+        '</div></div>';
+    }).join("");
+
+    grid.querySelectorAll(".btn-edit-banner").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var id = this.getAttribute("data-id");
+        var b = banners.find(function (x) { return x.id === id; });
+        if (!b) return;
+        var newTitle = prompt("عنوان بنر:", b.title);
+        if (newTitle !== null) b.title = newTitle;
+        var newImage = prompt("آدرس تصویر:", b.image);
+        if (newImage !== null) b.image = newImage;
+        var newLink = prompt("لینک:", b.link);
+        if (newLink !== null) b.link = newLink;
+        saveBanners(banners);
+        renderBanners();
+      });
+    });
+
+    grid.querySelectorAll(".btn-toggle-banner").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var id = this.getAttribute("data-id");
+        var b = banners.find(function (x) { return x.id === id; });
+        if (b) { b.active = !b.active; saveBanners(banners); renderBanners(); }
+      });
+    });
+
+    grid.querySelectorAll(".btn-delete-banner").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (!confirm("آیا از حذف این بنر مطمئن هستید؟")) return;
+        var id = this.getAttribute("data-id");
+        banners = banners.filter(function (x) { return x.id !== id; });
+        saveBanners(banners);
+        renderBanners();
+      });
+    });
   }
 
 });
