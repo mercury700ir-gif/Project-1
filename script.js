@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ── Auth Button State ──
   const authLink = document.getElementById("nav-auth-link");
+  const authLinkMobile = document.getElementById("nav-auth-link-mobile");
   if (authLink) {
     try {
       const user = JSON.parse(localStorage.getItem("site_user"));
@@ -47,6 +48,17 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.reload();
           }
         });
+        if (authLinkMobile) {
+          authLinkMobile.href = "#";
+          authLinkMobile.title = user.name.split(" ")[0] + " — کلیک برای خروج";
+          authLinkMobile.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (confirm("آیا می‌خواهید خارج شوید؟")) {
+              localStorage.removeItem("site_user");
+              window.location.reload();
+            }
+          });
+        }
       }
     } catch(e) {}
   }
