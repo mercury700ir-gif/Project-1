@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="نوشته‌ها و مقالات مهبد نادری در حوزه استراتژی رشد دیجیتال، ساختار مارکتینگ و مشاوره مدیریت بازاریابی." />
+    <title>نوشته‌ها | مهبد نادری</title>
+    <link rel="canonical" href="https://mahbodnaderi.com/blog.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="نوشته‌ها | مهبد نادری" />
+    <meta property="og:description" content="مقالات و نوشته‌ها در حوزه استراتژی رشد دیجیتال و بازاریابی." />
+    <meta property="og:image" content="assets/profile-formal.jpeg" />
+    <meta property="og:locale" content="fa_IR" />
+    <meta name="theme-color" content="#24507a" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .blog-hero { padding: 48px 0 24px; }
+      .blog-hero h1 { margin-bottom: 8px; }
+      .blog-hero .lead { max-width: 600px; }
+      .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; margin-top: 32px; }
+      .blog-card {
+        display: flex; flex-direction: column;
+        border: 1px solid var(--line); border-radius: 10px;
+        background: var(--surface); backdrop-filter: blur(16px);
+        box-shadow: 0 12px 36px rgba(23,26,31,0.05);
+        overflow: hidden; transition: transform 200ms ease, box-shadow 200ms ease;
+      }
+      .blog-card:hover { transform: translateY(-4px); box-shadow: 0 20px 48px rgba(23,26,31,0.1); }
+      .blog-card-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+      .blog-card-meta { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+      .blog-card-category { padding: 3px 10px; border-radius: 99px; background: rgba(36,80,122,0.1); color: var(--accent); font-size: 0.76rem; font-weight: 800; }
+      .blog-card-date { color: var(--muted); font-size: 0.82rem; }
+      .blog-card-title { font-size: 1.1rem; font-weight: 800; color: var(--ink); margin-bottom: 10px; text-align: right; }
+      .blog-card-excerpt { color: var(--muted); font-size: 0.9rem; line-height: 1.8; text-align: justify; flex: 1; }
+      .blog-card-footer { padding: 16px 24px; border-top: 1px solid var(--line); }
+      .blog-card-link { color: var(--accent); font-weight: 800; font-size: 0.88rem; text-decoration: none; transition: color 160ms ease; }
+      .blog-card-link:hover { color: var(--accent-2); }
+      .blog-empty { text-align: center; padding: 80px 20px; color: var(--muted); }
+      .blog-empty p { font-size: 1.1rem; }
+      /* Single post view */
+      .post-view { display: none; padding: 48px 0 80px; }
+      .post-view.active { display: block; }
+      .post-back { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 700; font-size: 0.9rem; margin-bottom: 24px; text-decoration: none; }
+      .post-back:hover { color: var(--accent-2); }
+      .post-header { margin-bottom: 32px; }
+      .post-header h1 { font-size: clamp(1.6rem, 3vw, 2.4rem); line-height: 1.45; margin-bottom: 14px; }
+      .post-meta { display: flex; gap: 16px; color: var(--muted); font-size: 0.88rem; flex-wrap: wrap; }
+      .post-content { max-width: 760px; line-height: 2; font-size: 1.02rem; }
+      .post-content h2, .post-content h3 { margin-top: 28px; }
+      .post-content p { margin-bottom: 18px; }
+      .post-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line); }
+      .post-tag { padding: 4px 12px; border-radius: 99px; background: var(--line); color: var(--muted); font-size: 0.8rem; font-weight: 700; }
+      @media (max-width: 560px) { .blog-grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
+    <header class="site-header" role="banner">
+      <div class="site-shell nav">
+        <a class="brand" href="index.html" aria-label="خانه">
+          <img class="brand-logo" src="assets/logo.png" alt="لوگوی مهبد نادری" />
+          <span class="brand-text">
+            <span>مهبد نادری</span>
+            <small>معمار رشد دیجیتال</small>
+          </span>
+        </a>
+        <nav class="nav-links" aria-label="ناوبری اصلی">
+          <a href="index.html">خانه</a>
+          <a href="about.html">درباره من</a>
+          <a href="blog.html" aria-current="page">نوشته‌ها</a>
+          <a href="contact.html">تماس با من</a>
+        </nav>
+        <button class="menu-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="mobile-menu" aria-label="منوی موبایل">
+      <nav>
+        <a href="index.html">خانه</a>
+        <a href="about.html">درباره من</a>
+        <a href="blog.html">نوشته‌ها</a>
+        <a href="contact.html">تماس با من</a>
+      </nav>
+    </div>
+
+    <main id="main-content" role="main">
+      <!-- Blog List View -->
+      <section id="blog-list" class="site-shell blog-hero">
+        <h1>نوشته‌ها</h1>
+        <p class="lead">مقالات و یادداشت‌ها در حوزه استراتژی رشد دیجیتال، ساختار مارکتینگ و مشاوره مدیریت بازاریابی.</p>
+        <div id="blog-grid" class="blog-grid"></div>
+        <div id="blog-empty" class="blog-empty" style="display:none">
+          <p>هنوز نوشته‌ای منتشر نشده است.</p>
+        </div>
+      </section>
+
+      <!-- Single Post View -->
+      <section id="post-view" class="site-shell post-view">
+        <a href="#" class="post-back" id="post-back-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          بازگشت به لیست نوشته‌ها
+        </a>
+        <div class="post-header">
+          <div class="blog-card-meta">
+            <span class="blog-card-category" id="post-category"></span>
+            <span class="blog-card-date" id="post-date"></span>
+            <span class="blog-card-date" id="post-author"></span>
+          </div>
+          <h1 id="post-title"></h1>
+        </div>
+        <article class="post-content" id="post-content"></article>
+        <div class="post-tags" id="post-tags"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-shell footer-inner">
+        <span>© سایت شخصی مهبد نادری | <a href="contact.html">تماس برای مشاوره</a></span>
+        <a href="admin.html" class="admin-link" aria-label="ورود به پنل مدیریت" title="ورود به پنل مدیریت">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>مدیریت</span>
+        </a>
+      </div>
+    </footer>
+
+    <script defer src="script.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var DEFAULT_POSTS = [
+        { id:"p1", title:"استراتژی رشد دیجیتال در ۱۴۰۵", author:"مهبد نادری", date:"2025-06-22", category:"استراتژی", tags:"استراتژی,رشد,دیجیتال", status:"published", body:"<p>بازاریابی دیجیتال امروزه به یکی از مهم‌ترین اجزای رشد کسب‌وکارها تبدیل شده است. اما بسیاری از شرکت‌ها هنوز با چالش پراکندگی فعالیت‌ها و عدم وجود ساختار منظم دست و پنجه نرم می‌کنند.</p><h2>چرا استراتژی رشد دیجیتال مهم است؟</h2><p>بر اساس آخرین آمارها، بیش از ۸۰ درصد کسب‌وکارها در حال سرمایه‌گذاری روی بازاریابی دیجیتال هستند. این موضوع نشان‌دهنده اهمیت روزافزون آن در استراتژی‌های سازمانی است.</p><h2>راهکارهای عملی</h2><p>۱. تحلیل وضعیت فعلی و شناسایی فرصت‌ها<br>۲. تعریف اهداف SMART و شاخص‌های کلیدی<br>۳. طراحی نقشه راه اجرایی<br>۴. پیاده‌سازی تدریجی و سنجش مداوم<br>۵. بهینه‌سازی بر اساس بازخورد داده‌ها</p><p>ساختار دیجیتال مارکتینگ شامل تعریف فرآیندها، نقش‌ها، شاخص‌های کلیدی عملکرد و ابزارهایی است که تیم بازاریابی را قابل مدیریت و قابل سنجش می‌کند.</p>" },
+        { id:"p2", title:"چگونه ساختار مارکتینگ بسازیم", author:"علی رضایی", date:"2025-06-18", category:"ساختار", tags:"ساختار,مارکتینگ", status:"published", body:"<p>ساختار دیجیتال مارکتینگ شامل تعریف فرآیندها، نقش‌ها و شاخص‌های کلیدی عملکرد است. بدون ساختار مناسب، حتی بهترین کمپین‌ها هم نتیجه مطلوبی نخواهند داشت.</p><h2>مراحل طراحی ساختار</h2><p>اولین قدم، تحلیل وضعیت فعلی سازمان است. باید بدانید کجای کار ایستاده‌اید تا بتوانید مسیر درست را انتخاب کنید.</p><p>دومین قدم، تعریف نقش‌ها و مسئولیت‌هاست. هر عضو تیم باید بداند دقیقاً چه مسئولیتی دارد و چگونه با سایر اعضا هماهنگ شود.</p><p>سومین قدم، طراحی شاخص‌های عملکرد (KPI) است. بدون اندازه‌گیری، نمی‌توانید بهبود ایجاد کنید.</p>" },
+        { id:"p3", title:"مشاوره مدیریت بازاریابی", author:"مهبد نادری", date:"2025-06-10", category:"مشاوره", tags:"مشاوره,مدیریت", status:"draft", body:"<p>همراهی مدیران برای تصمیم‌گیری دقیق‌تر در بازاریابی.</p>" }
+      ];
+
+      var posts = DEFAULT_POSTS;
+      try {
+        var stored = JSON.parse(localStorage.getItem("admin_blog_posts"));
+        if (stored && stored.length) posts = stored;
+      } catch(e) {}
+
+      var published = posts.filter(function(p) { return p.status === "published"; });
+      var grid = document.getElementById("blog-grid");
+      var empty = document.getElementById("blog-empty");
+      var listView = document.getElementById("blog-list");
+      var postView = document.getElementById("post-view");
+
+      function toPersianNumbers(s) {
+        var d = ["۰","۱","۲","۳","۴","۵","۶","۷","۸","۹"];
+        return String(s).replace(/[0-9]/g, function(c) { return d[+c]; });
+      }
+
+      function formatDate(iso) {
+        if (!iso) return "";
+        try { return new Date(iso).toLocaleDateString("fa-IR", {year:"numeric",month:"long",day:"numeric"}); }
+        catch(e) { return iso; }
+      }
+
+      function stripHTML(html) {
+        var tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+      }
+
+      if (published.length === 0) {
+        empty.style.display = "block";
+        return;
+      }
+
+      grid.innerHTML = published.map(function(p) {
+        var excerpt = stripHTML(p.body).substring(0, 180) + "…";
+        return '<article class="blog-card" data-animate>' +
+          '<div class="blog-card-body">' +
+            '<div class="blog-card-meta">' +
+              '<span class="blog-card-category">' + (p.category || "") + '</span>' +
+              '<span class="blog-card-date">' + formatDate(p.date) + '</span>' +
+            '</div>' +
+            '<h2 class="blog-card-title">' + p.title + '</h2>' +
+            '<p class="blog-card-excerpt">' + excerpt + '</p>' +
+          '</div>' +
+          '<div class="blog-card-footer">' +
+            '<a href="#" class="blog-card-link" data-post-id="' + p.id + '">ادامه مطلب →</a>' +
+          '</div>' +
+        '</article>';
+      }).join("");
+
+      // Animate cards
+      var cards = grid.querySelectorAll("[data-animate]");
+      if (cards.length) {
+        var obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) { e.target.classList.add("is-visible"); obs.unobserve(e.target); }
+          });
+        }, { threshold: 0.1 });
+        cards.forEach(function(c, i) { c.style.transitionDelay = Math.min(i * 80, 300) + "ms"; obs.observe(c); });
+      }
+
+      // Click to open post
+      grid.querySelectorAll(".blog-card-link").forEach(function(link) {
+        link.addEventListener("click", function(e) {
+          e.preventDefault();
+          var id = this.getAttribute("data-post-id");
+          var post = published.find(function(p) { return p.id === id; });
+          if (!post) return;
+          document.getElementById("post-title").textContent = post.title;
+          document.getElementById("post-category").textContent = post.category || "";
+          document.getElementById("post-date").textContent = formatDate(post.date);
+          document.getElementById("post-author").textContent = "نویسنده: " + (post.author || "");
+          document.getElementById("post-content").innerHTML = post.body || "";
+          var tagsEl = document.getElementById("post-tags");
+          tagsEl.innerHTML = (post.tags || "").split(",").filter(Boolean).map(function(t) {
+            return '<span class="post-tag">' + t.trim() + '</span>';
+          }).join("");
+          listView.style.display = "none";
+          postView.classList.add("active");
+          window.scrollTo(0, 0);
+        });
+      });
+
+      document.getElementById("post-back-link").addEventListener("click", function(e) {
+        e.preventDefault();
+        postView.classList.remove("active");
+        listView.style.display = "block";
+      });
+
+      // Persian numbers
+      var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode: function(n) {
+          if (!/[0-9]/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+          var el = n.parentElement;
+          if (el && el.closest('input, textarea, select, svg, [dir="ltr"], pre, code')) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      while (walker.nextNode()) {
+        walker.currentNode.nodeValue = toPersianNumbers(walker.currentNode.nodeValue);
+      }
+    });
+    </script>
+  </body>
+</html>
