@@ -31,6 +31,26 @@ function convertNumbersInDOM() {
 document.addEventListener("DOMContentLoaded", () => {
   convertNumbersInDOM();
 
+  // ── Auth Button State ──
+  const authLink = document.getElementById("nav-auth-link");
+  if (authLink) {
+    try {
+      const user = JSON.parse(localStorage.getItem("site_user"));
+      if (user && user.name) {
+        authLink.textContent = user.name.split(" ")[0];
+        authLink.href = "#";
+        authLink.classList.add("logged-in");
+        authLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (confirm("آیا می‌خواهید خارج شوید؟")) {
+            localStorage.removeItem("site_user");
+            window.location.reload();
+          }
+        });
+      }
+    } catch(e) {}
+  }
+
   // ── Image Lazy Load Observer ──
   const lazyImages = document.querySelectorAll('img[loading="lazy"]');
   if (lazyImages.length) {
@@ -58,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ── Mobile Menu ──
   const menuButton = document.querySelector(".menu-toggle");
   const mobileMenu = document.querySelector(".mobile-menu");
+  const menuCloseBtn = document.querySelector(".mobile-menu-close");
 
   if (menuButton && mobileMenu) {
     let lastFocused = null;
@@ -71,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isOpen) {
         lastFocused = document.activeElement;
         const firstLink = mobileMenu.querySelector("a");
-        if (firstLink) firstLink.focus();
+        if (firstLink) setTimeout(() => firstLink.focus(), 100);
       } else if (lastFocused) {
         lastFocused.focus();
       }
@@ -80,6 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
     menuButton.addEventListener("click", () => {
       setMenu(!mobileMenu.classList.contains("is-open"));
     });
+
+    if (menuCloseBtn) {
+      menuCloseBtn.addEventListener("click", () => setMenu(false));
+    }
 
     mobileMenu.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => setMenu(false));
