@@ -1356,6 +1356,20 @@
     min-height: 200px;
   }
 
+  #quill-editor .ql-toolbar {
+    padding: 6px 4px;
+  }
+
+  #quill-editor .ql-toolbar .ql-formats {
+    margin-right: 6px;
+  }
+
+  #quill-editor .ql-editor {
+    font-size: 0.9rem;
+    min-height: 180px;
+    padding: 12px;
+  }
+
   .editor-actions {
     flex-direction: column;
   }
@@ -1382,6 +1396,15 @@
   .ai-output-body {
     max-height: 200px;
     overflow-y: auto;
+    font-size: 0.85rem;
+  }
+
+  .ai-output-field {
+    font-size: 0.82rem;
+  }
+
+  .editor-header {
+    padding: 0;
   }
 
   /* ── Plugins Mobile ── */
@@ -1391,6 +1414,18 @@
 
   .plugin-header h4 {
     font-size: 0.92rem;
+  }
+
+  .plugin-manifest-section {
+    padding: 16px;
+  }
+
+  .plugin-manifest-section pre {
+    font-size: 0.72rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    direction: ltr;
+    text-align: left;
   }
 
   /* ── Settings Mobile ── */
