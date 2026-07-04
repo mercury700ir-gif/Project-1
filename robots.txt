@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /.mimocode/
+
+Sitemap: https://mahbodnaderi.com/sitemap.xml

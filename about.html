@@ -3,15 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="درباره مهبد نادری؛ معمار رشد دیجیتال، مشاور بازاریابی و فارغ‌التحصیل MBA از دانشگاه کارلتون کانادا."
-    />
+    <meta name="description" content="درباره مهبد نادری؛ معمار رشد دیجیتال، مشاور بازاریابی و فارغ‌التحصیل MBA از دانشگاه کارلتون کانادا." />
     <title>درباره مهبد نادری</title>
+    <link rel="canonical" href="https://mahbodnaderi.com/about.html" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="درباره مهبد نادری" />
+    <meta property="og:description" content="معمار رشد دیجیتال، مشاور بازاریابی و فارغ‌التحصیل MBA از دانشگاه کارلتون کانادا." />
+    <meta property="og:image" content="assets/profile-light.jpeg" />
+    <meta property="og:locale" content="fa_IR" />
+    <meta name="theme-color" content="#24507a" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="site-header">
+    <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
+    <header class="site-header" role="banner">
       <div class="site-shell nav">
         <a class="brand" href="index.html" aria-label="خانه">
           <img class="brand-logo" src="assets/logo.png" alt="لوگوی مهبد نادری" />
@@ -41,7 +46,7 @@
       </nav>
     </div>
 
-    <main>
+    <main id="main-content" role="main">
       <section class="site-shell hero compact">
         <div data-animate>
           <p class="kicker">درباره من</p>
@@ -56,7 +61,7 @@
         </div>
 
         <figure class="portrait-frame" data-animate>
-          <img src="assets/profile-light.jpeg" alt="پرتره مهبد نادری با کت روشن" />
+          <img src="assets/profile-light.jpeg" alt="پرتره مهبد نادری با کت روشن" loading="lazy" />
           <figcaption class="portrait-caption">
             ترکیب نگاه مدیریتی، تجربه اجرایی و شناخت عمیق از رشد دیجیتال.
           </figcaption>
@@ -121,12 +126,16 @@
       </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="site-shell">
-        <a href="index.html">خانه</a> | <a href="contact.html">تماس با من</a>
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-shell footer-inner">
+        <span><a href="index.html">خانه</a> | <a href="contact.html">تماس با من</a></span>
+        <a href="admin.html" class="admin-link" aria-label="ورود به پنل مدیریت" title="ورود به پنل مدیریت">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>مدیریت</span>
+        </a>
       </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script defer src="script.js"></script>
   </body>
 </html>

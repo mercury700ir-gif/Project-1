@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>پنل مدیریت | مهبد نادری</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="admin-styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" />
+  </head>
+  <body class="admin-body">
+
+    <!-- ═══════════ Login Screen ═══════════ -->
+    <div id="login-screen" class="login-screen">
+      <div class="login-card">
+        <div class="login-header">
+          <img src="assets/logo.png" alt="لوگو" class="login-logo" />
+          <h1>ورود به پنل مدیریت</h1>
+          <p>نام کاربری و رمز عبور خود را وارد کنید</p>
+        </div>
+        <form id="login-form" class="login-form">
+          <div class="field">
+            <label for="login-user">نام کاربری</label>
+            <input id="login-user" type="text" value="admin" autocomplete="username" />
+          </div>
+          <div class="field">
+            <label for="login-pass">رمز عبور</label>
+            <input id="login-pass" type="password" value="admin" autocomplete="current-password" />
+          </div>
+          <p id="login-error" class="login-error"></p>
+          <button type="submit" class="button primary login-btn">ورود</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ═══════════ Admin Panel ═══════════ -->
+    <div id="admin-panel" class="admin-panel" style="display:none">
+
+      <!-- Sidebar -->
+      <aside id="sidebar" class="admin-sidebar">
+        <div class="sidebar-header">
+          <img src="assets/logo.png" alt="لوگو" class="sidebar-logo" />
+          <span class="sidebar-brand">پنل مدیریت</span>
+          <button id="sidebar-close" class="sidebar-close" aria-label="بستن سایدبار">&times;</button>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="#" class="sidebar-link active" data-tab="dashboard">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            <span>داشبورد</span>
+          </a>
+          <a href="#" class="sidebar-link" data-tab="content">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>مدیریت محتوا</span>
+          </a>
+          <a href="#" class="sidebar-link" data-tab="users">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>مدیریت کاربران</span>
+          </a>
+          <a href="#" class="sidebar-link" data-tab="gallery">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>گالری</span>
+          </a>
+          <a href="#" class="sidebar-link" data-tab="blog">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span>وبلاگ</span>
+          </a>
+          <a href="#" class="sidebar-link" data-tab="files">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <span>فایل‌ها</span>
+          </a>
+          <a href="#" class="sidebar-link" data-tab="plugins">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <span>پلاگین‌ها</span>
+          </a>
+          <a href="#" class="sidebar-link" data-tab="social">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span>شبکه‌های اجتماعی</span>
+          </a>
+          <a href="#" class="sidebar-link" data-tab="settings">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>تنظیمات</span>
+          </a>
+        </nav>
+        <div class="sidebar-footer">
+          <button id="theme-toggle" class="theme-toggle-btn">
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <span>حالت تاریک</span>
+          </button>
+          <button id="logout-btn" class="logout-btn">خروج</button>
+        </div>
+      </aside>
+
+      <!-- Overlay for mobile sidebar -->
+      <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+      <!-- Main Area -->
+      <div class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-topbar">
+          <div class="topbar-right">
+            <button id="sidebar-toggle" class="sidebar-toggle" aria-label="باز کردن سایدبار">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <h2 id="page-title" class="page-title">داشبورد</h2>
+          </div>
+          <div class="topbar-left">
+            <div class="topbar-search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="جستجو..." id="global-search" />
+            </div>
+            <div class="topbar-user">
+              <span id="current-user">مدیر</span>
+              <div class="user-avatar">م</div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Tab Content -->
+        <div class="admin-content">
+
+          <!-- ════ 1. Dashboard ════ -->
+          <section id="tab-dashboard" class="tab-pane active">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(34,113,177,0.12);color:#2271b1">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number" data-count="12847">۰</span>
+                  <span class="stat-label">بازدید ماه</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(0,163,42,0.12);color:#00a32a">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number" data-count="48">۰</span>
+                  <span class="stat-label">کل پست‌ها</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(219,166,23,0.12);color:#dba617">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number" data-count="156">۰</span>
+                  <span class="stat-label">کاربران</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(214,54,56,0.12);color:#d63638">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number" data-count="23">۰</span>
+                  <span class="stat-label">نظرات جدید</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-grid">
+              <div class="dash-card">
+                <h3>پست‌های اخیر</h3>
+                <table class="data-table compact">
+                  <thead><tr><th>عنوان</th><th>تاریخ</th><th>وضعیت</th></tr></thead>
+                  <tbody>
+                    <tr><td>استراتژی رشد دیجیتال در ۱۴۰۵</td><td>۱۴۰۵/۰۴/۰۱</td><td><span class="badge badge-success">منتشر شده</span></td></tr>
+                    <tr><td>چگونه ساختار مارکتینگ بسازیم</td><td>۱۴۰۵/۰۳/۲۸</td><td><span class="badge badge-success">منتشر شده</span></td></tr>
+                    <tr><td>مشاوره مدیریت بازاریابی</td><td>۱۴۰۵/۰۳/۲۰</td><td><span class="badge badge-warning">پیش‌نویس</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="dash-card">
+                <h3>کاربران فعال</h3>
+                <table class="data-table compact">
+                  <thead><tr><th>نام</th><th>نقش</th><th>آخرین ورود</th></tr></thead>
+                  <tbody>
+                    <tr><td>مهبد نادری</td><td><span class="badge badge-primary">مدیر کل</span></td><td>امروز</td></tr>
+                    <tr><td>علی رضایی</td><td><span class="badge badge-info">ویرایشگر</span></td><td>دیروز</td></tr>
+                    <tr><td>سارا احمدی</td><td><span class="badge badge-info">نویسنده</span></td><td>۳ روز پیش</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ════ 2. Content Management ════ -->
+          <section id="tab-content" class="tab-pane">
+            <div class="tab-header">
+              <h3>مدیریت صفحات و پست‌ها</h3>
+              <button class="button primary" onclick="showModal('new-content-modal')">+ صفحه جدید</button>
+            </div>
+            <div class="filter-bar">
+              <select class="filter-select"><option>همه انواع</option><option>صفحه</option><option>پست</option></select>
+              <select class="filter-select"><option>همه وضعیت‌ها</option><option>منتشر شده</option><option>پیش‌نویس</option></select>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr><th>عنوان</th><th>نوع</th><th>نویسنده</th><th>تاریخ</th><th>وضعیت</th><th>عملیات</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>صفحه اصلی</td><td>صفحه</td><td>مدیر</td><td>۱۴۰۵/۰۱/۰۱</td><td><span class="badge badge-success">منتشر</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+                <tr><td>درباره ما</td><td>صفحه</td><td>مدیر</td><td>۱۴۰۵/۰۱/۰۵</td><td><span class="badge badge-success">منتشر</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+                <tr><td>تماس با ما</td><td>صفحه</td><td>مدیر</td><td>۱۴۰۵/۰۱/۰۵</td><td><span class="badge badge-success">منتشر</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+                <tr><td>راهکارهای رشد دیجیتال</td><td>پست</td><td>علی رضایی</td><td>۱۴۰۵/۰۴/۰۱</td><td><span class="badge badge-success">منتشر</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+                <tr><td>نقش داده در بازاریابی</td><td>پست</td><td>سارا احمدی</td><td>۱۴۰۵/۰۳/۲۸</td><td><span class="badge badge-warning">پیش‌نویس</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- ════ 3. User Management ════ -->
+          <section id="tab-users" class="tab-pane">
+            <div class="tab-header">
+              <h3>مدیریت کاربران</h3>
+              <button class="button primary" onclick="showModal('new-user-modal')">+ کاربر جدید</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr><th>نام</th><th>ایمیل</th><th>نقش</th><th>تاریخ عضویت</th><th>وضعیت</th><th>عملیات</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>مهبد نادری</td><td>mercury700ir@gmail.com</td><td><span class="badge badge-primary">مدیر کل</span></td><td>۱۴۰۳/۰۱/۰۱</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm">ویرایش</button></td></tr>
+                <tr><td>علی رضایی</td><td>ali@example.com</td><td><span class="badge badge-info">ویرایشگر</span></td><td>۱۴۰۴/۰۶/۱۵</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+                <tr><td>سارا احمدی</td><td>sara@example.com</td><td><span class="badge badge-info">نویسنده</span></td><td>۱۴۰۴/۰۹/۱۰</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+                <tr><td>رضا کریمی</td><td>reza@example.com</td><td><span class="badge badge-secondary">مشترک</span></td><td>۱۴۰۵/۰۲/۲۰</td><td><span class="badge badge-warning">غیرفعال</span></td><td><button class="btn-sm">ویرایش</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- ════ 4. Gallery ════ -->
+          <section id="tab-gallery" class="tab-pane">
+            <div class="sub-tabs">
+              <button class="sub-tab active" data-subtab="gallery-images">تصاویر</button>
+              <button class="sub-tab" data-subtab="gallery-videos">ویدیوها</button>
+            </div>
+
+            <div id="gallery-images" class="sub-pane active">
+              <div class="upload-zone" id="image-upload-zone">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <p>فایل‌ها را اینجا رها کنید یا کلیک کنید</p>
+                <span>PNG, JPG, GIF حداکثر ۱۰ مگابایت</span>
+                <input type="file" accept="image/*" multiple hidden id="image-upload-input" />
+              </div>
+              <div class="gallery-grid">
+                <div class="gallery-item"><img src="assets/profile-formal.jpeg" alt="تصویر ۱" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
+                <div class="gallery-item"><img src="assets/profile-light.jpeg" alt="تصویر ۲" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
+                <div class="gallery-item"><img src="assets/profile-suit.jpeg" alt="تصویر ۳" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
+                <div class="gallery-item"><img src="assets/consulting-room.jpeg" alt="تصویر ۴" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
+                <div class="gallery-item"><img src="assets/case-score.jpeg" alt="تصویر ۵" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
+                <div class="gallery-item"><img src="assets/logo.png" alt="لوگو" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
+              </div>
+            </div>
+
+            <div id="gallery-videos" class="sub-pane">
+              <div class="upload-zone" id="video-upload-zone">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                <p>فایل ویدیویی را اینجا رها کنید</p>
+                <span>MP4, WEBM حداکثر ۵۰ مگابایت</span>
+                <input type="file" accept="video/*" hidden id="video-upload-input" />
+              </div>
+              <div class="empty-state">
+                <p>هنوز ویدیویی آپلود نشده است</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ════ 5. Blog ════ -->
+          <section id="tab-blog" class="tab-pane">
+            <div class="sub-tabs">
+              <button class="sub-tab active" data-subtab="blog-posts">لیست پست‌ها</button>
+              <button class="sub-tab" data-subtab="blog-editor">ویرایشگر</button>
+              <button class="sub-tab" data-subtab="blog-ai">تولید محتوا با هوش مصنوعی</button>
+            </div>
+
+            <!-- Blog Post List -->
+            <div id="blog-posts" class="sub-pane active">
+              <div class="tab-header">
+                <h3>پست‌های وبلاگ</h3>
+                <button class="button primary" id="btn-new-post">+ پست جدید</button>
+              </div>
+              <table class="data-table" id="blog-table">
+                <thead>
+                  <tr><th>عنوان</th><th>نویسنده</th><th>تاریخ</th><th>دسته‌بندی</th><th>وضعیت</th><th>عملیات</th></tr>
+                </thead>
+                <tbody id="blog-table-body"></tbody>
+              </table>
+              <div id="blog-empty" class="empty-state" style="display:none"><p>هنوز پستی وجود ندارد.</p></div>
+            </div>
+
+            <!-- Blog Editor -->
+            <div id="blog-editor" class="sub-pane">
+              <input type="hidden" id="edit-post-id" value="" />
+              <div class="editor-header">
+                <input type="text" class="editor-title-input" id="editor-title" placeholder="عنوان پست..." />
+                <div class="editor-meta-grid">
+                  <div class="field">
+                    <label>دسته‌بندی</label>
+                    <select id="editor-category"><option>استراتژی</option><option>ساختار</option><option>مشاوره</option><option>مدیریت</option></select>
+                  </div>
+                  <div class="field">
+                    <label>برچسب‌ها</label>
+                    <input type="text" id="editor-tags" placeholder="برچسب‌ها با کاما جدا شوند" />
+                  </div>
+                  <div class="field">
+                    <label>نویسنده</label>
+                    <input type="text" id="editor-author" value="مهبد نادری" />
+                  </div>
+                </div>
+              </div>
+              <div id="quill-editor"></div>
+              <div class="editor-actions">
+                <button class="button" id="btn-save-draft">ذخیره پیش‌نویس</button>
+                <button class="button primary" id="btn-publish">انتشار</button>
+              </div>
+            </div>
+
+            <!-- AI Content Generator -->
+            <div id="blog-ai" class="sub-pane">
+              <div class="ai-generator">
+                <h3>تولید محتوای SEO-friendly با هوش مصنوعی</h3>
+                <p class="lead">موضوع یا متن خود را وارد کنید یا فایل Word/PDF آپلود کنید تا محتوای بهینه‌شده تولید شود.</p>
+
+                <div class="ai-input-tabs">
+                  <button class="ai-input-tab active" data-aitab="ai-text">موضوع / متن</button>
+                  <button class="ai-input-tab" data-aitab="ai-file">فایل Word/PDF</button>
+                </div>
+
+                <div id="ai-text" class="ai-input-pane active">
+                  <div class="field">
+                    <label>موضوع یا متن اولیه</label>
+                    <textarea id="ai-input-text" rows="6" placeholder="مثلاً: چگونه استراتژی رشد دیجیتال بسازیم..."></textarea>
+                  </div>
+                </div>
+
+                <div id="ai-file" class="ai-input-pane">
+                  <div class="upload-zone" id="ai-file-zone">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    <p>فایل Word یا PDF را اینجا رها کنید</p>
+                    <span>.docx, .pdf حداکثر ۲۰ مگابایت</span>
+                    <input type="file" accept=".docx,.pdf" hidden id="ai-file-input" />
+                  </div>
+                  <p id="ai-file-name" class="ai-file-name"></p>
+                </div>
+
+                <div class="ai-options">
+                  <div class="field">
+                    <label>نوع محتوا</label>
+                    <select id="ai-content-type"><option>مقاله وبلاگ</option><option>توضیحات محصول</option><option>پست شبکه اجتماعی</option><option>خبر</option></select>
+                  </div>
+                  <div class="field">
+                    <label>لحن محتوا</label>
+                    <select id="ai-tone"><option>رسمی و حرفه‌ای</option><option>صمیمی</option><option>آموزشی</option><option>تبلیغاتی</option></select>
+                  </div>
+                  <div class="field">
+                    <label>تعداد کلمات تقریبی</label>
+                    <input type="number" id="ai-word-count" value="800" min="200" max="5000" />
+                  </div>
+                </div>
+
+                <button class="button primary" id="ai-generate-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  تولید محتوا
+                </button>
+
+                <div id="ai-output" class="ai-output" style="display:none">
+                  <h4>محتوای تولید شده</h4>
+                  <div id="ai-output-title" class="ai-output-field"><strong>عنوان SEO:</strong> <span></span></div>
+                  <div id="ai-output-meta" class="ai-output-field"><strong>توضیحات متا:</strong> <span></span></div>
+                  <div id="ai-output-keywords" class="ai-output-field"><strong>تگ‌ها:</strong> <span></span></div>
+                  <div id="ai-output-body" class="ai-output-body"></div>
+                  <div id="ai-output-schedule" class="ai-output-field"><strong>زمان‌بندی پیشنهادی:</strong> <span></span></div>
+                  <div class="editor-actions">
+                    <button class="button" id="btn-copy-ai">کپی محتوا</button>
+                    <button class="button primary" id="btn-use-ai">استفاده در ویرایشگر</button>
+                    <button class="button" id="btn-save-ai-as-post">ذخیره به عنوان پست</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ════ 6. Files ════ -->
+          <section id="tab-files" class="tab-pane">
+            <div class="tab-header">
+              <h3>مدیریت فایل‌ها و اسناد</h3>
+              <button class="button primary" id="file-upload-btn">+ آپلود فایل</button>
+              <input type="file" hidden id="file-upload-input" multiple />
+            </div>
+            <div class="upload-zone" id="file-drop-zone">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <p>فایل‌ها را اینجا رها کنید</p>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr><th>نام فایل</th><th>نوع</th><th>حجم</th><th>تاریخ آپلود</th><th>عملیات</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>resume-mahbod.pdf</td><td>PDF</td><td>۲.۴ مگابایت</td><td>۱۴۰۵/۰۴/۰۱</td><td><button class="btn-sm">دانلود</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+                <tr><td>brand-guidelines.docx</td><td>Word</td><td>۵.۱ مگابایت</td><td>۱۴۰۵/۰۳/۲۸</td><td><button class="btn-sm">دانلود</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+                <tr><td>marketing-plan-1405.xlsx</td><td>Excel</td><td>۱.۸ مگابایت</td><td>۱۴۰۵/۰۳/۱۵</td><td><button class="btn-sm">دانلود</button><button class="btn-sm btn-danger">حذف</button></td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- ════ 7. Plugins ════ -->
+          <section id="tab-plugins" class="tab-pane">
+            <div class="tab-header">
+              <h3>مدیریت پلاگین‌ها</h3>
+              <button class="button primary" onclick="showModal('install-plugin-modal')">+ نصب پلاگین</button>
+            </div>
+            <div class="plugins-grid">
+              <div class="plugin-card active">
+                <div class="plugin-header">
+                  <h4>SEO Manager</h4>
+                  <span class="badge badge-success">فعال</span>
+                </div>
+                <p>بهینه‌سازی عنوان، توضیحات متا و نقشه سایت برای موتورهای جستجو.</p>
+                <div class="plugin-meta"><span>نسخه ۲.۱.۰</span><span>توسعه‌دهنده: تیم فنی</span></div>
+                <div class="plugin-actions"><button class="btn-sm">غیرفعال</button><button class="btn-sm">تنظیمات</button></div>
+              </div>
+              <div class="plugin-card active">
+                <div class="plugin-header">
+                  <h4>Analytics Dashboard</h4>
+                  <span class="badge badge-success">فعال</span>
+                </div>
+                <p>اتصال به Google Analytics و نمایش آمار بازدید در داشبورد.</p>
+                <div class="plugin-meta"><span>نسخه ۱.۴.۲</span><span>توسعه‌دهنده: تیم فنی</span></div>
+                <div class="plugin-actions"><button class="btn-sm">غیرفعال</button><button class="btn-sm">تنظیمات</button></div>
+              </div>
+              <div class="plugin-card">
+                <div class="plugin-header">
+                  <h4>Social Auto Poster</h4>
+                  <span class="badge badge-secondary">غیرفعال</span>
+                </div>
+                <p>انتشار خودکار پست‌ها در شبکه‌های اجتماعی مختلف.</p>
+                <div class="plugin-meta"><span>نسخه ۳.۰.۱</span><span>توسعه‌دهنده: تیم فنی</span></div>
+                <div class="plugin-actions"><button class="btn-sm btn-primary">فعال</button><button class="btn-sm">حذف</button></div>
+              </div>
+            </div>
+
+            <!-- Plugin Manifest Preview -->
+            <div class="plugin-manifest-section">
+              <h4>ساختار JSON Manifest پلاگین</h4>
+              <pre class="code-block">{
+  "name": "seo-manager",
+  "title": "SEO Manager",
+  "version": "2.1.0",
+  "description": "بهینه‌سازی سئو برای موتورهای جستجو",
+  "author": "تیم فنی",
+  "active": true,
+  "settings_url": "/admin/plugins/seo-manager",
+  "dependencies": [],
+  "permissions": ["manage_options", "edit_posts"]
+}</pre>
+            </div>
+          </section>
+
+          <!-- ════ 8. Social Networks ════ -->
+          <section id="tab-social" class="tab-pane">
+            <div class="sub-tabs">
+              <button class="sub-tab active" data-subtab="social-connect">اتصال شبکه‌ها</button>
+              <button class="sub-tab" data-subtab="social-schedule">زمان‌بندی انتشار</button>
+              <button class="sub-tab" data-subtab="social-history">تاریخچه انتشار</button>
+            </div>
+
+            <!-- Connect Networks -->
+            <div id="social-connect" class="sub-pane active">
+              <div class="tab-header"><h3>شبکه‌های اجتماعی</h3></div>
+              <div class="social-grid" id="social-grid"></div>
+            </div>
+
+            <!-- Schedule Post -->
+            <div id="social-schedule" class="sub-pane">
+              <div class="tab-header"><h3>زمان‌بندی انتشار</h3></div>
+              <div class="schedule-section">
+                <div class="schedule-form">
+                  <div class="field">
+                    <label>پست مبدأ</label>
+                    <select id="schedule-post-select"><option value="">انتخاب کنید...</option></select>
+                  </div>
+                  <div class="field">
+                    <label>شبکه‌های مقصد</label>
+                    <div class="checkbox-group" id="schedule-platforms"></div>
+                  </div>
+                  <div class="field">
+                    <label>متن پیام (اختیاری)</label>
+                    <textarea id="schedule-message" rows="3" placeholder="متن همراه لینک پست..."></textarea>
+                  </div>
+                  <div class="field">
+                    <label>زمان انتشار</label>
+                    <input type="datetime-local" id="schedule-datetime" />
+                  </div>
+                  <button class="button primary" id="btn-schedule-post">برنامه‌ریزی انتشار</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Publish History -->
+            <div id="social-history" class="sub-pane">
+              <div class="tab-header"><h3>تاریخچه انتشار</h3></div>
+              <table class="data-table" id="schedule-table">
+                <thead>
+                  <tr><th>پست</th><th>شبکه</th><th>زمان برنامه‌ریزی</th><th>وضعیت</th><th>عملیات</th></tr>
+                </thead>
+                <tbody id="schedule-table-body"></tbody>
+              </table>
+              <div id="schedule-empty" class="empty-state" style="display:none"><p>هنوز برنامه‌ای ثبت نشده است.</p></div>
+            </div>
+          </section>
+
+          <!-- ════ 9. Settings ════ -->
+          <section id="tab-settings" class="tab-pane">
+            <div class="settings-grid">
+              <div class="settings-card">
+                <h4>تنظیمات SEO</h4>
+                <div class="field"><label>عنوان سایت</label><input type="text" value="مهبد نادری | معمار رشد دیجیتال" /></div>
+                <div class="field"><label>توضیحات متا</label><textarea rows="3">سایت شخصی مهبد نادری؛ معمار رشد دیجیتال، مشاور بازاریابی و طراح ساختارهای دیجیتال مارکتینگ.</textarea></div>
+                <div class="field"><label>کلمات کلیدی</label><input type="text" value="بازاریابی دیجیتال, مشاوره, رشد دیجیتال" /></div>
+                <div class="field"><label>نقشه سایت</label><select><option>فعال</option><option>غیرفعال</option></select></div>
+                <button class="button primary">ذخیره تنظیمات SEO</button>
+              </div>
+
+              <div class="settings-card">
+                <h4>Google Analytics</h4>
+                <div class="field"><label>Tracking ID</label><input type="text" placeholder="G-XXXXXXXXXX" dir="ltr" /></div>
+                <div class="field"><label>اتصال</label><select><option>فعال</option><option>غیرفعال</option></select></div>
+                <button class="button primary">ذخیره</button>
+              </div>
+
+              <div class="settings-card">
+                <h4>اطلاعات تماس</h4>
+                <div class="field"><label>شماره تماس</label><input type="tel" value="+98 912 214 7417" dir="ltr" /></div>
+                <div class="field"><label>ایمیل</label><input type="email" value="mercury700ir@gmail.com" dir="ltr" /></div>
+                <div class="field"><label>آدرس</label><input type="text" value="تهران، ایران" /></div>
+                <button class="button primary">ذخیره</button>
+              </div>
+            </div>
+          </section>
+
+        </div><!-- /admin-content -->
+      </div><!-- /admin-main -->
+    </div><!-- /admin-panel -->
+
+    <!-- ═══════════ Modals ═══════════ -->
+    <div id="modal-overlay" class="modal-overlay" style="display:none">
+      <div class="modal-card" id="active-modal">
+        <!-- New Content Modal -->
+        <div id="new-content-modal" class="modal-content" style="display:none">
+          <div class="modal-header"><h3>ایجاد صفحه جدید</h3><button class="modal-close" onclick="hideModal()">&times;</button></div>
+          <div class="modal-body">
+            <div class="field"><label>عنوان</label><input type="text" placeholder="عنوان صفحه" /></div>
+            <div class="field"><label>نوع</label><select><option>صفحه</option><option>پست</option></select></div>
+            <div class="field"><label>محتوا</label><textarea rows="5" placeholder="محتوای اولیه..."></textarea></div>
+          </div>
+          <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" onclick="hideModal()">ایجاد</button></div>
+        </div>
+        <!-- New User Modal -->
+        <div id="new-user-modal" class="modal-content" style="display:none">
+          <div class="modal-header"><h3>افزودن کاربر جدید</h3><button class="modal-close" onclick="hideModal()">&times;</button></div>
+          <div class="modal-body">
+            <div class="field"><label>نام کامل</label><input type="text" /></div>
+            <div class="field"><label>ایمیل</label><input type="email" dir="ltr" /></div>
+            <div class="field"><label>نقش</label><select><option>مشترک</option><option>نویسنده</option><option>ویرایشگر</option><option>مدیر کل</option></select></div>
+            <div class="field"><label>رمز عبور</label><input type="password" /></div>
+          </div>
+          <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" onclick="hideModal()">افزودن</button></div>
+        </div>
+        <!-- Install Plugin Modal -->
+        <div id="install-plugin-modal" class="modal-content" style="display:none">
+          <div class="modal-header"><h3>نصب پلاگین</h3><button class="modal-close" onclick="hideModal()">&times;</button></div>
+          <div class="modal-body">
+            <div class="field"><label>آدرس مخزن پلاگین (URL)</label><input type="url" placeholder="https://example.com/plugin.json" dir="ltr" /></div>
+            <p class="lead">فایل manifest JSON پلاگین دانلود و بررسی می‌شود.</p>
+          </div>
+          <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" onclick="hideModal()">نصب</button></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
