@@ -1219,16 +1219,28 @@
   /* ── Sub Tabs Mobile ── */
   .sub-tabs {
     width: 100%;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: visible;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0;
+    background: transparent;
+    border: none;
   }
 
   .sub-tab {
     white-space: nowrap;
     flex-shrink: 0;
-    padding: 8px 14px;
-    font-size: 0.82rem;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+    background: var(--admin-card-bg);
+  }
+
+  .sub-tab.active {
+    background: var(--admin-primary);
+    color: #fff;
+    border-color: var(--admin-primary);
   }
 
   /* ── Upload Zones Mobile ── */
@@ -1395,6 +1407,52 @@
   /* ── Blog List Mobile ── */
   .blog-grid {
     grid-template-columns: 1fr;
+  }
+
+  #blog-posts {
+    overflow: visible;
+  }
+
+  #blog-posts .data-table {
+    width: 100%;
+  }
+
+  #blog-posts .data-table tr {
+    margin-bottom: 14px;
+  }
+
+  #blog-posts .data-table td {
+    font-size: 0.84rem;
+    word-break: break-word;
+  }
+
+  #blog-editor,
+  #blog-ai {
+    overflow: visible;
+  }
+
+  .ai-generator {
+    overflow: visible;
+    padding: 16px;
+  }
+
+  .ai-options {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-output {
+    overflow: visible;
+  }
+
+  .ai-output-field {
+    font-size: 0.82rem;
+    word-break: break-word;
+  }
+
+  .ai-output-body {
+    max-height: 250px;
+    overflow-y: auto;
+    font-size: 0.85rem;
   }
 
   #blog-posts {
