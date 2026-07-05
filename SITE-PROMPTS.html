@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>پرامپت‌های کامل طراحی سایت | مهبد نادری</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .prompt-page { max-width: 900px; margin: 0 auto; padding: 40px 24px 100px; }
+      .prompt-page h1 { font-size: 2.2rem; margin-bottom: 10px; }
+      .prompt-page .lead { color: var(--muted); margin-bottom: 36px; font-size: 1.05rem; }
+      .prompt-page h2 { margin-top: 48px; padding-bottom: 12px; border-bottom: 3px solid var(--accent); color: var(--accent); }
+      .prompt-page h3 { margin-top: 32px; color: var(--ink); }
+      .prompt-page h4 { margin-top: 20px; color: var(--accent-2); }
+      .prompt-page p { margin-bottom: 12px; text-align: justify; line-height: 2; }
+      .prompt-page ul, .prompt-page ol { padding-right: 24px; margin-bottom: 14px; }
+      .prompt-page li { margin-bottom: 6px; line-height: 1.9; }
+      .prompt-page pre { background: #1e1e2e; color: #cdd6f4; padding: 18px; border-radius: 10px; overflow-x: auto; direction: ltr; text-align: left; font-size: 0.82rem; line-height: 1.6; margin: 16px 0; border: 1px solid #313244; }
+      .prompt-page code { padding: 2px 7px; background: rgba(36,80,122,0.08); border-radius: 5px; font-size: 0.88em; color: var(--accent); }
+      .prompt-page table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+      .prompt-page th, .prompt-page td { padding: 10px 14px; border: 1px solid var(--line); text-align: right; font-size: 0.9rem; }
+      .prompt-page th { background: var(--bg); font-weight: 800; }
+      .prompt-page .prompt-box { background: linear-gradient(135deg, rgba(36,80,122,0.06), rgba(15,118,110,0.04)); border: 1px solid var(--line); border-radius: 10px; padding: 20px 24px; margin: 16px 0; }
+      .prompt-box h4 { margin-top: 0; color: var(--accent); }
+      .prompt-page .warning { padding: 14px 18px; background: rgba(214,54,56,0.06); border-right: 4px solid var(--accent-2); border-radius: 0 8px 8px 0; margin: 16px 0; }
+      .prompt-page .info { padding: 14px 18px; background: rgba(36,80,122,0.06); border-right: 4px solid var(--accent); border-radius: 0 8px 8px 0; margin: 16px 0; }
+      .toc { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px 28px; margin-bottom: 40px; }
+      .toc h3 { margin-top: 0; margin-bottom: 14px; }
+      .toc ol { padding-right: 22px; }
+      .toc a { color: var(--accent); font-weight: 700; text-decoration: none; }
+      .toc a:hover { text-decoration: underline; }
+      .toc li { margin-bottom: 4px; }
+      .file-tree { font-family: monospace; font-size: 0.85rem; direction: ltr; text-align: left; background: var(--surface); padding: 16px 20px; border-radius: 8px; border: 1px solid var(--line); margin: 14px 0; line-height: 1.7; }
+      @media (max-width: 768px) {
+        .prompt-page { padding: 24px 16px 60px; }
+        .prompt-page h1 { font-size: 1.6rem; }
+        .toc { padding: 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
+    <header class="site-header" role="banner">
+      <div class="site-shell nav">
+        <a class="brand" href="index.html" aria-label="خانه">
+          <img class="brand-logo" src="assets/logo.png" alt="لوگو" />
+          <span class="brand-text"><span>مهبد نادری</span><small>معمار رشد دیجیتال</small></span>
+        </a>
+        <nav class="nav-links" aria-label="ناوبری">
+          <a href="index.html">خانه</a>
+          <a href="admin.html">پنل مدیریت</a>
+          <a href="PLUGIN-GUIDE.html">راهنمای پلاگین</a>
+        </nav>
+        <button class="menu-toggle" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+      </div>
+    </header>
+    <div class="mobile-menu" aria-label="منوی موبایل">
+      <button class="mobile-menu-close" aria-label="بستن">&times;</button>
+      <nav><a href="index.html">خانه</a><a href="admin.html">پنل مدیریت</a></nav>
+    </div>
+
+    <main id="main-content" role="main" class="prompt-page">
+      <h1>پرامپت‌های کامل طراحی سایت</h1>
+      <p class="lead">این فایل شامل تمام دستورالعمل‌ها، الزامات و جزئیات فنی برای بازتولید کامل سایت شخصی مهبد نادری است. با دادن این پرامپت‌ها به یک ابزار هوش مصنوعی، می‌توانید دقیقاً همین سایت را بازسازی کنید.</p>
+
+      <div class="toc">
+        <h3>فهرست مطالب</h3>
+        <ol>
+          <li><a href="#overview">نمای کلی پروژه</a></li>
+          <li><a href="#design-system">سیستم طراحی و هویت بصری</a></li>
+          <li><a href="#structure">ساختار فایل‌ها و پوشه‌بندی</a></li>
+          <li><a href="#global-requirements">الزامات عمومی سایت</a></li>
+          <li><a href="#page-home">صفحه اصلی (Home)</a></li>
+          <li><a href="#page-about">صفحه درباره من</a></li>
+          <li><a href="#page-contact">صفحه تماس با من</a></li>
+          <li><a href="#page-blog">صفحه نوشته‌ها (وبلاگ)</a></li>
+          <li><a href="#page-register">صفحه ورود و ثبت‌نام</a></li>
+          <li><a href="#admin-panel">پنل مدیریت</a></li>
+          <li><a href="#admin-content">مدیریت محتوا و بنرها</a></li>
+          <li><a href="#admin-users">مدیریت کاربران</a></li>
+          <li><a href="#admin-gallery">گالری تصاویر</a></li>
+          <li><a href="#admin-blog">وبلاگ و هوش مصنوعی</a></li>
+          <li><a href="#admin-plugins">پلاگین‌ها</a></li>
+          <li><a href="#admin-social">شبکه‌های اجتماعی</a></li>
+          <li><a href="#admin-settings">تنظیمات</a></li>
+          <li><a href="#technical">الزامات فنی و عملکردی</a></li>
+          <li><a href="#deployment">راه‌اندازی و استقرار</a></li>
+        </ol>
+      </div>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="overview">
+        <h2>۱. نمای کلی پروژه</h2>
+
+        <p>سایت شخصی «مهبد نادری» یک پورتفولیوی حرفه‌ای برای یک معمار رشد دیجیتال و مشاور بازاریابی است. این سایت شامل بخش‌های عمومی (سایت اصلی) و یک پنل مدیریت کامل است. تمام صفحات باید <code>lang="fa"</code> و <code>dir="rtl"</code> باشند و فونت فقط IRANSans باشد.</p>
+
+        <div class="prompt-box">
+          <h4>پرامپت اولیه</h4>
+          <p>یک سایت شخصی حرفه‌ای برای «مهبد نادری» با عنوان شغلی «معمار رشد دیجیتال» بساز. سایت شامل صفحات اصلی (خانه، درباره من، تماس، نوشته‌ها، ثبت‌نام) و یک پنل مدیریت کامل با ۹ تب باشد. تمام صفحات باید RTL و فارسی باشند و فونت IRANSans باشد.</p>
+        </div>
+
+        <h3>صفحات سایت</h3>
+        <table>
+          <thead><tr><th>فایل</th><th>عنوان</th><th>توضیح</th></tr></thead>
+          <tbody>
+            <tr><td><code>index.html</code></td><td>صفحه اصلی</td><td>Hero Swiper + بنرهای داینامیک + معرفی خدمات</td></tr>
+            <tr><td><code>about.html</code></td><td>درباره من</td><td>بیوگرافی، مسیر حرفه‌ای، ارزش‌ها</td></tr>
+            <tr><td><code>contact.html</code></td><td>تماس با من</td><td>فرم تماس + اطلاعات ارتباطی</td></tr>
+            <tr><td><code>blog.html</code></td><td>نوشته‌ها</td><td>لیست مقالات + فیلتر + نمایش تکی</td></tr>
+            <tr><td><code>register.html</code></td><td>ورود و ثبت‌نام</td><td>فرم ورود + ثبت‌نام کاربر</td></tr>
+            <tr><td><code>reset-password.html</code></td><td>بازیابی رمز</td><td>فرم بازیابی رمز عبور</td></tr>
+            <tr><td><code>admin.html</code></td><td>پنل مدیریت</td><td>داشبورد + ۹ تب مدیریتی</td></tr>
+            <tr><td><code>PLUGIN-GUIDE.html</code></td><td>راهنمای پلاگین</td><td>آموزش ساخت پلاگین</td></tr>
+            <tr><td><code>SITE-PROMPTS.html</code></td><td>این فایل</td><td>پرامپت‌های کامل طراحی</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="design-system">
+        <h2>۲. سیستم طراحی و هویت بصری</h2>
+
+        <h3>رنگ‌ها</h3>
+        <table>
+          <thead><tr><th>متغیر</th><th>کد رنگ</th><th>کاربرد</th></tr></thead>
+          <tbody>
+            <tr><td><code>--bg</code></td><td><code>#f7f3ec</code></td><td>پس‌زمینه اصلی (کرمی گرم)</td></tr>
+            <tr><td><code>--surface</code></td><td><code>rgba(255,252,246,0.78)</code></td><td>پس‌زمینه کارت‌ها (شفاف)</td></tr>
+            <tr><td><code>--ink</code></td><td><code>#171a1f</code></td><td>رنگ متن اصلی</td></tr>
+            <tr><td><code>--muted</code></td><td><code>#525a63</code></td><td>رنگ متن فرعی (WCAG AA compliant)</td></tr>
+            <tr><td><code>--accent</code></td><td><code>#24507a</code></td><td>رنگ اصلی (آبی تیره)</td></tr>
+            <tr><td><code>--accent-2</code></td><td><code>#0f766e</code></td><td>رنگ فرعی (سبز تیره)</td></tr>
+            <tr><td><code>--gold</code></td><td><code>#c28b38</code></td><td>رنگ طلایی (تزئینی)</td></tr>
+            <tr><td><code>--line</code></td><td><code>rgba(23,26,31,0.1)</code></td><td>رنگ خطوط و حاشیه‌ها</td></tr>
+          </tbody>
+        </table>
+
+        <h3>فونت</h3>
+        <p>فقط فونت IRANSans از پوشه <code>assets/fonts/</code> استفاده شود:</p>
+        <ul>
+          <li><strong>Light (300)</strong>: متن‌های ظریف و زیرعنوان‌ها</li>
+          <li><strong>Regular (400)</strong>: متن اصلی پاراگراف‌ها</li>
+          <li><strong>Medium (500-600)</strong>: عنوان‌های فرعی</li>
+          <li><strong>Bold (700+)</strong>: عنوان‌های اصلی، دکمه‌ها، لینک‌ها</li>
+        </ul>
+
+        <h3> typography</h3>
+        <ul>
+          <li>عنوان‌ها: <code>text-align: right</code></li>
+          <li>پاراگراف‌ها: <code>text-align: justify</code></li>
+          <li>اعداد انگلیسی به فارسی تبدیل شوند (تابع <code>toPersianNumbers</code>)</li>
+        </ul>
+
+        <h3>پس‌زمینه body</h3>
+<p>پس‌زمینه body از ترکیب سه گرادینت تشکیل شده:</p>
+<pre>
+radial-gradient(circle at 8% 8%, rgba(36,80,122,0.12), transparent 27rem),
+radial-gradient(circle at 88% 12%, rgba(15,118,110,0.1), transparent 25rem),
+linear-gradient(180deg, #fbf8f2 0%, var(--bg) 58%, #efe7dc 100%)
+</pre>
+        <p>همچنین یک الگوی خط‌نقطه‌ای ظریف روی <code>body::before</code> با <code>mask-image</code> برای محو شدن در پایین اضافه شود.</p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="structure">
+        <h2>۳. ساختار فایل‌ها و پوشه‌بندی</h2>
+
+        <div class="file-tree">
+Project-1/
+├── index.html
+├── about.html
+├── contact.html
+├── blog.html
+├── register.html
+├── reset-password.html
+├── admin.html
+├── PLUGIN-GUIDE.html
+├── SITE-PROMPTS.html
+├── database.sql
+├── styles.css
+├── script.js
+├── admin-styles.css
+├── admin.js
+├── sitemap.xml
+├── robots.txt
+├── HOW-TO-INSTALL.txt
+└── assets/
+    ├── logo.png
+    ├── profile-formal.jpeg
+    ├── profile-light.jpeg
+    ├── profile-suit.jpeg
+    ├── consulting-room.jpeg
+    ├── case-score.jpeg
+    └── fonts/
+        ├── IRANSans-Light-web.woff2
+        ├── IRANSans-web.woff2
+        ├── IRANSans-Medium-web.woff2
+        └── IRANSans-Bold-web.woff2
+        </div>
+
+        <h3>فایل‌های اصلی</h3>
+        <table>
+          <thead><tr><th>فایل</th><th>توضیح</th></tr></thead>
+          <tbody>
+            <tr><td><code>styles.css</code></td><td>استایل‌های اصلی سایت (~۱۴۰۰ خط)</td></tr>
+            <tr><td><code>script.js</code></td><td>جاوااسکریپت اصلی: منو، انیمیشن، اعداد فارسی، لاگین</td></tr>
+            <tr><td><code>admin-styles.css</code></td><td>استایل‌های پنل مدیریت (~۱۷۰۰ خط)</td></tr>
+            <tr><td><code>admin.js</code></td><td>جاوااسکریپت پنل مدیریت (~۱۷۰۰ خط)</td></tr>
+            <tr><td><code>database.sql</code></td><td>اسکیمای پایگاه داده MySQL</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="global-requirements">
+        <h2>۴. الزامات عمومی سایت</h2>
+
+        <div class="prompt-box">
+          <h4>پرامپت الزامات عمومی</h4>
+          <p>تمام صفحات سایت باید دارای ویژگی‌های زیر باشند:</p>
+        </div>
+
+        <h3>Accessibility (دسترسی‌پذیری)</h3>
+        <ul>
+          <li>لینک <code>Skip to content</code> در بالای هر صفحه</li>
+          <li>ARIA landmarks: <code>role="banner"</code> روی header، <code>role="main"</code> روی main، <code>role="contentinfo"</code> روی footer</li>
+          <li>شناسه <code>id="main-content"</code> روی تگ main</li>
+          <li>استایل‌های <code>:focus-visible</code> با outline آبی ۳ پیکسل</li>
+          <li>پشتیبانی از <code>prefers-reduced-motion</code></li>
+          <li>ترپ فوکوس در منوی موبایل</li>
+        </ul>
+
+        <h3>Performance (عملکرد)</h3>
+        <ul>
+          <li>تگ‌های <code>&lt;script&gt;</code> با <code>defer</code></li>
+          <li>تصاویر زیر fold با <code>loading="lazy"</code></li>
+          <li>تصویر LCP با <code>fetchpriority="high"</code></li>
+          <li><code>&lt;link rel="preconnect"&gt;</code> برای CDN</li>
+          <li>فونت‌ها با <code>font-display: swap</code></li>
+        </ul>
+
+        <h3>SEO</h3>
+        <ul>
+          <li>تگ‌های Open Graph (<code>og:type</code>, <code>og:title</code>, <code>og:description</code>, <code>og:image</code>, <code>og:locale</code>)</li>
+          <li><code>&lt;link rel="canonical"&gt;</code></li>
+          <li>JSON-LD Structured Data (Person schema)</li>
+          <li><code>&lt;meta name="theme-color"&gt;</code></li>
+          <li><code>sitemap.xml</code> با تمام صفحات</li>
+          <li><code>robots.txt</code> با قوانین خزش</li>
+          <li>دقیقاً یک <code>&lt;h1&gt;</code> در هر صفحه</li>
+        </ul>
+
+        <h3>Persian Number System</h3>
+        <p>تابع <code>toPersianNumbers(str)</code> باید اعداد انگلیسی ۰-۹ را به اعداد فارسی ۰-۹ تبدیل کند و در تمام متن‌های قابل مشاهده اعمال شود (به جز inputها، SVGها، لینک‌های tel:/mailto:).</p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="page-home">
+        <h2>۵. صفحه اصلی (Home)</h2>
+
+        <div class="prompt-box">
+          <h4>پرامپت صفحه اصلی</h4>
+          <p>صفحه اصلی سایت شامل دو بخش مجزا برای دسکتاپ و موبایل باشد:</p>
+        </div>
+
+        <h3>دسکتاپ — Hero Swiper</h3>
+        <ul>
+          <li>اسلایدر تمام‌صفحه با افکت <code>fade</code> و <code>crossFade</code></li>
+          <li>۴ اسلاید با تصاویر موجود (<code>profile-formal.jpeg</code>، <code>consulting-room.jpeg</code>، <code>case-score.jpeg</code>، <code>profile-light.jpeg</code>)</li>
+          <li>هر اسلاید دارای overlay gradient تیره باشد</li>
+          <li>محتوای هر اسلاید: kicker، h2 عنوان، lead پاراگراف، دو دکمه CTA</li>
+          <li>فقط در <code>min-width: 901px</code> نمایش داده شود</li>
+          <li>Auto-play هر ۵ ثانیه با سرعت transition ۹۰۰ms</li>
+          <li>فلش‌های ناوبری و pagination dots سازگار با RTL</li>
+          <li>انیمیشن ورود متن‌ها با stagger</li>
+        </ul>
+
+        <h3>موبایل — Hero با پس‌زمینه</h3>
+        <ul>
+          <li>تصویر تمام‌عرض با overlay gradient از بالا به پایین</li>
+          <li>بادج «مشاوره تخصصی رایگان» با رنگ طلایی</li>
+          <li>عنوان h1 سفید، lead سفید شفاف</li>
+          <li>دو دکمه تمام‌عرض با backdrop-blur</li>
+          <li>نوار آمار: ۱۰+ سال تجربه | MBA کارلتون | ۱۰۰+ پروژه موفق</li>
+          <li>انیمیشن fadeSlideUp با stagger ۱۲۰ms</li>
+        </ul>
+
+        <h3>بخش‌های زیر Hero</h3>
+        <ul>
+          <li><strong>Feature Band</strong>: رویکرد کاری با گرادینت پس‌زمینه</li>
+          <li><strong>Section Grid</strong>: ۳ کارت اطلاعاتی (استراتژی رشد، ساختار مارکتینگ، مشاوره مدیریت)</li>
+          <li>انیمیشن اسکرول با IntersectionObserver</li>
+          <li>پورتره شناور با انیمیشن <code>soft-float</code></li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="page-about">
+        <h2>۶. صفحه درباره من</h2>
+        <ul>
+          <li>Hero compact با h1، lead، دو دکمه، پرتره با کپشن</li>
+          <li>بخش دو ستونه: مسیر حرفه‌ای (feature-band) + لیست فرآیند (۳ مرحله با شماره فارسی)</li>
+          <li>بخش ارزش‌ها: ۳ کارت اطلاعاتی</li>
+          <li>پرتره <code>profile-light.jpeg</code></li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="page-contact">
+        <h2>۷. صفحه تماس با من</h2>
+        <ul>
+          <li>Hero compact دو ستونه: پرتره + پنل تماس</li>
+          <li>پنل تماس شامل: عنوان، lead، دکمه تلفن (<code>tel:</code>)، دکمه ایمیل (<code>mailto:</code>)</li>
+          <li>آیتم‌های تماس با آیکون SVG (رنگ <code>rgb(36,80,122)</code>)</li>
+          <li>فرم تماس با فیلدها: نام، شماره (dir=ltr)، ایمیل (dir=ltr)، موضوع (select)، پیام</li>
+          <li>ارسال از طریق mailto: link</li>
+          <li>۳ کارت mini: ارزیابی بازاریابی، طراحی سیستم رشد، همراهی مدیریتی</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="page-blog">
+        <h2>۸. صفحه نوشته‌ها (وبلاگ)</h2>
+        <ul>
+          <li>خواندن پست‌ها از <code>localStorage</code> (آرایه <code>admin_blog_posts</code>)</li>
+          <li>پست‌های با وضعیت <code>published</code> نمایش داده شوند</li>
+          <li>لیست پست‌ها با کارت‌ها: عنوان، تاریخ، دسته‌بندی، خلاصه</li>
+          <li>فیلتر sidebar: دسته‌بندی، نویسنده، مرتب‌سازی، نوع محتوا (مقاله/ویدئو)</li>
+          <li>نمایش تکی پست با دکمه بازگشت</li>
+          <li>پشتیبانی از ویدئو در پست‌ها</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="page-register">
+        <h2>۹. صفحه ورود و ثبت‌نام</h2>
+        <ul>
+          <li>تب‌های ورود و ثبت‌نام در یک کارت مرکزی</li>
+          <li>ورود: ایمیل + رمز عبور → بررسی در <code>localStorage</code></li>
+          <li>ثبت‌نام: نام، شماره موبایل، ایمیل (نام کاربری)، رمز عبور</li>
+          <li>ذخیره کاربران در <code>site_users</code> در <code>localStorage</code></li>
+          <li>ورود خودکار بعد از ثبت‌نام</li>
+          <li>لینک «فراموشی رمز عبور» → صفحه <code>reset-password.html</code></li>
+          <li>دکمه «ورود/عضویت» در هدر سایت (دسکتاپ: متن، موبایل: آیکون)</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="admin-panel">
+        <h2>۱۰. پنل مدیریت</h2>
+
+        <div class="prompt-box">
+          <h4>پرامپت پنل مدیریت</h4>
+          <p>یک پنل مدیریت کامل مشابه WordPress Admin بساز. شامل sidebar چپ (RTL)، header بالا، ۹ تب مدیریتی، Dark/Light mode، احراز هویت با localStorage، و تمام متن‌ها فارسی و RTL باشد.</p>
+        </div>
+
+        <h3>ساختار کلی</h3>
+        <ul>
+          <li><strong>Sidebar</strong>: ثابت در دسکتاپ، کشویی در موبایل، با آیکون‌های SVG</li>
+          <li><strong>Top Bar</strong>: عنوان صفحه، جستجو، نام کاربر، دکمه بازگشت به سایت</li>
+          <li><strong>احراز هویت</strong>: صفحه ورود با نام کاربری <code>admin</code> و رمز <code>admin</code></li>
+          <li><strong>Dark/Light mode</strong>: ذخیره ترجیح در <code>localStorage</code></li>
+          <li><strong>Responsive</strong>: سایدبار در موبایل overlay می‌شود</li>
+        </ul>
+
+        <h3>۹ تب مدیریتی</h3>
+        <ol>
+          <li><strong>داشبورد</strong>: آمار بازدید، پست‌های اخیر، کاربران فعال</li>
+          <li><strong>مدیریت محتوا</strong>: صفحات + بنرها و تصاویر</li>
+          <li><strong>مدیریت کاربران</strong>: مدیریت سایت + اعضای سایت</li>
+          <li><strong>گالری</strong>: تصاویر + ویدیوها + اطلاعات مetadata</li>
+          <li><strong>وبلاگ</strong>: لیست پست‌ها + ویرایشگر + هوش مصنوعی</li>
+          <li><strong>فایل‌ها</strong>: آپلود + دانلود + حذف</li>
+          <li><strong>پلاگین‌ها</strong>: لیست + آپلود + Plugin Edit Tool</li>
+          <li><strong>شبکه‌های اجتماعی</strong>: اتصال + ربات‌ها + زمان‌بندی</li>
+          <li><strong>تنظیمات</strong>: SEO + Analytics + Tag Manager + تماس</li>
+        </ol>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="admin-content">
+        <h2>۱۱. مدیریت محتوا و بنرها</h2>
+
+        <h3>ویرایشگر صفحات (مشابه Elementor)</h3>
+        <ul>
+          <li>بخش‌های قابل جمع‌شدن: Hero، محتوا، SEO، تصویر</li>
+          <li>هر بخش با آیکون و دکمه «ویرایش/بستن»</li>
+          <li>فیلدها: h1، lead، kicker، متن دکمه‌ها، لینک دکمه‌ها</li>
+          <li>ویرایشگر Quill.js برای محتوای اصلی</li>
+          <li>فیلدهای SEO: عنوان، توضیحات متا، کلمات کلیدی، canonical</li>
+        </ul>
+
+        <h3>مدیریت بنرها</h3>
+        <ul>
+          <li>لیست بنرها با پیش‌نمایش تصویر</li>
+          <li>ویرایش: عنوان، تصویر، لینک، موقعیت نمایش</li>
+          <li><strong>نقطه کانونی</strong>: اسلایدر X و Y برای تنظیم <code>object-position</code></li>
+          <li><strong>انتخاب از گالری</strong>: دکمه‌ای که Modal فایل منیجر باز می‌کند</li>
+          <li>فعال/غیرفعال کردن و حذف</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="admin-users">
+        <h2>۱۲. مدیریت کاربران</h2>
+
+        <h3>سیستم نقش‌ها</h3>
+        <table>
+          <thead><tr><th>نقش</th><th>دسترسی</th></tr></thead>
+          <tbody>
+            <tr><td><strong>مدیر سایت</strong> (admin)</td><td>دسترسی کامل به تمام بخش‌ها</td></tr>
+            <tr><td><strong>مدیر محتوا</strong> (editor)</td><td>فقط محتوا، گالری، فایل‌ها، وبلاگ، شبکه‌ها</td></tr>
+            <tr><td><strong>کاربر عادی</strong> (subscriber)</td><td>فقط مشاهده سایت و ثبت‌نام</td></tr>
+          </tbody>
+        </table>
+
+        <h3>تب دوگانه کاربران</h3>
+        <ul>
+          <li><strong>تب مدیریت سایت</strong>: لیست مدیران با نقش، افزودن، ویرایش رمز، حذف</li>
+          <li><strong>تب اعضای سایت</strong>: لیست کاربران ثبت‌نام‌شده با نام، ایمیل، شماره، تاریخ، تیک خبرنامه</li>
+          <li>ویرایش اطلاعات عضو شامل نام، شماره، رمز جدید، عضویت خبرنامه</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="admin-gallery">
+        <h2>۱۳. گالری تصاویر</h2>
+
+        <h3>اطلاعات زیر هر تصویر</h3>
+        <ul>
+          <li><strong>نام فایل</strong>: قابل ویرایش</li>
+          <li><strong>تگ‌ها</strong>: قابل ویرایش (با کاما جدا شوند)</li>
+          <li><strong>فرمت</strong>: WebP, JPEG, PNG, SVG</li>
+          <li><strong>حجم</strong>: با فرمت خوانا (B, KB, MB)</li>
+          <li><strong>ابعاد</strong>: عرض × ارتفاع</li>
+        </ul>
+
+        <h3>راهنمای فرمت تصاویر</h3>
+        <ul>
+          <li><strong>WebP / JPEG</strong>: عکس‌ها و تصاویر پیچیده — حجم کمتر، کیفیت بالا</li>
+          <li><strong>PNG</strong>: لوگو، گرافیک و شفافیت — بدون افت کیفیت</li>
+          <li><strong>SVG</strong>: آیکون‌ها و تصاویر برداری — مقیاس‌پذیر</li>
+          <li><strong>WebP</strong>: انیمیشن‌ها — پشتیبانی از GIF متحرک</li>
+        </ul>
+
+        <h3>فایل منیجر</h3>
+        <p>Modal انتخاب تصویر از گالری با نمایش شبکه‌ای تصاویر. کلیک روی تصویر → انتخاب → بازگشت آدرس به فیلد درخواست‌کننده.</p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="admin-blog">
+        <h2>۱۴. وبلاگ و هوش مصنوعی</h2>
+
+        <h3>انتشار زمان‌دار</h3>
+        <ul>
+          <li>دکمه «انتشار» با dropdown: انتشار فوری + انتشار زمان‌دار</li>
+          <li>انتخاب پست + تاریخ/ساعت → وضعیت <code>scheduled</code></li>
+          <li>بررسی خودکار هر ۳۰ ثانیه برای انتشار پست‌های زمان‌دار شده</li>
+        </ul>
+
+        <h3>ویرایشگر Quill.js</h3>
+        <ul>
+          <li>تولبار کامل: h1-h3، bold/italic/underline، list، blockquote، code-block، link، image، align</li>
+          <li>فیلد آدرس ویدئو با قابلیت انتخاب از گالری</li>
+          <li>دکمه درج تصویر از گالری</li>
+        </ul>
+
+        <h3>تولید محتوا با هوش مصنوعی (سیمولیشن پیشرفته)</h3>
+        <ul>
+          <li>ورودی: موضوع یا فایل Word/PDF</li>
+          <li>گزینه‌ها: نوع محتوا (۴ نوع)، لحن (۴ لحن)، تعداد کلمات</li>
+          <li>خروجی: عنوان SEO، توضیحات متا، تگ‌ها، محتوای کامل با ساختار h2/h3، blockquote، لیست</li>
+          <li>رعایت RTL و قواعد نگارشی فارسی</li>
+          <li>دکمه‌ها: کپی، استفاده در ویرایشگر، ذخیره به عنوان پست</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="admin-plugins">
+        <h2>۱۵. پلاگین‌ها</h2>
+
+        <h3>آپلود پلاگین</h3>
+        <ul>
+          <li>فرمت‌های پشتیبانی: ZIP, RAR, TAR, 7Z</li>
+          <li>ذخیره در <code>localStorage</code></li>
+          <li>ساختار پلاگین: فایل <code>plugin.json</code> (manifest)</li>
+        </ul>
+
+        <h3>Plugin Edit Tool</h3>
+        <ul>
+          <li>انتخاب پلاگین از dropdown</li>
+          <li>نمایش کد در textarea با استایل monospace</li>
+          <li>دکمه ذخیره / رد تغییرات</li>
+          <li>ذخیره کد در <code>localStorage</code></li>
+        </ul>
+
+        <h3>تنظیمات پلاگین</h3>
+        <ul>
+          <li>دکمه تنظیمات → Modal باز شود</li>
+          <li>ذخیره → Modal بسته شود + پیام موفقیت + نمایش سبز زیر پلاگین</li>
+          <li>قابلیت ویرایش مجدد تنظیمات</li>
+        </ul>
+
+        <h3>راهنمای ساخت پلاگین</h3>
+        <p>فایل <code>PLUGIN-GUIDE.html</code> شامل آموزش کامل: ساختار فایل، manifest، اتصال به database، سیستم hook، بررسی امنیت، نصب و نمونه کد.</p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="admin-social">
+        <h2>۱۶. شبکه‌های اجتماعی</h2>
+
+        <h3>۴ تب</h3>
+        <ol>
+          <li><strong>اتصال شبکه‌ها</strong>: لیست شبکه‌ها + دستورالعمل اتصال برای هرکدام</li>
+          <li><strong>ربات‌ها</strong>: لیست ربات‌ها + افزودن ربات جدید</li>
+          <li><strong>زمان‌بندی انتشار</strong>: انتخاب پست + اکانت‌های عادی + ربات‌ها + زمان</li>
+          <li><strong>تاریخچه انتشار</strong>: جدول وضعیت انتشارها</li>
+        </ol>
+
+        <h3>دستورالعمل اتصال هر شبکه</h3>
+        <ul>
+          <li><strong>واتساپ</strong>: WhatsApp Business API + Webhook</li>
+          <li><strong>بله</strong>: ساخت ربات از @BaleBot</li>
+          <li><strong>روبیکا</strong>: پنل توسعه‌دهندگان</li>
+          <li><strong>تلگرام</strong>: BotFather + Bot Token</li>
+          <li><strong>اینستاگرام</strong>: Facebook Developer + Graph API</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="admin-settings">
+        <h2>۱۷. تنظیمات</h2>
+        <ul>
+          <li><strong>SEO</strong>: عنوان سایت، توضیحات متا، کلمات کلیدی، نقشه سایت</li>
+          <li><strong>Google Analytics</strong>: فیلد Tracking ID (فرمت <code>G-XXXXXXXXXX</code>) + دکمه تست اتصال با اعتبارسنجی regex</li>
+          <li><strong>Google Tag Manager</strong>: فیلد Container ID (فرمت <code>GTM-XXXXXXX</code>) + دکمه تست اتصال</li>
+          <li><strong>اطلاعات تماس</strong>: شماره، ایمیل، آدرس</li>
+          <li>تمام تنظیمات در <code>localStorage</code> ذخیره شوند</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="technical">
+        <h2>۱۸. الزامات فنی و عملکردی</h2>
+
+        <h3>پایگاه داده (database.sql)</h3>
+        <p>اسکیمای MySQL شامل جداول: <code>users</code>, <code>pages</code>, <code>posts</code>, <code>categories</code>, <code>tags</code>, <code>post_tags</code>, <code>banners</code>, <code>media</code>, <code>social_accounts</code>, <code>social_schedules</code>, <code>files</code>, <code>plugins</code>, <code>settings</code>, <code>contact_submissions</code>, <code>activity_log</code></p>
+
+        <h3>CSS</h3>
+        <ul>
+          <li>بریک‌پوینت‌ها: <code>901px</code> (دسکتاپ/mوبایل)، <code>900px</code>، <code>768px</code>، <code>560px</code>، <code>480px</code></li>
+          <li>جدول‌ها در موبایل به layout کارتی تبدیل شوند با <code>data-label</code></li>
+          <li>Sub-tabs در موبایل wrap شوند (<code>flex-wrap: wrap</code>)</li>
+          <li>Modals در موبایل از پایین slide شوند</li>
+        </ul>
+
+        <h3>JS</h3>
+        <ul>
+          <li>ذخیره‌سازی: <code>localStorage</code> با پیشوند <code>admin_</code> برای پنل و <code>site_</code> برای سایت</li>
+          <li>سیستم Store: <code>Store.get(key, fallback)</code> و <code>Store.set(key, val)</code></li>
+          <li>IntersectionObserver برای انیمیشن اسکرول و lazy load</li>
+          <li>Quill.js برای ویرایشگر متن غنی</li>
+          <li>Swiper.js برای اسلایدر Hero</li>
+        </ul>
+
+        <h3>Security</h3>
+        <ul>
+          <li>احراز هویت ساده با <code>localStorage</code> (demo mode)</li>
+          <li>پلاگین‌ها قبل از فعال شدن بررسی امنیتی می‌شوند</li>
+          <li>فرم‌ها با <code>required</code> اعتبارسنجی می‌شوند</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <section id="deployment">
+        <h2>۱۹. راه‌اندازی و استقرار</h2>
+
+        <h3>راه‌اندازی محلی</h3>
+        <ul>
+          <li>فایل <code>index.html</code> را مستقیماً در مرورگر باز کنید</li>
+          یا از سرور محلی استفاده کنید: <code>npx serve .</code></li>
+        </ul>
+
+        <h3>استقرار روی GitHub Pages</h3>
+        <ol>
+          <li>فایل‌ها را در مخزن GitHub push کنید</li>
+          <li>در Settings > Pages: Source = main branch / root</li>
+          <li>آدرس سایت: <code>https://username.github.io/repo-name/</code></li>
+        </ol>
+
+        <h3>اطلاعات ورود پنل مدیریت</h3>
+        <div class="info">
+          <strong>نام کاربری:</strong> admin &nbsp;|&nbsp; <strong>رمز عبور:</strong> admin
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-shell footer-inner">
+        <span>© سایت شخصی مهبد نادری</span>
+      </div>
+    </footer>
+
+    <script defer src="script.js"></script>
+  </body>
+</html>
