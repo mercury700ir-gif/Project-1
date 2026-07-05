@@ -1,73 +1,67 @@
 const express = require('express');
-const db = require('../db');
+const pool = require('../db');
 const { authMiddleware, adminOnly } = require('../middleware/auth');
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     let isAdmin = false;
     if (token) { try { require('jsonwebtoken').verify(token, process.env.JWT_SECRET); isAdmin = true; } catch(e) {} }
     const where = isAdmin ? '' : "WHERE p.status = 'published'";
-    const rows = db.prepare(`SELECT p.*, u.name as author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id ${where} ORDER BY p.created_at DESC`).all();
-    res.json(rows);
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+    const [r] = await pool.query(`SELECT p.*, u.name as author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id ${where} ORDER BY p.created_at DESC`);
+    res.json(r);
+  } catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const row = db.prepare('SELECT p.*, u.name as author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id WHERE p.id = ?').get(req.params.id);
-    if (!row) return res.status(404).json({ error: 'پست یافت نشد' });
-    res.json(row);
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+    const [r] = await pool.query('SELECT p.*, u.name as author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id WHERE p.id = ?', [req.params.id]);
+    r.length ? res.json(r[0]) : res.status(404).json({ error: 'یافت نشد' });
+  } catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
-router.post('/', authMiddleware, adminOnly, (req, res) => {
+router.post('/', authMiddleware, adminOnly, async (req, res) => {
   try {
     const { title, body, excerpt, content_type, video_url, category_id, tags, status, scheduled_at } = req.body;
     const slug = (title || '').replace(/[^\w\u0600-\u06FF\s]/g, '').toLowerCase().replace(/\s+/g, '-');
-    const result = db.prepare('INSERT INTO posts (title, slug, body, excerpt, content_type, video_url, category_id, author_id, status, scheduled_at, published_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)').run(title, slug, body || '', excerpt || '', content_type || 'article', video_url || null, category_id || null, req.user.id, status || 'draft', scheduled_at || null, status === 'published' ? new Date().toISOString() : null);
+    const [r] = await pool.query('INSERT INTO posts (title, slug, body, excerpt, content_type, video_url, category_id, author_id, status, scheduled_at, published_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)', [title, slug, body || '', excerpt || '', content_type || 'article', video_url || null, category_id || null, req.user.id, status || 'draft', scheduled_at || null, status === 'published' ? new Date() : null]);
     if (tags) {
-      tags.split(',').map(t => t.trim()).filter(Boolean).forEach(tagName => {
-        db.prepare('INSERT OR IGNORE INTO tags (name, slug) VALUES (?, ?)').run(tagName, tagName);
-        const tag = db.prepare('SELECT id FROM tags WHERE name = ?').get(tagName);
-        if (tag) db.prepare('INSERT OR IGNORE INTO post_tags (post_id, tag_id) VALUES (?, ?)').run(result.lastInsertRowid, tag.id);
-      });
+      for (const t of tags.split(',').map(s => s.trim()).filter(Boolean)) {
+        await pool.query('INSERT IGNORE INTO tags (name, slug) VALUES (?,?)', [t, t]);
+        const [tag] = await pool.query('SELECT id FROM tags WHERE name = ?', [t]);
+        if (tag.length) await pool.query('INSERT IGNORE INTO post_tags (post_id, tag_id) VALUES (?,?)', [r.insertId, tag[0].id]);
+      }
     }
-    res.status(201).json({ id: result.lastInsertRowid, title, slug, status: status || 'draft' });
-  } catch (err) { console.error(err); res.status(500).json({ error: 'خطای سرور' }); }
+    res.status(201).json({ id: r.insertId, title, slug, status: status || 'draft' });
+  } catch (e) { console.error(e); res.status(500).json({ error: 'خطای سرور' }); }
 });
 
-router.put('/:id', authMiddleware, adminOnly, (req, res) => {
+router.put('/:id', authMiddleware, adminOnly, async (req, res) => {
   try {
     const { title, body, excerpt, content_type, video_url, category_id, status, scheduled_at } = req.body;
-    const updates = []; const values = [];
-    if (title) { updates.push('title = ?'); values.push(title); }
-    if (body !== undefined) { updates.push('body = ?'); values.push(body); }
-    if (excerpt !== undefined) { updates.push('excerpt = ?'); values.push(excerpt); }
-    if (content_type) { updates.push('content_type = ?'); values.push(content_type); }
-    if (video_url !== undefined) { updates.push('video_url = ?'); values.push(video_url); }
-    if (category_id !== undefined) { updates.push('category_id = ?'); values.push(category_id); }
-    if (status) { updates.push('status = ?'); values.push(status); if (status === 'published') updates.push('published_at = datetime("now")'); }
-    if (scheduled_at !== undefined) { updates.push('scheduled_at = ?'); values.push(scheduled_at); }
-    if (updates.length > 0) { values.push(req.params.id); db.prepare('UPDATE posts SET ' + updates.join(', ') + ' WHERE id = ?').run(...values); }
-    res.json({ message: 'پست به‌روزرسانی شد' });
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+    const u = []; const v = [];
+    if (title) { u.push('title = ?'); v.push(title); }
+    if (body !== undefined) { u.push('body = ?'); v.push(body); }
+    if (excerpt !== undefined) { u.push('excerpt = ?'); v.push(excerpt); }
+    if (content_type) { u.push('content_type = ?'); v.push(content_type); }
+    if (video_url !== undefined) { u.push('video_url = ?'); v.push(video_url); }
+    if (category_id !== undefined) { u.push('category_id = ?'); v.push(category_id); }
+    if (status) { u.push('status = ?'); v.push(status); if (status === 'published') u.push('published_at = NOW()'); }
+    if (scheduled_at !== undefined) { u.push('scheduled_at = ?'); v.push(scheduled_at); }
+    if (u.length) { v.push(req.params.id); await pool.query('UPDATE posts SET ' + u.join(', ') + ' WHERE id = ?', v); }
+    res.json({ message: 'به‌روزرسانی شد' });
+  } catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
-router.delete('/:id', authMiddleware, adminOnly, (req, res) => {
-  try {
-    db.prepare('DELETE FROM post_tags WHERE post_id = ?').run(req.params.id);
-    db.prepare('DELETE FROM posts WHERE id = ?').run(req.params.id);
-    res.json({ message: 'پست حذف شد' });
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+router.delete('/:id', authMiddleware, adminOnly, async (req, res) => {
+  try { await pool.query('DELETE FROM post_tags WHERE post_id = ?', [req.params.id]); await pool.query('DELETE FROM posts WHERE id = ?', [req.params.id]); res.json({ message: 'حذف شد' }); }
+  catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
-router.post('/:id/publish', authMiddleware, adminOnly, (req, res) => {
-  try {
-    db.prepare("UPDATE posts SET status = 'published', published_at = datetime('now') WHERE id = ?").run(req.params.id);
-    res.json({ message: 'پست منتشر شد' });
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+router.post('/:id/publish', authMiddleware, adminOnly, async (req, res) => {
+  try { await pool.query("UPDATE posts SET status = 'published', published_at = NOW() WHERE id = ?", [req.params.id]); res.json({ message: 'منتشر شد' }); }
+  catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
 module.exports = router;
