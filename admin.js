@@ -134,22 +134,25 @@ document.addEventListener("DOMContentLoaded", function () {
   var tabPanes       = document.querySelectorAll(".tab-pane");
 
   // ────────── Auth ──────────
-  if (localStorage.getItem("admin_auth") === "true") showAdmin();
+  if (api.token) {
+    api.getMe().then(function() { showAdmin(); }).catch(function() { api.clearToken(); });
+  }
 
-  loginForm.addEventListener("submit", function (e) {
+  loginForm.addEventListener("submit", async function (e) {
     e.preventDefault();
     var u = document.getElementById("login-user").value.trim();
     var p = document.getElementById("login-pass").value.trim();
-    if (u === "admin" && p === "admin") {
-      localStorage.setItem("admin_auth", "true");
+    try {
+      var result = await api.login(u, p);
+      api.setToken(result.token);
       showAdmin();
-    } else {
-      loginError.textContent = "نام کاربری یا رمز عبور اشتباه است.";
+    } catch (err) {
+      loginError.textContent = err.message || "ورود ناموفق بود.";
     }
   });
 
   logoutBtn.addEventListener("click", function () {
-    localStorage.removeItem("admin_auth");
+    api.clearToken();
     adminPanel.style.display = "none";
     loginScreen.style.display = "flex";
   });
@@ -328,12 +331,18 @@ document.addEventListener("DOMContentLoaded", function () {
   var blogPosts = getBlogPosts();
   var editingPostId = null;
 
-  function initBlog() {
-    blogPosts = getBlogPosts();
-    renderBlogTable();
+  async function initBlog() {
+    await loadBlogPosts();
     document.getElementById("btn-new-post").addEventListener("click", newPost);
     document.getElementById("btn-save-draft").addEventListener("click", function () { savePost("draft"); });
     document.getElementById("btn-publish").addEventListener("click", function () { savePost("published"); });
+  }
+
+  async function loadBlogPosts() {
+    try {
+      blogPosts = await api.getPosts();
+      renderBlogTable();
+    } catch (e) { console.error(e); blogPosts = []; renderBlogTable(); }
   }
 
   function renderBlogTable() {
@@ -399,42 +408,36 @@ document.addEventListener("DOMContentLoaded", function () {
     switchSubTab("blog", "blog-editor");
   }
 
-  function deletePost(id) {
+  async function deletePost(id) {
     if (!confirm("آیا از حذف این پست مطمئن هستید؟")) return;
-    blogPosts = blogPosts.filter(function (p) { return p.id !== id; });
-    saveBlogPosts(blogPosts);
-    renderBlogTable();
+    try { await api.deletePost(id); await loadBlogPosts(); }
+    catch (err) { alert(err.message); }
   }
 
-  function savePost(status) {
+  async function savePost(status) {
     var title = document.getElementById("editor-title").value.trim();
     if (!title) { alert("عنوان پست را وارد کنید."); return; }
 
     var data = {
       title: title,
-      author: document.getElementById("editor-author").value.trim() || "مدیر",
-      category: document.getElementById("editor-category").value,
-      contentType: document.getElementById("editor-content-type").value,
-      videoUrl: document.getElementById("editor-video-url").value.trim(),
-      tags: document.getElementById("editor-tags").value.trim(),
       body: quill ? quill.root.innerHTML : "",
-      status: status,
-      date: new Date().toISOString().split("T")[0]
+      content_type: document.getElementById("editor-content-type").value,
+      video_url: document.getElementById("editor-video-url").value.trim(),
+      tags: document.getElementById("editor-tags").value.trim(),
+      status: status
     };
 
-    if (editingPostId) {
-      var idx = blogPosts.findIndex(function (p) { return p.id === editingPostId; });
-      if (idx !== -1) { data.id = editingPostId; blogPosts[idx] = data; }
-    } else {
-      data.id = uid();
-      blogPosts.unshift(data);
-    }
-
-    saveBlogPosts(blogPosts);
-    editingPostId = null;
-    renderBlogTable();
-    switchSubTab("blog", "blog-posts");
-    convertNumbersInScope(document.getElementById("tab-blog"));
+    try {
+      if (editingPostId) {
+        await api.updatePost(editingPostId, data);
+      } else {
+        await api.createPost(data);
+      }
+      editingPostId = null;
+      await loadBlogPosts();
+      switchSubTab("blog", "blog-posts");
+      convertNumbersInScope(document.getElementById("tab-blog"));
+    } catch (err) { alert(err.message); }
   }
 
   // ════════════════════════════════════════════════
@@ -1110,14 +1113,14 @@ document.addEventListener("DOMContentLoaded", function () {
   // ════════════════════════════════════════════════
 
   function initUsers() {
-    renderAdminUsersTable();
-    renderMembersTable();
+    loadAdminUsers();
+    loadMembers();
 
     document.getElementById("btn-new-admin-user").addEventListener("click", function () {
       showModal("new-admin-user-modal");
     });
 
-    document.getElementById("btn-save-admin-user").addEventListener("click", function () {
+    document.getElementById("btn-save-admin-user").addEventListener("click", async function () {
       var name = document.getElementById("modal-admin-name").value.trim();
       var email = document.getElementById("modal-admin-email").value.trim().toLowerCase();
       var phone = document.getElementById("modal-admin-phone").value.trim();
@@ -1125,37 +1128,28 @@ document.addEventListener("DOMContentLoaded", function () {
       var pass = document.getElementById("modal-admin-pass").value;
       if (!name || !email || !pass) { alert("لطفاً فیلدهای ضروری را پر کنید."); return; }
       if (pass.length < 6) { alert("رمز باید حداقل ۶ کاراکتر باشد."); return; }
-
-      var admins = JSON.parse(localStorage.getItem("admin_users") || "[]");
-      if (admins.find(function (u) { return u.email === email; })) { alert("این ایمیل قبلاً ثبت شده."); return; }
-
-      admins.push({ name: name, email: email, phone: phone, role: role, password: pass, date: new Date().toISOString() });
-      localStorage.setItem("admin_users", JSON.stringify(admins));
-      hideModal();
-      renderAdminUsersTable();
-      alert("مدیر «" + name + "» اضافه شد.");
+      try {
+        await api.createUser({ name, email, phone, role, password: pass });
+        hideModal();
+        loadAdminUsers();
+        alert("مدیر «" + name + "» اضافه شد.");
+      } catch (err) { alert(err.message); }
     });
   }
 
-  function getAdminUsers() {
-    var defaults = [
-      { name: "مدیر سایت", email: "admin@example.com", phone: "09121234567", role: "admin", password: "admin", date: "2024-01-01T00:00:00.000Z" }
-    ];
+  async function loadAdminUsers() {
     try {
-      var stored = JSON.parse(localStorage.getItem("admin_users") || "[]");
-      var all = defaults.concat(stored);
-      var seen = {};
-      return all.filter(function (u) { if (seen[u.email]) return false; seen[u.email] = true; return true; });
-    } catch (e) { return defaults; }
+      var users = await api.getAdmins();
+      renderAdminUsersList(users);
+    } catch (e) { console.error(e); }
   }
 
-  function renderAdminUsersTable() {
-    var users = getAdminUsers();
+  function renderAdminUsersList(users) {
     var tbody = document.getElementById("admin-users-table-body");
     var empty = document.getElementById("admin-users-empty");
     if (!users.length) { tbody.innerHTML = ""; empty.style.display = "block"; return; }
     empty.style.display = "none";
-    tbody.innerHTML = users.map(function (u, i) {
+    tbody.innerHTML = users.map(function (u) {
       var roleBadge = u.role === "admin" ? '<span class="badge badge-primary">مدیر سایت</span>' : '<span class="badge badge-info">مدیر محتوا</span>';
       return '<tr>' +
         '<td data-label="نام">' + escapeHTML(u.name) + '</td>' +
@@ -1163,30 +1157,92 @@ document.addEventListener("DOMContentLoaded", function () {
         '<td data-label="شماره">' + escapeHTML(u.phone || "—") + '</td>' +
         '<td data-label="نقش">' + roleBadge + '</td>' +
         '<td data-label="عملیات">' +
-          '<button class="btn-sm btn-edit-admin" data-idx="' + i + '">تغییر رمز</button> ' +
-          '<button class="btn-sm btn-danger btn-delete-admin" data-email="' + escapeHTML(u.email) + '">حذف</button>' +
+          '<button class="btn-sm btn-edit-admin" data-id="' + u.id + '">تغییر رمز</button> ' +
+          '<button class="btn-sm btn-danger btn-delete-admin" data-id="' + u.id + '">حذف</button>' +
         '</td></tr>';
     }).join("");
 
     tbody.querySelectorAll(".btn-edit-admin").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var idx = parseInt(this.getAttribute("data-idx"));
-        var u = users[idx];
-        if (!u) return;
-        var newPass = prompt("رمز جدید برای " + u.name + ":", "");
+      btn.addEventListener("click", async function () {
+        var id = this.getAttribute("data-id");
+        var newPass = prompt("رمز جدید را وارد کنید:", "");
         if (newPass && newPass.length >= 6) {
-          var stored = JSON.parse(localStorage.getItem("admin_users") || "[]");
-          var su = stored.find(function (x) { return x.email === u.email; });
-          if (su) { su.password = newPass; localStorage.setItem("admin_users", JSON.stringify(stored)); }
-          else if (u.email === "admin@example.com") { alert("رمز مدیر پیش‌فرض تغییر کرد (فقط در حافظه)."); }
-          alert("رمز عبور تغییر کرد.");
+          try { await api.updateUser(id, { password: newPass }); alert("رمز عبور تغییر کرد."); }
+          catch (err) { alert(err.message); }
         } else if (newPass !== null) { alert("رمز باید حداقل ۶ کاراکتر باشد."); }
       });
     });
 
     tbody.querySelectorAll(".btn-delete-admin").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var email = this.getAttribute("data-email");
+      btn.addEventListener("click", async function () {
+        if (!confirm("آیا از حذف مطمئن هستید؟")) return;
+        try { await api.deleteUser(this.getAttribute("data-id")); loadAdminUsers(); }
+        catch (err) { alert(err.message); }
+      });
+    });
+    convertNumbersInScope(tbody);
+  }
+
+  async function loadMembers() {
+    try {
+      var members = await api.getMembers();
+      renderMembersList(members);
+    } catch (e) { console.error(e); }
+  }
+
+  function renderMembersList(members) {
+    var tbody = document.getElementById("members-table-body");
+    var empty = document.getElementById("members-empty");
+    if (!members.length) { tbody.innerHTML = ""; empty.style.display = "block"; return; }
+    empty.style.display = "none";
+    tbody.innerHTML = members.map(function (u) {
+      var nl = u.newsletter ? '<span style="color:var(--admin-success)">✓</span>' : '<span style="color:var(--admin-text-muted)">—</span>';
+      return '<tr>' +
+        '<td data-label="نام">' + escapeHTML(u.name) + '</td>' +
+        '<td data-label="ایمیل">' + escapeHTML(u.email) + '</td>' +
+        '<td data-label="شماره">' + escapeHTML(u.phone || "—") + '</td>' +
+        '<td data-label="تاریخ">' + persianDateShort(u.created_at) + '</td>' +
+        '<td data-label="خبرنامه">' + nl + '</td>' +
+        '<td data-label="عملیات">' +
+          '<button class="btn-sm btn-edit-member" data-id="' + u.id + '">ویرایش</button> ' +
+          '<button class="btn-sm btn-danger btn-delete-member" data-id="' + u.id + '">حذف</button>' +
+        '</td></tr>';
+    }).join("");
+
+    tbody.querySelectorAll(".btn-edit-member").forEach(function (btn) {
+      btn.addEventListener("click", async function () {
+        var id = this.getAttribute("data-id");
+        var member = members.find(function (u) { return u.id == id; });
+        if (!member) return;
+        document.getElementById("modal-member-name").value = member.name;
+        document.getElementById("modal-member-email").value = member.email;
+        document.getElementById("modal-member-phone").value = member.phone || "";
+        document.getElementById("modal-member-pass").value = "";
+        document.getElementById("modal-member-newsletter").checked = !!member.newsletter;
+        document.getElementById("btn-save-member").onclick = async function () {
+          var data = {
+            name: document.getElementById("modal-member-name").value.trim(),
+            phone: document.getElementById("modal-member-phone").value.trim(),
+            newsletter: document.getElementById("modal-member-newsletter").checked
+          };
+          var np = document.getElementById("modal-member-pass").value;
+          if (np && np.length >= 6) data.password = np;
+          try { await api.updateUser(id, data); hideModal(); loadMembers(); alert("ذخیره شد."); }
+          catch (err) { alert(err.message); }
+        };
+        showModal("edit-member-modal");
+      });
+    });
+
+    tbody.querySelectorAll(".btn-delete-member").forEach(function (btn) {
+      btn.addEventListener("click", async function () {
+        if (!confirm("آیا از حذف مطمئن هستید؟")) return;
+        try { await api.deleteUser(this.getAttribute("data-id")); loadMembers(); }
+        catch (err) { alert(err.message); }
+      });
+    });
+    convertNumbersInScope(tbody);
+  }
         if (email === "admin@example.com") { alert("مدیر پیش‌فرض قابل حذف نیست."); return; }
         if (!confirm("آیا از حذف مدیر مطمئن هستید؟")) return;
         var stored = JSON.parse(localStorage.getItem("admin_users") || "[]");
@@ -1564,76 +1620,75 @@ document.addEventListener("DOMContentLoaded", function () {
   //  SETTINGS — Persistence
   // ════════════════════════════════════════════════
 
-  function initSettings() {
-    // Load saved settings
-    var settings = Store.get("settings", {
-      siteTitle: "مهبد نادری | معمار رشد دیجیتال",
-      siteDesc: "سایت شخصی مهبد نادری؛ معمار رشد دیجیتال، مشاور بازاریابی.",
-      siteKeywords: "بازاریابی دیجیتال, مشاوره, رشد دیجیتال",
-      analyticsId: "", analyticsStatus: "فعال",
-      gtmId: "", gtmStatus: "فعال",
-      phone: "+98 912 214 7417", email: "mercury700ir@gmail.com", address: "تهران، ایران"
+  async function initSettings() {
+    try {
+      var settings = await api.getSettings();
+      document.getElementById("setting-site-title").value = settings.siteTitle || "";
+      document.getElementById("setting-site-desc").value = settings.siteDesc || "";
+      document.getElementById("setting-site-keywords").value = settings.siteKeywords || "";
+      document.getElementById("setting-analytics-id").value = settings.analyticsId || "";
+      document.getElementById("setting-gtm-id").value = settings.gtmId || "";
+      document.getElementById("setting-phone").value = settings.phone || "";
+      document.getElementById("setting-email").value = settings.email || "";
+      document.getElementById("setting-address").value = settings.address || "";
+    } catch (e) { console.error(e); }
+
+    document.getElementById("btn-save-seo").addEventListener("click", async function () {
+      try {
+        await api.updateSettings({
+          siteTitle: document.getElementById("setting-site-title").value,
+          siteDesc: document.getElementById("setting-site-desc").value,
+          siteKeywords: document.getElementById("setting-site-keywords").value
+        });
+        alert("تنظیمات SEO ذخیره شد.");
+      } catch (err) { alert(err.message); }
     });
 
-    document.getElementById("setting-site-title").value = settings.siteTitle;
-    document.getElementById("setting-site-desc").value = settings.siteDesc;
-    document.getElementById("setting-site-keywords").value = settings.siteKeywords;
-    document.getElementById("setting-analytics-id").value = settings.analyticsId;
-    document.getElementById("setting-gtm-id").value = settings.gtmId;
-    document.getElementById("setting-phone").value = settings.phone;
-    document.getElementById("setting-email").value = settings.email;
-    document.getElementById("setting-address").value = settings.address;
-
-    document.getElementById("btn-save-seo").addEventListener("click", function () {
-      settings.siteTitle = document.getElementById("setting-site-title").value;
-      settings.siteDesc = document.getElementById("setting-site-desc").value;
-      settings.siteKeywords = document.getElementById("setting-site-keywords").value;
-      Store.set("settings", settings);
-      alert("تنظیمات SEO ذخیره شد.");
-    });
-
-    document.getElementById("btn-save-analytics").addEventListener("click", function () {
+    document.getElementById("btn-save-analytics").addEventListener("click", async function () {
       var id = document.getElementById("setting-analytics-id").value.trim();
-      settings.analyticsId = id;
-      settings.analyticsStatus = document.getElementById("setting-analytics-status").value;
-      Store.set("settings", settings);
-      var result = document.getElementById("analytics-test-result");
-      if (id && /^G-[A-Z0-9]+$/.test(id)) {
-        result.style.display = "block";
-        result.innerHTML = '<span style="color:var(--admin-success)">✓ شناسه معتبر است: ' + id + '<br>کد رهگیری به صفحات اضافه شد.</span>';
-      } else if (id) {
-        result.style.display = "block";
-        result.innerHTML = '<span style="color:var(--admin-danger)">فرمت شناسه نامعتبر است. فرمت صحیح: G-XXXXXXXXXX</span>';
-      } else {
-        result.style.display = "block";
-        result.innerHTML = '<span style="color:var(--admin-warning)">شناسه خالی است. برای اتصال، شناسه را وارد کنید.</span>';
-      }
+      try {
+        await api.updateSettings({ analyticsId: id, analyticsStatus: document.getElementById("setting-analytics-status").value });
+        var result = document.getElementById("analytics-test-result");
+        if (id && /^G-[A-Z0-9]+$/.test(id)) {
+          result.style.display = "block";
+          result.innerHTML = '<span style="color:var(--admin-success)">✓ شناسه معتبر است: ' + id + '</span>';
+        } else if (id) {
+          result.style.display = "block";
+          result.innerHTML = '<span style="color:var(--admin-danger)">فرمت نامعتبر. فرمت صحیح: G-XXXXXXXXXX</span>';
+        } else {
+          result.style.display = "block";
+          result.innerHTML = '<span style="color:var(--admin-warning)">شناسه خالی است.</span>';
+        }
+      } catch (err) { alert(err.message); }
     });
 
-    document.getElementById("btn-save-gtm").addEventListener("click", function () {
+    document.getElementById("btn-save-gtm").addEventListener("click", async function () {
       var id = document.getElementById("setting-gtm-id").value.trim();
-      settings.gtmId = id;
-      settings.gtmStatus = document.getElementById("setting-gtm-status").value;
-      Store.set("settings", settings);
-      var result = document.getElementById("gtm-test-result");
-      if (id && /^GTM-[A-Z0-9]+$/.test(id)) {
-        result.style.display = "block";
-        result.innerHTML = '<span style="color:var(--admin-success)">✓ شناسه Container معتبر است: ' + id + '<br>کد Container به head صفحات اضافه شد.</span>';
-      } else if (id) {
-        result.style.display = "block";
-        result.innerHTML = '<span style="color:var(--admin-danger)">فرمت شناسه نامعتبر است. فرمت صحیح: GTM-XXXXXXX</span>';
-      } else {
-        result.style.display = "block";
-        result.innerHTML = '<span style="color:var(--admin-warning)">شناسه خالی است.</span>';
-      }
+      try {
+        await api.updateSettings({ gtmId: id, gtmStatus: document.getElementById("setting-gtm-status").value });
+        var result = document.getElementById("gtm-test-result");
+        if (id && /^GTM-[A-Z0-9]+$/.test(id)) {
+          result.style.display = "block";
+          result.innerHTML = '<span style="color:var(--admin-success)">✓ شناسه معتبر است: ' + id + '</span>';
+        } else if (id) {
+          result.style.display = "block";
+          result.innerHTML = '<span style="color:var(--admin-danger)">فرمت نامعتبر. فرمت صحیح: GTM-XXXXXXX</span>';
+        } else {
+          result.style.display = "block";
+          result.innerHTML = '<span style="color:var(--admin-warning)">شناسه خالی است.</span>';
+        }
+      } catch (err) { alert(err.message); }
     });
 
-    document.getElementById("btn-save-contact").addEventListener("click", function () {
-      settings.phone = document.getElementById("setting-phone").value;
-      settings.email = document.getElementById("setting-email").value;
-      settings.address = document.getElementById("setting-address").value;
-      Store.set("settings", settings);
-      alert("اطلاعات تماس ذخیره شد.");
+    document.getElementById("btn-save-contact").addEventListener("click", async function () {
+      try {
+        await api.updateSettings({
+          phone: document.getElementById("setting-phone").value,
+          email: document.getElementById("setting-email").value,
+          address: document.getElementById("setting-address").value
+        });
+        alert("ذخیره شد.");
+      } catch (err) { alert(err.message); }
     });
   }
 

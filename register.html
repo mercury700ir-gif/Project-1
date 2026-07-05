@@ -121,6 +121,7 @@
       </div>
     </footer>
 
+    <script defer src="api.js"></script>
     <script defer src="script.js"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -142,25 +143,24 @@
       });
 
       // Login
-      document.getElementById("login-form").addEventListener("submit", function(e) {
+      document.getElementById("login-form").addEventListener("submit", async function(e) {
         e.preventDefault();
         var email = document.getElementById("login-email").value.trim().toLowerCase();
         var pass = document.getElementById("login-pass").value;
         var err = document.getElementById("login-error");
         err.textContent = "";
-
-        var users = JSON.parse(localStorage.getItem("site_users") || "[]");
-        var user = users.find(function(u) { return u.email === email && u.password === pass; });
-        if (user) {
-          localStorage.setItem("site_user", JSON.stringify({ name: user.name, email: user.email, phone: user.phone }));
+        try {
+          var result = await api.login(email, pass);
+          localStorage.setItem("site_user", JSON.stringify(result.user));
+          localStorage.setItem("api_token", result.token);
           window.location.href = "index.html";
-        } else {
-          err.textContent = "ایمیل یا رمز عبور اشتباه است.";
+        } catch (e2) {
+          err.textContent = e2.message || "ایمیل یا رمز عبور اشتباه است.";
         }
       });
 
       // Register
-      document.getElementById("register-form").addEventListener("submit", function(e) {
+      document.getElementById("register-form").addEventListener("submit", async function(e) {
         e.preventDefault();
         var name = document.getElementById("reg-name").value.trim();
         var phone = document.getElementById("reg-phone").value.trim();
@@ -174,19 +174,11 @@
         if (!name || !phone || !email || !pass) { err.textContent = "لطفاً همه فیلدها را پر کنید."; return; }
         if (pass.length < 6) { err.textContent = "رمز عبور باید حداقل ۶ کاراکتر باشد."; return; }
 
-        var users = JSON.parse(localStorage.getItem("site_users") || "[]");
-        if (users.find(function(u) { return u.email === email; })) {
-          err.textContent = "این ایمیل قبلاً ثبت‌نام شده است.";
-          return;
-        }
-
-        var newUser = { name: name, phone: phone, email: email, password: pass, date: new Date().toISOString() };
-        users.push(newUser);
-        localStorage.setItem("site_users", JSON.stringify(users));
-
-        // Auto login
-        localStorage.setItem("site_user", JSON.stringify({ name: name, email: email, phone: phone }));
-        suc.textContent = "ثبت‌نام با موفقیت انجام شد! در حال انتقال...";
+        try {
+          var result = await api.register(name, email, phone, pass);
+          localStorage.setItem("site_user", JSON.stringify(result.user));
+          localStorage.setItem("api_token", result.token);
+          suc.textContent = "ثبت‌نام با موفقیت انجام شد! در حال انتقال...";
         setTimeout(function() { window.location.href = "index.html"; }, 1200);
       });
     });
