@@ -1,42 +1,28 @@
 const express = require('express');
-const pool = require('../db');
+const db = require('../db');
 const { authMiddleware, adminOnly } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT * FROM media ORDER BY created_at DESC');
-    res.json(rows);
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
-});
+router.get('/', (req, res) => { try { res.json(db.prepare('SELECT * FROM media ORDER BY created_at DESC').all()); } catch (e) { res.status(500).json({ error: 'خطای سرور' }); } });
 
-router.post('/upload', authMiddleware, adminOnly, upload.single('file'), async (req, res) => {
+router.post('/upload', authMiddleware, adminOnly, upload.single('file'), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'فایلی ارسال نشد' });
-    const { alt_text, tags } = req.body;
     const fileType = req.file.mimetype.startsWith('image') ? 'image' : req.file.mimetype.startsWith('video') ? 'video' : 'document';
-    const [result] = await pool.query(
-      'INSERT INTO media (file_name, file_path, file_type, file_size, alt_text, tags, uploaded_by) VALUES (?,?,?,?,?,?,?)',
-      [req.file.originalname, '/uploads/' + req.file.filename, fileType, req.file.size, alt_text || '', tags || '', req.user.id]
-    );
-    res.status(201).json({ id: result.insertId, file_path: '/uploads/' + req.file.filename });
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+    const r = db.prepare('INSERT INTO media (file_name, file_path, file_type, file_size, alt_text, tags, uploaded_by) VALUES (?,?,?,?,?,?,?)').run(req.file.originalname, '/uploads/' + req.file.filename, fileType, req.file.size, req.body.alt_text || '', req.body.tags || '', req.user.id);
+    res.status(201).json({ id: r.lastInsertRowid, file_path: '/uploads/' + req.file.filename });
+  } catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
-router.put('/:id', authMiddleware, adminOnly, async (req, res) => {
-  try {
-    const { alt_text, tags } = req.body;
-    await pool.query('UPDATE media SET alt_text = ?, tags = ? WHERE id = ?', [alt_text || '', tags || '', req.params.id]);
-    res.json({ message: 'اطلاعات به‌روزرسانی شد' });
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+router.put('/:id', authMiddleware, adminOnly, (req, res) => {
+  try { db.prepare('UPDATE media SET alt_text = ?, tags = ? WHERE id = ?').run(req.body.alt_text || '', req.body.tags || '', req.params.id); res.json({ message: 'به‌روزرسانی شد' }); }
+  catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
-router.delete('/:id', authMiddleware, adminOnly, async (req, res) => {
-  try {
-    await pool.query('DELETE FROM media WHERE id = ?', [req.params.id]);
-    res.json({ message: 'فایل حذف شد' });
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+router.delete('/:id', authMiddleware, adminOnly, (req, res) => {
+  try { db.prepare('DELETE FROM media WHERE id = ?').run(req.params.id); res.json({ message: 'حذف شد' }); }
+  catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
 module.exports = router;

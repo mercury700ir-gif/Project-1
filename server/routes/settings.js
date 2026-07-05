@@ -1,11 +1,11 @@
 const express = require('express');
-const pool = require('../db');
+const db = require('../db');
 const { authMiddleware, adminOnly } = require('../middleware/auth');
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT setting_key, setting_value, setting_type, category FROM settings');
+    const rows = db.prepare('SELECT setting_key, setting_value, setting_type FROM settings').all();
     const settings = {};
     rows.forEach(r => {
       let val = r.setting_value;
@@ -15,19 +15,16 @@ router.get('/', async (req, res) => {
       settings[r.setting_key] = val;
     });
     res.json(settings);
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+  } catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
-router.put('/', authMiddleware, adminOnly, async (req, res) => {
+router.put('/', authMiddleware, adminOnly, (req, res) => {
   try {
     for (const [key, value] of Object.entries(req.body)) {
-      await pool.query(
-        'INSERT INTO settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)',
-        [key, String(value), typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'text']
-      );
+      db.prepare('INSERT OR REPLACE INTO settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?)').run(key, String(value), typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'text');
     }
     res.json({ message: 'تنظیمات ذخیره شد' });
-  } catch (err) { res.status(500).json({ error: 'خطای سرور' }); }
+  } catch (e) { res.status(500).json({ error: 'خطای سرور' }); }
 });
 
 module.exports = router;
