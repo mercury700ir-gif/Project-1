@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>راهنمای جامع ساخت پلاگین | مهبد نادری</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .guide-page { max-width: 800px; margin: 0 auto; padding: 40px 24px 80px; }
+      .guide-page h1 { font-size: 2rem; margin-bottom: 8px; }
+      .guide-page .lead { color: var(--muted); margin-bottom: 32px; }
+      .guide-page h2 { margin-top: 40px; padding-bottom: 10px; border-bottom: 2px solid var(--line); }
+      .guide-page h3 { margin-top: 28px; color: var(--accent); }
+      .guide-page p { margin-bottom: 14px; }
+      .guide-page ul, .guide-page ol { padding-right: 24px; margin-bottom: 14px; }
+      .guide-page li { margin-bottom: 6px; line-height: 1.8; }
+      .guide-page pre { background: #1e1e2e; color: #cdd6f4; padding: 16px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; font-size: 0.85rem; line-height: 1.6; margin: 14px 0; }
+      .guide-page code { padding: 2px 6px; background: var(--line); border-radius: 4px; font-size: 0.9em; }
+      .guide-page .warning { padding: 14px 18px; background: rgba(214,54,56,0.08); border-right: 4px solid var(--accent-2); border-radius: 0 6px 6px 0; margin: 16px 0; }
+      .guide-page .info { padding: 14px 18px; background: rgba(36,80,122,0.06); border-right: 4px solid var(--accent); border-radius: 0 6px 6px 0; margin: 16px 0; }
+      .guide-page table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+      .guide-page th, .guide-page td { padding: 10px 14px; border: 1px solid var(--line); text-align: right; font-size: 0.9rem; }
+      .guide-page th { background: var(--bg); font-weight: 800; }
+      .toc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
+      .toc h3 { margin-top: 0; margin-bottom: 12px; }
+      .toc ol { padding-right: 20px; margin-bottom: 0; }
+      .toc a { color: var(--accent); font-weight: 700; }
+      .toc a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
+    <header class="site-header" role="banner">
+      <div class="site-shell nav">
+        <a class="brand" href="index.html" aria-label="خانه">
+          <img class="brand-logo" src="assets/logo.png" alt="لوگو" />
+          <span class="brand-text"><span>مهبد نادری</span><small>معمار رشد دیجیتال</small></span>
+        </a>
+        <nav class="nav-links" aria-label="ناوبری">
+          <a href="admin.html">پنل مدیریت</a>
+          <a href="index.html">بازگشت به سایت</a>
+        </nav>
+        <button class="menu-toggle" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+      </div>
+    </header>
+    <div class="mobile-menu" aria-label="منوی موبایل">
+      <button class="mobile-menu-close" aria-label="بستن">&times;</button>
+      <nav><a href="admin.html">پنل مدیریت</a><a href="index.html">بازگشت به سایت</a></nav>
+    </div>
+
+    <main id="main-content" role="main" class="guide-page">
+      <h1>راهنمای جامع ساخت پلاگین</h1>
+      <p class="lead">آموزش گام‌به‌گام ساخت پلاگین برای سایت مهبد نادری — از صفر تا انتشار</p>
+
+      <div class="toc">
+        <h3>فهرست مطالب</h3>
+        <ol>
+          <li><a href="#intro">معرفی سیستم پلاگین</a></li>
+          <li><a href="#structure">ساختار فایل پلاگین</a></li>
+          <li><a href="#manifest">فایل Manifest (JSON)</a></li>
+          <li><a href="#database">اتصال به پایگاه داده</a></li>
+          <li><a href="#hooks">سیستم Hook و رویدادها</a></li>
+          <li><a href="#security">بررسی امنیت و کیفیت</a></li>
+          <li><a href="#install">نصب و فعال‌سازی</a></li>
+          <li><a href="#example">نمونه کامل پلاگین</a></li>
+          <li><a href="#faq">سوالات متداول</a></li>
+        </ol>
+      </div>
+
+      <section id="intro">
+        <h2>۱. معرفی سیستم پلاگین</h2>
+        <p>سیستم پلاگین این سایت مشابه WordPress عمل می‌کند. پلاگین‌ها می‌توانند به هسته سایت متصل شوند و امکانات جدیدی اضافه کنند.</p>
+        <div class="info">
+          <strong>نکته مهم:</strong> هر پلاگین قبل از فعال شدن توسط موتور سایت بررسی می‌شود. در صورت وجود مشکل امنیتی یا عملکردی، اجازه فعال شدن داده نمی‌شود.
+        </div>
+        <p>ویژگی‌های کلیدی سیستم پلاگین:</p>
+        <ul>
+          <li>جدول‌های اختصاصی برای هر پلاگین (قابل پاکسازی)</li>
+          <li>بررسی خودکار کد قبل از نصب</li>
+          <li>سازگاری با ساختار database سایت</li>
+          <li>عدم کاهش سرعت سایت</li>
+          <li>عدم ایجاد خطا در فرآیندهای سایت</li>
+        </ul>
+      </section>
+
+      <section id="structure">
+        <h2>۲. ساختار فایل پلاگین</h2>
+        <p>هر پلاگین باید در یک پوشه جداگانه با ساختار زیر قرار گیرد:</p>
+<pre>
+my-plugin/
+├── plugin.json          ← فایل manifest (الزامی)
+├── index.js             ← فایل اصلی پلاگین (الزامی)
+├── style.css            ← استایل‌های اختصاصی (اختیاری)
+├── settings.json        ← تنظیمات پیش‌فرض (اختیاری)
+└── assets/              ← فایل‌های رسانه (اختیاری)
+    ├── logo.png
+    └── ...
+</pre>
+      </section>
+
+      <section id="manifest">
+        <h2>۳. فایل Manifest (JSON)</h2>
+        <p>هر پلاگین باید یک فایل <code>plugin.json</code> داشته باشد:</p>
+<pre>
+{
+  "name": "my-plugin",
+  "title": "عنوان پلاگین",
+  "version": "1.0.0",
+  "description": "توضیحات کوتاه درباره عملکرد پلاگین",
+  "author": "نام توسعه‌دهنده",
+  "main": "index.js",
+  "settings": [
+    { "key": "api_key", "label": "کلید API", "type": "text", "default": "" },
+    { "key": "enable", "label": "فعال‌سازی", "type": "boolean", "default": true }
+  ],
+  "permissions": ["manage_options", "edit_posts"],
+  "dependencies": [],
+  "database_tables": ["my_plugin_data"]
+}
+</pre>
+        <div class="info">
+          <strong>فیلدهای manifest:</strong>
+          <ul>
+            <li><code>name</code>: شناسه یکتای پلاگین (انگلیسی، بدون فاصله)</li>
+            <li><code>title</code>: عنوان نمایشی فارسی</li>
+            <li><code>version</code>: شماره نسخه (فرمت semver)</li>
+            <li><code>main</code>: فایل اجرایی اصلی</li>
+            <li><code>settings</code>: آرایه فیلدهای تنظیمات</li>
+            <li><code>permissions</code>: دسترسی‌های مورد نیاز</li>
+            <li><code>database_tables</code>: جداول اختصاصی پلاگین</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="database">
+        <h2>۴. اتصال به پایگاه داده</h2>
+        <p>هر پلاگین می‌تواند جداول اختصاصی خود را در database سایت ایجاد کند. این جداول باید با پیشوند نام پلاگین شروع شوند:</p>
+<pre>
+CREATE TABLE my_plugin_data (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  post_id INT,
+  data_key VARCHAR(100),
+  data_value TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+);
+</pre>
+        <div class="warning">
+          <strong>نکته امنیتی:</strong> از query‌های آماده (Prepared Statements) استفاده کنید. هرگز مقادیر کاربر را مستقیماً در query قرار ندهید.
+        </div>
+      </section>
+
+      <section id="hooks">
+        <h2>۵. سیستم Hook و رویدادها</h2>
+        <p>پلاگین‌ها می‌توانند به رویدادهای سایت متصل شوند:</p>
+        <table>
+          <thead><tr><th>رویداد</th><th>توضیح</th><th>زمان اجرا</th></tr></thead>
+          <tbody>
+            <tr><td><code>onInit</code></td><td>راه‌اندازی اولیه</td><td>هنگام فعال شدن پلاگین</td></tr>
+            <tr><td><code>onPostSave</code></td><td>ذخیره پست</td><td>بعد از ذخیره هر پست</td></tr>
+            <tr><td><code>onUserRegister</code></td><td>ثبت‌نام کاربر</td><td>هنگام عضویت کاربر جدید</td></tr>
+            <tr><td><code>onPageRender</code></td><td>رندر صفحه</td><td>قبل از نمایش هر صفحه</td></tr>
+            <tr><td><code>onCron</code></td><td>زمان‌بندی</td><td>اجرای دوره‌ای</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="security">
+        <h2>۶. بررسی امنیت و کیفیت</h2>
+        <p>قبل از فعال شدن، پلاگین توسط موتور سایت بررسی می‌شود:</p>
+        <ul>
+          <li>بررسی وجود توابع ممنوعه (eval, exec, system)</li>
+          <li>بررسی SQL Injection</li>
+          <li>بررسی XSS</li>
+          <li>بررسی حملات CSRF</li>
+          <li>بررسی سرعت اجرا</li>
+          <li>بررسی سازگاری با database سایت</li>
+        </ul>
+        <div class="warning">
+          <strong>هشدار:</strong> پلاگین‌هایی که کد ناامن داشته باشند، اجازه فعال شدن نخواهند داشت.
+        </div>
+      </section>
+
+      <section id="install">
+        <h2>۷. نصب و فعال‌سازی</h2>
+        <ol>
+          <li>فایل پلاگین (ZIP, RAR, TAR, 7Z) را آپلود کنید</li>
+          <li>در بخش پلاگین‌های پنل مدیریت، پلاگین را پیدا کنید</li>
+          <li>روی «فعال» کلیک کنید</li>
+          <li>تنظیمات پلاگین را پیکربندی کنید</li>
+          <li>تست کنید که پلاگین بدون خطا کار می‌کند</li>
+        </ol>
+      </section>
+
+      <section id="example">
+        <h2>۸. نمونه کامل پلاگین</h2>
+        <p>نمونه یک پلاگین ساده شمارش بازدید:</p>
+<pre>
+// index.js — پلاگین شمارش بازدید
+module.exports = {
+  name: "view-counter",
+  title: "شمارشگر بازدید",
+
+  onInit: function() {
+    console.log("پلاگین شمارشگر بازدید فعال شد");
+  },
+
+  onPageRender: function(page) {
+    var key = "views_" + page.slug;
+    var count = this.getSetting(key, 0);
+    this.setSetting(key, count + 1);
+    page.viewCount = count + 1;
+  },
+
+  getSetting: function(key, def) {
+    var val = localStorage.getItem("plugin_view-counter_" + key);
+    return val ? JSON.parse(val) : def;
+  },
+
+  setSetting: function(key, val) {
+    localStorage.setItem("plugin_view-counter_" + key, JSON.stringify(val));
+  }
+};
+</pre>
+      </section>
+
+      <section id="faq">
+        <h2>۹. سوالات متداول</h2>
+
+        <h3>آیا پلاگین‌ها به سرعت سایت آسیب می‌زنند؟</h3>
+        <p>خیر. قبل از فعال شدن، سرعت اجرای پلاگین بررسی می‌شود. پلاگین‌های سنگین اجازه فعال شدن ندارند.</p>
+
+        <h3>آیا می‌توانم از زبان‌های مختلف استفاده کنم؟</h3>
+        <p>پلاگین‌های اصلی باید با JavaScript نوشته شوند. برای پلاگین‌های پیشرفته‌تر می‌توانید از ماژول‌های سازگار استفاده کنید.</p>
+
+        <h3>آیا می‌توانم پلاگین را حذف کنم؟</h3>
+        <p>بله. ابتدا پلاگین را غیرفعال کنید، سپس حذف کنید. جداول اختصاصی پلاگین نیز حذف خواهند شد.</p>
+
+        <h3>چگونه پلاگین را به‌روزرسانی کنم؟</h3>
+        <p>نسخه جدید را آپلود کنید. سیستم به‌طور خودکار نسخه قبلی را جایگزین می‌کند.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-shell footer-inner">
+        <span>© سایت شخصی مهبد نادری</span>
+      </div>
+    </footer>
+
+    <script defer src="script.js"></script>
+  </body>
+</html>
