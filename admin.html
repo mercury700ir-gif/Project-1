@@ -301,17 +301,46 @@
 
           <!-- ════ 3. User Management ════ -->
           <section id="tab-users" class="tab-pane">
-            <div class="tab-header">
-              <h3>مدیریت کاربران</h3>
-              <button class="button primary" id="btn-new-user">+ کاربر جدید</button>
+            <div class="sub-tabs">
+              <button class="sub-tab active" data-subtab="users-admin">مدیریت سایت</button>
+              <button class="sub-tab" data-subtab="users-members">اعضای سایت</button>
             </div>
-            <table class="data-table">
-              <thead>
-                <tr><th>نام</th><th>ایمیل</th><th>شماره</th><th>تاریخ عضویت</th><th>عملیات</th></tr>
-              </thead>
-              <tbody id="users-table-body"></tbody>
-            </table>
-            <div id="users-empty" class="empty-state" style="display:none"><p>هنوز کاربری ثبت‌نام نکرده است.</p></div>
+
+            <!-- Admin Users -->
+            <div id="users-admin" class="sub-pane active">
+              <div class="tab-header">
+                <h3>مدیران سایت</h3>
+                <button class="button primary" id="btn-new-admin-user">+ مدیر جدید</button>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr><th>نام</th><th>ایمیل</th><th>شماره</th><th>نقش</th><th>عملیات</th></tr>
+                </thead>
+                <tbody id="admin-users-table-body"></tbody>
+              </table>
+              <div id="admin-users-empty" class="empty-state" style="display:none"><p>هنوز مدیری تعریف نشده است.</p></div>
+              <div class="role-info-box">
+                <h4>توضیح نقش‌ها</h4>
+                <div class="role-list">
+                  <div class="role-item"><span class="badge badge-primary">مدیر سایت</span><span>دسترسی کامل به تمام بخش‌ها</span></div>
+                  <div class="role-item"><span class="badge badge-info">مدیر محتوا</span><span>فقط محتوا، گالری، فایل‌ها، وبلاگ و شبکه‌های اجتماعی</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Public Members -->
+            <div id="users-members" class="sub-pane">
+              <div class="tab-header">
+                <h3>اعضای سایت</h3>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr><th>نام</th><th>ایمیل</th><th>شماره</th><th>تاریخ عضویت</th><th>خبرنامه</th><th>عملیات</th></tr>
+                </thead>
+                <tbody id="members-table-body"></tbody>
+              </table>
+              <div id="members-empty" class="empty-state" style="display:none"><p>هنوز کاربری ثبت‌نام نکرده است.</p></div>
+            </div>
           </section>
 
           <!-- ════ 4. Gallery ════ -->
@@ -325,17 +354,22 @@
               <div class="upload-zone" id="image-upload-zone">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 <p>فایل‌ها را اینجا رها کنید یا کلیک کنید</p>
-                <span>PNG, JPG, GIF حداکثر ۱۰ مگابایت</span>
+                <span>PNG, JPG, GIF, SVG, WebP حداکثر ۱۰ مگابایت</span>
                 <input type="file" accept="image/*" multiple hidden id="image-upload-input" />
               </div>
-              <div class="gallery-grid">
-                <div class="gallery-item"><img src="assets/profile-formal.jpeg" alt="تصویر ۱" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
-                <div class="gallery-item"><img src="assets/profile-light.jpeg" alt="تصویر ۲" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
-                <div class="gallery-item"><img src="assets/profile-suit.jpeg" alt="تصویر ۳" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
-                <div class="gallery-item"><img src="assets/consulting-room.jpeg" alt="تصویر ۴" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
-                <div class="gallery-item"><img src="assets/case-score.jpeg" alt="تصویر ۵" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
-                <div class="gallery-item"><img src="assets/logo.png" alt="لوگو" /><div class="gallery-actions"><button class="btn-sm">حذف</button></div></div>
+
+              <div class="format-info-box">
+                <h4>راهنمای فرمت تصاویر</h4>
+                <div class="format-list">
+                  <div class="format-item"><strong>WebP / JPEG</strong> — عکس‌ها و تصاویر پیچیده: حجم کمتر، کیفیت بالا، مناسب برای عکس‌های واقعی</div>
+                  <div class="format-item"><strong>PNG</strong> — لوگو، گرافیک و شفافیت: بدون افت کیفیت، پشتیبانی از پس‌زمینه شفاف</div>
+                  <div class="format-item"><strong>SVG</strong> — آیکون‌ها و تصاویر برداری: مقیاس‌پذیر، حجم بسیار کم</div>
+                  <div class="format-item"><strong>WebP</strong> — انیمیشن‌ها: پشتیبانی از GIF متحرک با حجم کمتر</div>
+                </div>
               </div>
+
+              <div class="gallery-grid" id="gallery-images-grid"></div>
+              <div id="gallery-images-empty" class="empty-state" style="display:none"><p>هنوز تصویری آپلود نشده است.</p></div>
             </div>
 
             <div id="gallery-videos" class="sub-pane">
@@ -363,11 +397,32 @@
             <div id="blog-posts" class="sub-pane active">
               <div class="tab-header">
                 <h3>پست‌های وبلاگ</h3>
-                <button class="button primary" id="btn-new-post">+ پست جدید</button>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <button class="button primary" id="btn-new-post">+ پست جدید</button>
+                  <div class="publish-dropdown" id="publish-dropdown">
+                    <button class="button primary" id="btn-publish-dropdown">انتشار ▾</button>
+                    <div class="publish-menu" id="publish-menu" style="display:none">
+                      <button class="publish-option" data-action="instant">انتشار فوری</button>
+                      <button class="publish-option" data-action="scheduled">انتشار زمان‌دار</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="scheduled-publish-section" style="display:none;margin-bottom:16px;padding:16px;border:1px solid var(--admin-border);border-radius:var(--admin-radius);background:var(--admin-card-bg)">
+                <h4 style="margin-bottom:12px">انتشار زمان‌دار</h4>
+                <div class="field">
+                  <label>انتخاب پست</label>
+                  <select id="scheduled-post-select"><option value="">انتخاب کنید...</option></select>
+                </div>
+                <div class="field">
+                  <label>تاریخ و زمان انتشار</label>
+                  <input type="datetime-local" id="scheduled-publish-datetime" />
+                </div>
+                <button class="button primary" id="btn-confirm-schedule">تأیید زمان‌بندی</button>
               </div>
               <table class="data-table" id="blog-table">
                 <thead>
-                  <tr><th>عنوان</th><th>نویسنده</th><th>تاریخ</th><th>دسته‌بندی</th><th>وضعیت</th><th>عملیات</th></tr>
+                  <tr><th>عنوان</th><th>نویسنده</th><th>تاریخ</th><th>وضعیت</th><th>عملیات</th></tr>
                 </thead>
                 <tbody id="blog-table-body"></tbody>
               </table>
@@ -499,54 +554,65 @@
 
           <!-- ════ 7. Plugins ════ -->
           <section id="tab-plugins" class="tab-pane">
-            <div class="tab-header">
-              <h3>مدیریت پلاگین‌ها</h3>
-              <button class="button primary" onclick="showModal('install-plugin-modal')">+ نصب پلاگین</button>
+            <div class="sub-tabs">
+              <button class="sub-tab active" data-subtab="plugins-list">لیست پلاگین‌ها</button>
+              <button class="sub-tab" data-subtab="plugins-upload">آپلود پلاگین</button>
+              <button class="sub-tab" data-subtab="plugins-edit">Plugin Edit Tool</button>
             </div>
-            <div class="plugins-grid">
-              <div class="plugin-card active">
-                <div class="plugin-header">
-                  <h4>SEO Manager</h4>
-                  <span class="badge badge-success">فعال</span>
-                </div>
-                <p>بهینه‌سازی عنوان، توضیحات متا و نقشه سایت برای موتورهای جستجو.</p>
-                <div class="plugin-meta"><span>نسخه ۲.۱.۰</span><span>توسعه‌دهنده: تیم فنی</span></div>
-                <div class="plugin-actions"><button class="btn-sm">غیرفعال</button><button class="btn-sm">تنظیمات</button></div>
+
+            <!-- Plugins List -->
+            <div id="plugins-list" class="sub-pane active">
+              <div class="tab-header">
+                <h3>پلاگین‌های نصب شده</h3>
               </div>
-              <div class="plugin-card active">
-                <div class="plugin-header">
-                  <h4>Analytics Dashboard</h4>
-                  <span class="badge badge-success">فعال</span>
-                </div>
-                <p>اتصال به Google Analytics و نمایش آمار بازدید در داشبورد.</p>
-                <div class="plugin-meta"><span>نسخه ۱.۴.۲</span><span>توسعه‌دهنده: تیم فنی</span></div>
-                <div class="plugin-actions"><button class="btn-sm">غیرفعال</button><button class="btn-sm">تنظیمات</button></div>
+              <div class="plugins-grid" id="plugins-grid"></div>
+              <div id="plugins-empty" class="empty-state" style="display:none"><p>هنوز پلاگینی نصب نشده است.</p></div>
+            </div>
+
+            <!-- Plugin Upload -->
+            <div id="plugins-upload" class="sub-pane">
+              <div class="tab-header"><h3>آپلود پلاگین</h3></div>
+              <div class="upload-zone" id="plugin-upload-zone">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                <p>فایل پلاگین را اینجا رها کنید</p>
+                <span>فرمت‌های پشتیبانی: ZIP, RAR, TAR, 7Z</span>
+                <input type="file" accept=".zip,.rar,.tar,.7z" hidden id="plugin-upload-input" />
               </div>
-              <div class="plugin-card">
-                <div class="plugin-header">
-                  <h4>Social Auto Poster</h4>
-                  <span class="badge badge-secondary">غیرفعال</span>
-                </div>
-                <p>انتشار خودکار پست‌ها در شبکه‌های اجتماعی مختلف.</p>
-                <div class="plugin-meta"><span>نسخه ۳.۰.۱</span><span>توسعه‌دهنده: تیم فنی</span></div>
-                <div class="plugin-actions"><button class="btn-sm btn-primary">فعال</button><button class="btn-sm">حذف</button></div>
+              <div class="plugin-upload-info">
+                <h4>ساختار پلاگین</h4>
+                <p>هر پلاگین باید شامل فایل <code>plugin.json</code> (manifest) باشد. فایل‌های پلاگین باید با کیفیت و امنیت بالا باشند.</p>
+                <pre class="code-block">{
+  "name": "plugin-name",
+  "title": "عنوان پلاگین",
+  "version": "1.0.0",
+  "description": "توضیحات پلاگین",
+  "author": "نام توسعه‌دهنده",
+  "main": "index.js",
+  "settings": []
+}</pre>
               </div>
             </div>
 
-            <!-- Plugin Manifest Preview -->
-            <div class="plugin-manifest-section">
-              <h4>ساختار JSON Manifest پلاگین</h4>
-              <pre class="code-block">{
-  "name": "seo-manager",
-  "title": "SEO Manager",
-  "version": "2.1.0",
-  "description": "بهینه‌سازی سئو برای موتورهای جستجو",
-  "author": "تیم فنی",
-  "active": true,
-  "settings_url": "/admin/plugins/seo-manager",
-  "dependencies": [],
-  "permissions": ["manage_options", "edit_posts"]
-}</pre>
+            <!-- Plugin Edit Tool -->
+            <div id="plugins-edit" class="sub-pane">
+              <div class="tab-header"><h3>Plugin Edit Tool</h3></div>
+              <div class="plugin-edit-section">
+                <div class="field">
+                  <label>انتخاب پلاگین</label>
+                  <select id="plugin-edit-select"><option value="">انتخاب کنید...</option></select>
+                </div>
+                <div class="plugin-code-editor" id="plugin-code-editor" style="display:none">
+                  <div class="code-editor-header">
+                    <span>ویرایش کد پلاگین</span>
+                    <div class="code-editor-actions">
+                      <button class="btn-sm" id="btn-plugin-code-save">ذخیره</button>
+                      <button class="btn-sm btn-danger" id="btn-plugin-code-reject">رد تغییرات</button>
+                    </div>
+                  </div>
+                  <textarea id="plugin-code-textarea" class="code-textarea" dir="ltr" spellcheck="false"></textarea>
+                  <div id="plugin-code-status" class="code-editor-status"></div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -554,6 +620,7 @@
           <section id="tab-social" class="tab-pane">
             <div class="sub-tabs">
               <button class="sub-tab active" data-subtab="social-connect">اتصال شبکه‌ها</button>
+              <button class="sub-tab" data-subtab="social-bots">ربات‌ها</button>
               <button class="sub-tab" data-subtab="social-schedule">زمان‌بندی انتشار</button>
               <button class="sub-tab" data-subtab="social-history">تاریخچه انتشار</button>
             </div>
@@ -562,6 +629,20 @@
             <div id="social-connect" class="sub-pane active">
               <div class="tab-header"><h3>شبکه‌های اجتماعی</h3></div>
               <div class="social-grid" id="social-grid"></div>
+              <div class="social-instructions" id="social-instructions" style="display:none">
+                <h4 id="social-instruction-title"></h4>
+                <div id="social-instruction-body"></div>
+              </div>
+            </div>
+
+            <!-- Bots -->
+            <div id="social-bots" class="sub-pane">
+              <div class="tab-header">
+                <h3>ربات‌ها و بازوها</h3>
+                <button class="button primary" id="btn-new-bot">+ ربات جدید</button>
+              </div>
+              <div class="bots-grid" id="bots-grid"></div>
+              <div id="bots-empty" class="empty-state" style="display:none"><p>هنوز رباتی تعریف نشده است.</p></div>
             </div>
 
             <!-- Schedule Post -->
@@ -574,8 +655,12 @@
                     <select id="schedule-post-select"><option value="">انتخاب کنید...</option></select>
                   </div>
                   <div class="field">
-                    <label>شبکه‌های مقصد</label>
+                    <label>اکانت‌های عادی</label>
                     <div class="checkbox-group" id="schedule-platforms"></div>
+                  </div>
+                  <div class="field">
+                    <label>ربات‌ها</label>
+                    <div class="checkbox-group" id="schedule-bots"></div>
                   </div>
                   <div class="field">
                     <label>متن پیام (اختیاری)</label>
@@ -608,26 +693,35 @@
             <div class="settings-grid">
               <div class="settings-card">
                 <h4>تنظیمات SEO</h4>
-                <div class="field"><label>عنوان سایت</label><input type="text" value="مهبد نادری | معمار رشد دیجیتال" /></div>
-                <div class="field"><label>توضیحات متا</label><textarea rows="3">سایت شخصی مهبد نادری؛ معمار رشد دیجیتال، مشاور بازاریابی و طراح ساختارهای دیجیتال مارکتینگ.</textarea></div>
-                <div class="field"><label>کلمات کلیدی</label><input type="text" value="بازاریابی دیجیتال, مشاوره, رشد دیجیتال" /></div>
-                <div class="field"><label>نقشه سایت</label><select><option>فعال</option><option>غیرفعال</option></select></div>
-                <button class="button primary">ذخیره تنظیمات SEO</button>
+                <div class="field"><label>عنوان سایت</label><input type="text" id="setting-site-title" value="مهبد نادری | معمار رشد دیجیتال" /></div>
+                <div class="field"><label>توضیحات متا</label><textarea rows="3" id="setting-site-desc">سایت شخصی مهبد نادری؛ معمار رشد دیجیتال، مشاور بازاریابی و طراح ساختارهای دیجیتال مارکتینگ.</textarea></div>
+                <div class="field"><label>کلمات کلیدی</label><input type="text" id="setting-site-keywords" value="بازاریابی دیجیتال, مشاوره, رشد دیجیتال" /></div>
+                <div class="field"><label>نقشه سایت</label><select id="setting-sitemap"><option>فعال</option><option>غیرفعال</option></select></div>
+                <button class="button primary" id="btn-save-seo">ذخیره تنظیمات SEO</button>
               </div>
 
               <div class="settings-card">
                 <h4>Google Analytics</h4>
-                <div class="field"><label>Tracking ID</label><input type="text" placeholder="G-XXXXXXXXXX" dir="ltr" /></div>
-                <div class="field"><label>اتصال</label><select><option>فعال</option><option>غیرفعال</option></select></div>
-                <button class="button primary">ذخیره</button>
+                <div class="field"><label>Tracking ID</label><input type="text" id="setting-analytics-id" placeholder="G-XXXXXXXXXX" dir="ltr" /></div>
+                <div class="field"><label>وضعیت اتصال</label><select id="setting-analytics-status"><option>فعال</option><option>غیرفعال</option></select></div>
+                <button class="button primary" id="btn-save-analytics">ذخیره و تست اتصال</button>
+                <div id="analytics-test-result" class="analytics-test" style="display:none"></div>
+              </div>
+
+              <div class="settings-card">
+                <h4>Google Tag Manager</h4>
+                <div class="field"><label>Container ID</label><input type="text" id="setting-gtm-id" placeholder="GTM-XXXXXXX" dir="ltr" /></div>
+                <div class="field"><label>وضعیت اتصال</label><select id="setting-gtm-status"><option>فعال</option><option>غیرفعال</option></select></div>
+                <button class="button primary" id="btn-save-gtm">ذخیره و تست اتصال</button>
+                <div id="gtm-test-result" class="analytics-test" style="display:none"></div>
               </div>
 
               <div class="settings-card">
                 <h4>اطلاعات تماس</h4>
-                <div class="field"><label>شماره تماس</label><input type="tel" value="+98 912 214 7417" dir="ltr" /></div>
-                <div class="field"><label>ایمیل</label><input type="email" value="mercury700ir@gmail.com" dir="ltr" /></div>
-                <div class="field"><label>آدرس</label><input type="text" value="تهران، ایران" /></div>
-                <button class="button primary">ذخیره</button>
+                <div class="field"><label>شماره تماس</label><input type="tel" id="setting-phone" value="+98 912 214 7417" dir="ltr" /></div>
+                <div class="field"><label>ایمیل</label><input type="email" id="setting-email" value="mercury700ir@gmail.com" dir="ltr" /></div>
+                <div class="field"><label>آدرس</label><input type="text" id="setting-address" value="تهران، ایران" /></div>
+                <button class="button primary" id="btn-save-contact">ذخیره</button>
               </div>
             </div>
           </section>
@@ -649,16 +743,49 @@
           </div>
           <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" onclick="hideModal()">ایجاد</button></div>
         </div>
-        <!-- New User Modal -->
-        <div id="new-user-modal" class="modal-content" style="display:none">
-          <div class="modal-header"><h3>افزودن کاربر جدید</h3><button class="modal-close" onclick="hideModal()">&times;</button></div>
+        <!-- New Admin User Modal -->
+        <div id="new-admin-user-modal" class="modal-content" style="display:none">
+          <div class="modal-header"><h3>افزودن مدیر جدید</h3><button class="modal-close" onclick="hideModal()">&times;</button></div>
           <div class="modal-body">
-            <div class="field"><label>نام کامل</label><input type="text" /></div>
-            <div class="field"><label>ایمیل</label><input type="email" dir="ltr" /></div>
-            <div class="field"><label>نقش</label><select><option>مشترک</option><option>نویسنده</option><option>ویرایشگر</option><option>مدیر کل</option></select></div>
-            <div class="field"><label>رمز عبور</label><input type="password" /></div>
+            <div class="field"><label>نام کامل</label><input type="text" id="modal-admin-name" /></div>
+            <div class="field"><label>ایمیل</label><input type="email" id="modal-admin-email" dir="ltr" /></div>
+            <div class="field"><label>شماره موبایل</label><input type="tel" id="modal-admin-phone" dir="ltr" /></div>
+            <div class="field"><label>نقش</label><select id="modal-admin-role"><option value="admin">مدیر سایت</option><option value="editor">مدیر محتوا</option></select></div>
+            <div class="field"><label>رمز عبور</label><input type="password" id="modal-admin-pass" /></div>
           </div>
-          <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" onclick="hideModal()">افزودن</button></div>
+          <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" id="btn-save-admin-user">افزودن</button></div>
+        </div>
+        <!-- Edit Member Modal -->
+        <div id="edit-member-modal" class="modal-content" style="display:none">
+          <div class="modal-header"><h3>ویرایش عضو</h3><button class="modal-close" onclick="hideModal()">&times;</button></div>
+          <div class="modal-body">
+            <div class="field"><label>نام کامل</label><input type="text" id="modal-member-name" /></div>
+            <div class="field"><label>ایمیل</label><input type="email" id="modal-member-email" dir="ltr" readonly /></div>
+            <div class="field"><label>شماره موبایل</label><input type="tel" id="modal-member-phone" dir="ltr" /></div>
+            <div class="field"><label>رمز جدید (خالی بگذارید اگر نمی‌خواهید تغییر دهید)</label><input type="password" id="modal-member-pass" /></div>
+            <div class="field"><label><input type="checkbox" id="modal-member-newsletter" /> عضویت در خبرنامه</label></div>
+          </div>
+          <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" id="btn-save-member">ذخیره</button></div>
+        </div>
+        <!-- Edit Banner Modal -->
+        <div id="edit-banner-modal" class="modal-content" style="display:none">
+          <div class="modal-header"><h3>ویرایش بنر</h3><button class="modal-close" onclick="hideModal()">&times;</button></div>
+          <div class="modal-body">
+            <div class="field"><label>عنوان بنر</label><input type="text" id="modal-banner-title" /></div>
+            <div class="field"><label>آدرس تصویر</label>
+              <div style="display:flex;gap:8px"><input type="text" id="modal-banner-image" dir="ltr" style="flex:1" /><button class="btn-sm" id="btn-banner-pick-image">انتخاب از گالری</button></div>
+            </div>
+            <div class="banner-preview-box" id="modal-banner-preview"></div>
+            <div class="field"><label>لینک</label><input type="text" id="modal-banner-link" dir="ltr" /></div>
+            <div class="field"><label>موقعیت نمایش</label><select id="modal-banner-position"><option value="hero">هیروی اصلی</option><option value="about">درباره من</option><option value="contact">تماس با من</option><option value="custom">سفارشی</option></select></div>
+            <div class="field"><label>نقطه کانونی تصویر</label>
+              <div class="position-control">
+                <label>X: <input type="range" id="modal-banner-posx" min="0" max="100" value="50" /> <span id="modal-banner-posx-val">50%</span></label>
+                <label>Y: <input type="range" id="modal-banner-posy" min="0" max="100" value="50" /> <span id="modal-banner-posy-val">50%</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" id="btn-save-banner">ذخیره</button></div>
         </div>
         <!-- Install Plugin Modal -->
         <div id="install-plugin-modal" class="modal-content" style="display:none">
@@ -668,6 +795,19 @@
             <p class="lead">فایل manifest JSON پلاگین دانلود و بررسی می‌شود.</p>
           </div>
           <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" onclick="hideModal()">نصب</button></div>
+        </div>
+        <!-- Plugin Settings Modal -->
+        <div id="plugin-settings-modal" class="modal-content" style="display:none">
+          <div class="modal-header"><h3 id="plugin-settings-title">تنظیمات پلاگین</h3><button class="modal-close" onclick="hideModal()">&times;</button></div>
+          <div class="modal-body" id="plugin-settings-body"></div>
+          <div class="modal-footer"><button class="button" onclick="hideModal()">انصراف</button><button class="button primary" id="btn-save-plugin-settings">ذخیره تنظیمات</button></div>
+        </div>
+        <!-- Gallery File Manager Modal -->
+        <div id="file-manager-modal" class="modal-content" style="display:none">
+          <div class="modal-header"><h3>انتخاب تصویر از گالری</h3><button class="modal-close" onclick="hideModal()">&times;</button></div>
+          <div class="modal-body">
+            <div class="file-manager-grid" id="file-manager-grid"></div>
+          </div>
         </div>
       </div>
     </div>
