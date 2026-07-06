@@ -2069,3 +2069,262 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ══ Image Editor (Palleon-like) ══ */
+
+.image-editor-modal {
+  max-width: 1100px !important;
+  width: 95vw;
+}
+
+.image-editor-body {
+  padding: 0 !important;
+}
+
+.editor-layout {
+  display: flex;
+  gap: 0;
+  min-height: 500px;
+}
+
+.editor-canvas-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a2e;
+  min-width: 0;
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: #16213e;
+  border-bottom: 1px solid #0f3460;
+  flex-wrap: wrap;
+}
+
+.editor-tool {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.editor-tool:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.editor-tool.active {
+  background: var(--admin-primary);
+  color: #fff;
+  border-color: var(--admin-primary);
+}
+
+.editor-separator {
+  width: 1px;
+  height: 24px;
+  background: rgba(255,255,255,0.15);
+  margin: 0 4px;
+}
+
+.editor-canvas-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 20px;
+  position: relative;
+}
+
+.editor-canvas-container canvas {
+  max-width: 100%;
+  max-height: 100%;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  cursor: crosshair;
+}
+
+.editor-zoom-info {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  padding: 4px 10px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 0.78rem;
+  border-radius: 4px;
+}
+
+.editor-settings-panel {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--admin-card-bg);
+  border-left: 1px solid var(--admin-border);
+  overflow-y: auto;
+  max-height: 560px;
+}
+
+.editor-settings-section {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.editor-settings-section h4 {
+  margin: 0 0 10px;
+  font-size: 0.88rem;
+  color: var(--admin-text);
+}
+
+.editor-field-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.editor-field-row .field {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.editor-field-row .field input {
+  height: 34px;
+  padding: 0 8px;
+  font-size: 0.82rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 4px;
+  width: 100%;
+  background: var(--admin-body-bg);
+  color: var(--admin-text);
+}
+
+.editor-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.editor-slider-group {
+  margin-bottom: 10px;
+}
+
+.editor-slider-group label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.editor-slider-group input[type="range"] {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  background: var(--admin-border);
+  border-radius: 3px;
+  outline: none;
+}
+
+.editor-slider-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--admin-primary);
+  cursor: pointer;
+}
+
+.editor-filters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.editor-filter-btn {
+  padding: 6px 4px;
+  border: 1px solid var(--admin-border);
+  border-radius: 4px;
+  background: var(--admin-body-bg);
+  color: var(--admin-text);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.editor-filter-btn:hover {
+  border-color: var(--admin-primary);
+}
+
+.editor-filter-btn.active {
+  background: var(--admin-primary);
+  color: #fff;
+  border-color: var(--admin-primary);
+}
+
+.editor-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.82rem;
+}
+
+.editor-info-label {
+  font-weight: 700;
+  color: var(--admin-text-muted);
+}
+
+.editor-actions-row {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px;
+}
+
+.editor-actions-row .button {
+  flex: 1;
+}
+
+/* Gallery card edit button */
+.gallery-card-edit {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.gallery-card:hover .gallery-card-edit {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .editor-layout {
+    flex-direction: column;
+  }
+
+  .editor-settings-panel {
+    width: 100%;
+    max-height: 300px;
+  }
+
+  .editor-canvas-container {
+    min-height: 300px;
+  }
+
+  .editor-filters-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

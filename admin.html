@@ -809,6 +809,91 @@
             <div class="file-manager-grid" id="file-manager-grid"></div>
           </div>
         </div>
+        <!-- Image Editor Modal (Palleon-like) -->
+        <div id="image-editor-modal" class="modal-content image-editor-modal" style="display:none">
+          <div class="modal-header">
+            <h3>ویرایشگر تصویر</h3>
+            <button class="modal-close" onclick="closeImageEditor()">&times;</button>
+          </div>
+          <div class="modal-body image-editor-body">
+            <div class="editor-layout">
+              <!-- Canvas Area -->
+              <div class="editor-canvas-area">
+                <div class="editor-toolbar">
+                  <button class="editor-tool" data-tool="crop" title="برش"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"/><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"/></svg></button>
+                  <button class="editor-tool" data-tool="rotate-left" title="چرخش چپ"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></button>
+                  <button class="editor-tool" data-tool="rotate-right" title="چرخش راست"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+                  <button class="editor-tool" data-tool="flip-h" title=" flips افقی"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
+                  <button class="editor-tool" data-tool="flip-v" title=" flips عمودی"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
+                  <div class="editor-separator"></div>
+                  <button class="editor-tool" data-tool="zoom-in" title="بزرگ‌نمایی"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+                  <button class="editor-tool" data-tool="zoom-out" title="کوچک‌نمایی"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+                  <button class="editor-tool" data-tool="reset" title="بازنشانی"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+                </div>
+                <div class="editor-canvas-container">
+                  <canvas id="image-editor-canvas"></canvas>
+                </div>
+                <div class="editor-zoom-info" id="editor-zoom-info">۱۰۰٪</div>
+              </div>
+              <!-- Settings Panel -->
+              <div class="editor-settings-panel">
+                <div class="editor-settings-section">
+                  <h4>ابعاد تصویر</h4>
+                  <div class="editor-field-row">
+                    <div class="field"><label>عرض</label><input type="number" id="editor-width" min="1" max="4000" /></div>
+                    <div class="field"><label>ارتفاع</label><input type="number" id="editor-height" min="1" max="4000" /></div>
+                  </div>
+                  <label class="editor-checkbox"><input type="checkbox" id="editor-lock-ratio" checked /> قفل نسبت ابعاد</label>
+                  <button class="btn-sm" id="editor-apply-size">اعمال ابعاد</button>
+                </div>
+                <div class="editor-settings-section">
+                  <h4>تنظیمات نور و رنگ</h4>
+                  <div class="editor-slider-group">
+                    <label>روشنایی: <span id="val-brightness">۰</span></label>
+                    <input type="range" id="editor-brightness" min="-100" max="100" value="0" />
+                  </div>
+                  <div class="editor-slider-group">
+                    <label>کنتراست: <span id="val-contrast">۰</span></label>
+                    <input type="range" id="editor-contrast" min="-100" max="100" value="0" />
+                  </div>
+                  <div class="editor-slider-group">
+                    <label>اشباع رنگ: <span id="val-saturation">۰</span></label>
+                    <input type="range" id="editor-saturation" min="-100" max="100" value="0" />
+                  </div>
+                  <div class="editor-slider-group">
+                    <label>شفافیت: <span id="val-opacity">۱۰۰</span>٪</label>
+                    <input type="range" id="editor-opacity" min="0" max="100" value="100" />
+                  </div>
+                </div>
+                <div class="editor-settings-section">
+                  <h4>فیلترها</h4>
+                  <div class="editor-filters-grid">
+                    <button class="editor-filter-btn active" data-filter="none">اصلی</button>
+                    <button class="editor-filter-btn" data-filter="grayscale">سیاه و سفید</button>
+                    <button class="editor-filter-btn" data-filter="sepia">سبزایی</button>
+                    <button class="editor-filter-btn" data-filter="blur">تار</button>
+                    <button class="editor-filter-btn" data-filter="brightness">روشن</button>
+                    <button class="editor-filter-btn" data-filter="contrast">تیره</button>
+                  </div>
+                </div>
+                <div class="editor-settings-section">
+                  <h4>اطلاعات تصویر</h4>
+                  <div class="editor-info-grid">
+                    <div><span class="editor-info-label">نام فایل:</span> <span id="editor-info-name">—</span></div>
+                    <div><span class="editor-info-label">فرمت:</span> <span id="editor-info-format">—</span></div>
+                    <div><span class="editor-info-label">ابعاد:</span> <span id="editor-info-dims">—</span></div>
+                    <div><span class="editor-info-label">حجم:</span> <span id="editor-info-size">—</span></div>
+                  </div>
+                </div>
+                <div class="editor-actions-row">
+                  <button class="button" id="editor-download-btn">دانلود تصویر</button>
+                  <button class="button primary" id="editor-save-btn">ذخیره در گالری</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
       </div>
     </div>
 

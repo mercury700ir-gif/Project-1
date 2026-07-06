@@ -1791,6 +1791,7 @@ document.addEventListener("DOMContentLoaded", function () {
           '<div class="gallery-meta"><span>' + img.format + '</span><span>' + sizeStr + '</span>' + (dimStr ? '<span>' + dimStr + '</span>' : '') + '</div>' +
         '</div>' +
         '<div class="gallery-card-actions">' +
+          '<button class="btn-sm btn-gallery-edit" data-idx="' + i + '">ویرایش</button>' +
           '<button class="btn-sm btn-gallery-select" data-idx="' + i + '">انتخاب</button>' +
           '<button class="btn-sm btn-danger btn-gallery-delete" data-idx="' + i + '">حذف</button>' +
         '</div>' +
@@ -1817,6 +1818,13 @@ document.addEventListener("DOMContentLoaded", function () {
       btn.addEventListener("click", function () {
         var idx = parseInt(this.getAttribute("data-idx"));
         selectFromGallery(idx);
+      });
+    });
+
+    grid.querySelectorAll(".btn-gallery-edit").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var idx = parseInt(this.getAttribute("data-idx"));
+        openImageEditor(galleryImages[idx].src);
       });
     });
 
@@ -1853,9 +1861,241 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   window.selectFromGallery = function (idx) {
-    // For banner editing — set the banner image field
     var bannerImg = document.getElementById("modal-banner-image");
     if (bannerImg) bannerImg.value = galleryImages[idx].src;
+  };
+
+  // ════════════════════════════════════════════════
+  //  IMAGE EDITOR — Palleon-like Canvas Editor
+  // ════════════════════════════════════════════════
+
+  var editorCanvas, editorCtx, editorImg, editorZoom = 1;
+  var editorOriginalData = null;
+  var editorSettings = { brightness: 0, contrast: 0, saturation: 0, opacity: 100, filter: "none" };
+
+  window.openImageEditor = function (imageSrc) {
+    editorCanvas = document.getElementById("image-editor-canvas");
+    editorCtx = editorCanvas.getContext("2d");
+    editorZoom = 1;
+    editorSettings = { brightness: 0, contrast: 0, saturation: 0, opacity: 100, filter: "none" };
+
+    // Reset sliders
+    document.getElementById("editor-brightness").value = 0;
+    document.getElementById("editor-contrast").value = 0;
+    document.getElementById("editor-saturation").value = 0;
+    document.getElementById("editor-opacity").value = 100;
+    document.getElementById("val-brightness").textContent = "۰";
+    document.getElementById("val-contrast").textContent = "۰";
+    document.getElementById("val-saturation").textContent = "۰";
+    document.getElementById("val-opacity").textContent = "۱۰۰";
+    document.querySelectorAll(".editor-filter-btn").forEach(function(b) { b.classList.remove("active"); });
+    document.querySelector('.editor-filter-btn[data-filter="none"]').classList.add("active");
+
+    editorImg = new Image();
+    editorImg.crossOrigin = "anonymous";
+    editorImg.onload = function () {
+      editorCanvas.width = editorImg.naturalWidth;
+      editorCanvas.height = editorImg.naturalHeight;
+      editorOriginalData = editorCtx.getImageData(0, 0, editorCanvas.width, editorCanvas.height);
+      editorCtx.drawImage(editorImg, 0, 0);
+      updateEditorInfo(imageSrc);
+      updateZoomInfo();
+      showModal("image-editor-modal");
+    };
+    editorImg.src = imageSrc;
+  };
+
+  function updateEditorInfo(src) {
+    var name = src.split("/").pop() || "تصویر";
+    document.getElementById("editor-info-name").textContent = name;
+    document.getElementById("editor-info-format").textContent = name.split(".").pop().toUpperCase();
+    document.getElementById("editor-info-dims").textContent = editorCanvas.width + " × " + editorCanvas.height + " px";
+    document.getElementById("editor-info-size").textContent = Math.round(editorCanvas.toBlob ? 0 : 0) + " KB";
+    document.getElementById("editor-width").value = editorCanvas.width;
+    document.getElementById("editor-height").value = editorCanvas.height;
+
+    // Try to get actual file size
+    fetch(src).then(function(r) { return r.blob(); }).then(function(b) {
+      document.getElementById("editor-info-size").textContent = formatSize(b.size);
+    }).catch(function() {
+      document.getElementById("editor-info-size").textContent = "نامشخص";
+    });
+  }
+
+  function updateZoomInfo() {
+    document.getElementById("editor-zoom-info").textContent = toPersianNumbers(Math.round(editorZoom * 100)) + "٪";
+    editorCanvas.style.transform = "scale(" + editorZoom + ")";
+    editorCanvas.style.transformOrigin = "center center";
+  }
+
+  function applyEditorFilters() {
+    if (!editorOriginalData) return;
+    var w = editorCanvas.width, h = editorCanvas.height;
+    var tempCanvas = document.createElement("canvas");
+    tempCanvas.width = w;
+    tempCanvas.height = h;
+    var tempCtx = tempCanvas.getContext("2d");
+    tempCtx.putImageData(editorOriginalData, 0, 0);
+
+    // Apply CSS-like filters
+    var filterStr = "";
+    var b = 100 + editorSettings.brightness;
+    var c = 100 + editorSettings.contrast;
+    var s = 100 + editorSettings.saturation;
+    filterStr += "brightness(" + (b / 100) + ") ";
+    filterStr += "contrast(" + (c / 100) + ") ";
+    filterStr += "saturate(" + (s / 100) + ") ";
+    filterStr += "opacity(" + (editorSettings.opacity / 100) + ") ";
+
+    if (editorSettings.filter === "grayscale") filterStr += "grayscale(1) ";
+    else if (editorSettings.filter === "sepia") filterStr += "sepia(1) ";
+    else if (editorSettings.filter === "blur") filterStr += "blur(3px) ";
+    else if (editorSettings.filter === "brightness") filterStr += "brightness(1.3) ";
+    else if (editorSettings.filter === "contrast") filterStr += "contrast(1.5) ";
+
+    editorCtx.filter = filterStr.trim();
+    editorCtx.drawImage(tempCanvas, 0, 0);
+    editorCtx.filter = "none";
+  }
+
+  // Tool buttons
+  document.querySelectorAll(".editor-tool").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var tool = this.getAttribute("data-tool");
+      if (tool === "rotate-left") { rotateCanvas(-90); }
+      else if (tool === "rotate-right") { rotateCanvas(90); }
+      else if (tool === "flip-h") { flipCanvas("h"); }
+      else if (tool === "flip-v") { flipCanvas("v"); }
+      else if (tool === "zoom-in") { editorZoom = Math.min(editorZoom * 1.2, 5); updateZoomInfo(); }
+      else if (tool === "zoom-out") { editorZoom = Math.max(editorZoom / 1.2, 0.2); updateZoomInfo(); }
+      else if (tool === "reset") { resetEditor(); }
+    });
+  });
+
+  function rotateCanvas(deg) {
+    var w = editorCanvas.width, h = editorCanvas.height;
+    var tempCanvas = document.createElement("canvas");
+    tempCanvas.width = w; tempCanvas.height = h;
+    tempCanvas.getContext("2d").drawImage(editorCanvas, 0, 0);
+    if (Math.abs(deg) === 90) { editorCanvas.width = h; editorCanvas.height = w; }
+    editorCtx.save();
+    editorCtx.translate(editorCanvas.width / 2, editorCanvas.height / 2);
+    editorCtx.rotate(deg * Math.PI / 180);
+    editorCtx.drawImage(tempCanvas, -w / 2, -h / 2);
+    editorCtx.restore();
+    editorOriginalData = editorCtx.getImageData(0, 0, editorCanvas.width, editorCanvas.height);
+    updateEditorInfo(document.getElementById("modal-banner-image").value || "image");
+  }
+
+  function flipCanvas(dir) {
+    var w = editorCanvas.width, h = editorCanvas.height;
+    var tempCanvas = document.createElement("canvas");
+    tempCanvas.width = w; tempCanvas.height = h;
+    tempCanvas.getContext("2d").drawImage(editorCanvas, 0, 0);
+    editorCtx.save();
+    if (dir === "h") { editorCtx.translate(w, 0); editorCtx.scale(-1, 1); }
+    else { editorCtx.translate(0, h); editorCtx.scale(1, -1); }
+    editorCtx.drawImage(tempCanvas, 0, 0);
+    editorCtx.restore();
+    editorOriginalData = editorCtx.getImageData(0, 0, w, h);
+  }
+
+  function resetEditor() {
+    if (!editorOriginalData || !editorImg) return;
+    editorCanvas.width = editorImg.naturalWidth;
+    editorCanvas.height = editorImg.naturalHeight;
+    editorOriginalData = editorCtx.getImageData(0, 0, editorCanvas.width, editorCanvas.height);
+    editorCtx.drawImage(editorImg, 0, 0);
+    editorZoom = 1;
+    updateZoomInfo();
+    document.getElementById("editor-brightness").value = 0;
+    document.getElementById("editor-contrast").value = 0;
+    document.getElementById("editor-saturation").value = 0;
+    document.getElementById("editor-opacity").value = 100;
+    document.getElementById("val-brightness").textContent = "۰";
+    document.getElementById("val-contrast").textContent = "۰";
+    document.getElementById("val-saturation").textContent = "۰";
+    document.getElementById("val-opacity").textContent = "۱۰۰";
+    editorSettings = { brightness: 0, contrast: 0, saturation: 0, opacity: 100, filter: "none" };
+  }
+
+  // Sliders
+  ["brightness", "contrast", "saturation", "opacity"].forEach(function (key) {
+    var slider = document.getElementById("editor-" + key);
+    if (slider) {
+      slider.addEventListener("input", function () {
+        editorSettings[key] = parseInt(this.value);
+        document.getElementById("val-" + key).textContent = toPersianNumbers(this.value);
+        applyEditorFilters();
+      });
+    }
+  });
+
+  // Filter buttons
+  document.querySelectorAll(".editor-filter-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".editor-filter-btn").forEach(function (b) { b.classList.remove("active"); });
+      this.classList.add("active");
+      editorSettings.filter = this.getAttribute("data-filter");
+      applyEditorFilters();
+    });
+  });
+
+  // Resize
+  document.getElementById("editor-apply-size").addEventListener("click", function () {
+    var newW = parseInt(document.getElementById("editor-width").value);
+    var newH = parseInt(document.getElementById("editor-height").value);
+    if (!newW || !newH || newW < 1 || newH < 1) return;
+    var tempCanvas = document.createElement("canvas");
+    tempCanvas.width = editorCanvas.width;
+    tempCanvas.height = editorCanvas.height;
+    tempCanvas.getContext("2d").drawImage(editorCanvas, 0, 0);
+    editorCanvas.width = newW;
+    editorCanvas.height = newH;
+    editorCtx.drawImage(tempCanvas, 0, 0, newW, newH);
+    editorOriginalData = editorCtx.getImageData(0, 0, newW, newH);
+    updateEditorInfo(document.getElementById("modal-banner-image").value || "image");
+  });
+
+  // Lock ratio
+  document.getElementById("editor-lock-ratio").addEventListener("change", function () {
+    var lock = this.checked;
+    var wInput = document.getElementById("editor-width");
+    var hInput = document.getElementById("editor-height");
+    if (lock) {
+      wInput.addEventListener("input", function () {
+        hInput.value = Math.round(parseInt(this.value) * (editorCanvas.height / editorCanvas.width));
+      });
+      hInput.addEventListener("input", function () {
+        wInput.value = Math.round(parseInt(this.value) * (editorCanvas.width / editorCanvas.height));
+      });
+    }
+  });
+
+  // Download
+  document.getElementById("editor-download-btn").addEventListener("click", function () {
+    var link = document.createElement("a");
+    link.download = "edited-image.png";
+    link.href = editorCanvas.toDataURL("image/png");
+    link.click();
+  });
+
+  // Save to gallery
+  document.getElementById("editor-save-btn").addEventListener("click", function () {
+    var dataUrl = editorCanvas.toDataURL("image/png");
+    var name = (document.getElementById("modal-banner-image").value || "image").split("/").pop().replace(/\.[^.]+$/, "") + "-edited.png";
+    galleryImages.push({
+      src: dataUrl, name: name, format: "PNG", size: Math.round(dataUrl.length * 0.75),
+      tags: "edited", width: editorCanvas.width, height: editorCanvas.height
+    });
+    localStorage.setItem("admin_gallery", JSON.stringify(galleryImages));
+    renderGalleryImages();
+    alert("تصویر ویرایش شده در گالری ذخیره شد.");
+    closeImageEditor();
+  });
+
+  window.closeImageEditor = function () {
+    hideModal();
   };
 
 
