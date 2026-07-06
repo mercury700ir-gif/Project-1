@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تاریخچه کامل تسک‌ها | پروژه سایت مهبد نادری</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .history-page{max-width:960px;margin:0 auto;padding:40px 24px 100px}
+      .history-page h1{font-size:2.4rem;margin-bottom:6px;background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+      .history-page .lead{color:var(--muted);margin-bottom:40px;font-size:1.05rem;line-height:2}
+      .history-page h2{margin-top:52px;padding-bottom:12px;border-bottom:3px solid var(--accent);color:var(--accent);font-size:1.5rem}
+      .history-page h3{margin-top:28px;color:var(--ink);font-size:1.15rem}
+      .history-page p{margin-bottom:10px;text-align:justify;line-height:2}
+      .history-page ul{padding-right:24px;margin-bottom:10px}
+      .history-page li{margin-bottom:5px;line-height:1.9}
+      .toc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin-bottom:44px}
+      .toc h3{margin-top:0;margin-bottom:14px;color:var(--accent)}
+      .toc ol{padding-right:22px}
+      .toc a{color:var(--accent);font-weight:700;text-decoration:none}
+      .toc a:hover{text-decoration:underline}
+      .toc li{margin-bottom:5px;line-height:1.8}
+
+      /* Task Cards */
+      .task-section{margin:32px 0}
+      .task-card{border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:16px;background:var(--surface);backdrop-filter:blur(12px);transition:transform 200ms ease,box-shadow 200ms ease;position:relative;overflow:hidden}
+      .task-card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(23,26,31,0.08)}
+      .task-card::before{content:'';position:absolute;top:0;right:0;width:5px;height:100%;border-radius:0 14px 14px 0}
+      .task-card.green::before{background:linear-gradient(180deg,#00a32a,#0f766e)}
+      .task-card.blue::before{background:linear-gradient(180deg,#2271b1,#24507a)}
+      .task-card.gold::before{background:linear-gradient(180deg,#dba617,#c28b38)}
+      .task-card.red::before{background:linear-gradient(180deg,#d63638,#b71c1c)}
+      .task-card.purple::before{background:linear-gradient(180deg,#7c3aed,#5b21b6)}
+      .task-card.teal::before{background:linear-gradient(180deg,#0f766e,#065f46)}
+
+      .task-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+      .task-title{font-size:1.05rem;font-weight:800;color:var(--ink)}
+      .task-badge{display:inline-block;padding:3px 12px;border-radius:99px;font-size:0.72rem;font-weight:800}
+      .badge-done{background:rgba(0,163,42,0.12);color:#00a32a}
+      .badge-progress{background:rgba(34,113,177,0.12);color:#2271b1}
+      .badge-fix{background:rgba(219,166,23,0.12);color:#b8860b}
+      .badge-new{background:rgba(124,58,237,0.1);color:#7c3aed}
+
+      .task-body{font-size:0.92rem;color:var(--ink);line-height:1.9}
+      .task-body p{margin-bottom:8px}
+      .task-changes{margin-top:10px;padding:12px 16px;background:rgba(36,80,122,0.04);border-radius:8px;font-size:0.85rem}
+      .task-changes strong{color:var(--accent)}
+      .task-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+      .task-file{padding:3px 10px;background:var(--line);border-radius:6px;font-size:0.78rem;font-family:monospace;color:var(--accent)}
+
+      /* Phase Headers */
+      .phase-header{display:flex;align-items:center;gap:12px;margin:40px 0 20px;padding:16px 20px;border-radius:12px;color:#fff;font-weight:800;font-size:1.1rem}
+      .phase-1{background:linear-gradient(135deg,#2271b1,#1a5276)}
+      .phase-2{background:linear-gradient(135deg,#0f766e,#065f46)}
+      .phase-3{background:linear-gradient(135deg,#7c3aed,#5b21b6)}
+      .phase-4{background:linear-gradient(135deg,#d63638,#b71c1c)}
+      .phase-5{background:linear-gradient(135deg,#dba617,#b8860b)}
+      .phase-6{background:linear-gradient(135deg,#0891b2,#0e7490)}
+      .phase-7{background:linear-gradient(135deg,#c28b38,#92400e)}
+      .phase-8{background:linear-gradient(135deg,#059669,#047857)}
+      .phase-icon{font-size:1.4rem}
+
+      /* Stats */
+      .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:32px 0}
+      .stat-box{text-align:center;padding:20px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface)}
+      .stat-num{font-size:2rem;font-weight:900;color:var(--accent)}
+      .stat-label{font-size:0.82rem;color:var(--muted);margin-top:4px}
+
+      @media(max-width:768px){
+        .history-page{padding:20px 14px 60px}
+        .history-page h1{font-size:1.7rem}
+        .stats-row{grid-template-columns:repeat(2,1fr)}
+        .task-card{padding:18px}
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">رفتن به محتوا</a>
+    <header class="site-header" role="banner">
+      <div class="site-shell nav">
+        <a class="brand" href="index.html" aria-label="خانه">
+          <img class="brand-logo" src="assets/logo.png" alt="لوگو" />
+          <span class="brand-text"><span>مهبد نادری</span><small>معمار رشد دیجیتال</small></span>
+        </a>
+        <nav class="nav-links" aria-label="ناوبری">
+          <a href="index.html">خانه</a>
+          <a href="admin.html">پنل مدیریت</a>
+        </nav>
+        <button class="menu-toggle" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+      </div>
+    </header>
+    <div class="mobile-menu" aria-label="منوی موبایل">
+      <button class="mobile-menu-close" aria-label="بستن">&times;</button>
+      <nav><a href="index.html">خانه</a><a href="admin.html">پنل مدیریت</a></nav>
+    </div>
+
+    <main id="main-content" role="main" class="history-page">
+      <h1>تاریخچه کامل تسک‌های پروژه</h1>
+      <p class="lead">فهرست تمام درخواست‌ها و تغییرات اعمال شده از ابتدای طراحی سایت شخصی مهبد نادری تا زمان حال، به ترتیب زمانی و دسته‌بندی شده بر اساس بخش‌های سایت.</p>
+
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num">۲۵+</div><div class="stat-label">تسک انجام شده</div></div>
+        <div class="stat-box"><div class="stat-num">۱۵</div><div class="stat-label">جدول پایگاه داده</div></div>
+        <div class="stat-box"><div class="stat-num">۳۰+</div><div class="stat-label">نقطه اتصال API</div></div>
+        <div class="stat-box"><div class="stat-num">۱۰</div><div class="stat-label">فایل اصلی کد</div></div>
+      </div>
+
+      <div class="toc">
+        <h3>فهرست بخش‌ها</h3>
+        <ol>
+          <li><a href="#phase1">فاز ۱: طراحی اولیه و زیرساخت</a></li>
+          <li><a href="#phase2">فاز ۲: صفحات سایت عمومی</a></li>
+          <li><a href="#phase3">فاز ۳: پنل مدیریت</a></li>
+          <li><a href="#phase4">فاز ۴: موبایل و ریسپانسیو</a></li>
+          <li><a href="#phase5">فاز ۵: بک‌اند و پایگاه داده</a></li>
+          <li><a href="#phase6">فاز ۶: اتصال فرانت‌اند به بک‌اند</a></li>
+          <li><a href="#phase7">فاز ۷: ابزارهای پیشرفته</a></li>
+          <li><a href="#phase8">فاز ۸: استقرار، تست و بهینه‌سازی</a></li>
+        </ol>
+      </div>
+
+      <!-- ═══════ فاز ۱ ═══════ -->
+      <div class="phase-header phase-1"><span class="phase-icon">🏗️</span> فاز ۱: طراحی اولیه و زیرساخت</div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۱ — تنظیم RTL، فونت و اعداد فارسی</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>تمام صفحات با <code>lang="fa"</code> و <code>dir="rtl"</code> تنظیم شدند. فونت IRANSans با ۴ وزن از <code>assets/fonts/</code> بارگذاری شد. تابع <code>toPersianNumbers()</code> برای تبدیل خودکار اعداد انگلیسی به فارسی ساخته شد.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> اضافه شدن <code>toPersianNumbers</code> به script.js، فونت‌های @font-face در styles.css، متون justification مناسب</div>
+          <div class="task-files"><span class="task-file">styles.css</span><span class="task-file">script.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۲ — Hero Swiper برای دسکتاپ</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>اسلایدر تمام‌صفحه با Swiper.js CDN برای دسکتاپ ساخته شد. ۴ اسلاید با تصاویر موجود، افکت fade، auto-play هر ۵ ثانیه، ناوبری RTL سازگار.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> Swiper CDN اضافه شد، ۴ بنر با overlay gradient، انیمیشن ورود متن‌ها</div>
+          <div class="task-files"><span class="task-file">index.html</span><span class="task-file">styles.css</span></div>
+        </div>
+      </div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۳ — ساخت پنل مدیریت اولیه</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>پنل مدیریت کامل با ۹ تب (داشبورد، محتوا، کاربران، گالری، وبلاگ، فایل‌ها، پلاگین‌ها، شبکه‌ها، تنظیمات) ساخته شد. احراز هویت ساده با localStorage.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> admin.html + admin.js + admin-styles.css ایجاد شدند</div>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span><span class="task-file">admin-styles.css</span></div>
+        </div>
+      </div>
+
+      <!-- ═══════ فاز ۲ ═══════ -->
+      <div class="phase-header phase-2"><span class="phase-icon">📄</span> فاز ۲: صفحات سایت عمومی</div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۴ — صفحه وبلاگ (نوشته‌ها)</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>صفحه <code>blog.html</code> با قابلیت خواندن پست‌ها از localStorage، فیلتر sidebar (دسته‌بندی، نویسنده، مرتب‌سازی، نوع محتوا)، و نمایش تکی پست‌ها ساخته شد.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> blog.html ایجاد شد، پشتیبانی از ویدئو در پست‌ها، فیلتر sidebar</div>
+          <div class="task-files"><span class="task-file">blog.html</span></div>
+        </div>
+      </div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۵ — صفحه ورود و ثبت‌نام</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>صفحه <code>register.html</code> با تب‌های ورود و ثبت‌نام، ذخیره کاربران در localStorage، و ورود خودکار بعد از ثبت‌نام.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> register.html + reset-password.html ایجاد شدند</div>
+          <div class="task-files"><span class="task-file">register.html</span><span class="task-file">reset-password.html</span></div>
+        </div>
+      </div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۶ — دکمه ورود/عضویت در هدر</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>دکمه «ورود / عضویت» به هدر تمام صفحات اضافه شد. در دسکتاپ به صورت متن، در موبایل به صورت آیکون. وضعیت لاگین تشخیص داده می‌شود.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> ۴ فایل HTML به‌روزرسانی شد، CSS برای آیکون موبایل اضافه شد</div>
+          <div class="task-files"><span class="task-file">index.html</span><span class="task-file">about.html</span><span class="task-file">contact.html</span><span class="task-file">blog.html</span></div>
+        </div>
+      </div>
+
+      <!-- ═══════ فاز ۳ ═══════ -->
+      <div class="phase-header phase-3"><span class="phase-icon">⚙️</span> فاز ۳: پنل مدیریت — بهبودهای جامع</div>
+
+      <div class="task-card blue">
+        <div class="task-header">
+          <span class="task-title">تسک ۷ — مدیریت محتوا (Elementor-like)</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>ویرایشگر صفحات مشابه Elementor با بخش‌های قابل جمع‌شدن: Hero، محتوا، SEO، تصویر. ویرایشگر Quill.js برای متن غنی.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> ویرایشگر Section-based، فیلدهای dyanmic، ذخیره در database</div>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card blue">
+        <div class="task-header">
+          <span class="task-title">تسک ۸ — مدیریت بنرها با نقطه کانونی</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>ویرایش بنرها با اسلایدرهای position_x/position_y برای تنظیم نقطه کانونی تصویر. انتخاب تصویر از گالری با فایل منیجر.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> position_x/y در database، فایل منیجر modal، پیش‌نمایش زنده</div>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span><span class="task-file">database.sql</span></div>
+        </div>
+      </div>
+
+      <div class="task-card blue">
+        <div class="task-header">
+          <span class="task-title">تسک ۹ — مدیریت کاربران با نقش‌ها</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>سیستم نقش‌ها (مدیر سایت، مدیر محتوا، کاربر عادی). تب دوگانه: مدیریت سایت + اعضای سایت. ویرایش اطلاعات، تغییر رمز، تیک خبرنامه.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> تب‌های جدید در admin.html، نقش‌ها در users table، فرم‌های ویرایش modal</div>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card blue">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۰ — گالری با metadata و فرمت‌ها</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>زیر هر عکس: نام، سایز، فرمت، حجم، تگ‌ها. راهنمای فرمت تصاویر (WebP, JPEG, PNG, SVG) با توضیحات فارسی. فایل منیجر برای انتخاب از گالری.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> gallery-card با metadata، format-info-box، file-manager-modal</div>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span><span class="task-file">admin-styles.css</span></div>
+        </div>
+      </div>
+
+      <div class="task-card blue">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۱ — وبلاگ با انتشار زمان‌دار</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>دکمه انتشار با dropdown (فوری + زمان‌دار). نمایش وضعیت «در انتظار انتشار» در جدول. بررسی خودکار هر ۳۰ ثانیه.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> publish-dropdown، scheduled-publish-section، بررسی خودکار</div>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card blue">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۲ — پلاگین‌ها با آپلود و ویرایش کد</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>آپلود فایل پلاگین (ZIP/RAR/TAR/7Z). Plugin Edit Tool با ویرایشگر کد. تنظیمات پلاگین در Modal. راهنمای کامل ساخت پلاگین (<code>PLUGIN-GUIDE.html</code>).</p>
+          <div class="task-changes"><strong>تغییرات:</strong> plugins-upload tab، plugins-edit tab، plugin-settings-modal، PLUGIN-GUIDE.html</div>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span><span class="task-file">PLUGIN-GUIDE.html</span></div>
+        </div>
+      </div>
+
+      <div class="task-card blue">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۳ — شبکه‌های اجتماعی با ربات‌ها</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>دستورالعمل اتصال هر شبکه. تب ربات‌ها و بازوها. زمان‌بندی جداگانه برای اکانت‌ها و ربات‌ها. جداسازی نمایش.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> social-bots tab، social-instructions، checkbox مجزا در schedule</div>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card blue">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۴ — تنظیمات Analytics و Tag Manager</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>فیلد Tracking ID با اعتبارسنجی regex و تست اتصال. بخش Google Tag Manager با Container ID. ذخیره در database.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> analytics-test-result، gtm-test-result، اعتبارسنجی فرمت</div>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card blue">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۵ — هوش مصنوعی تولید محتوا</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>سیمولیشن پیشرفته با ۴ لحن و ۴ نوع محتوا. خروجی: عنوان SEO، متا، تگ‌ها، محتوای کامل با h2/h3، blockquote، لیست. رعایت RTL و قواعد نگارشی.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> rewrite کامل generateAIContent، template pools بر اساس لحن، ساختار مقاله قابل چاپ</div>
+          <div class="task-files"><span class="task-file">admin.js</span></div>
+        </div>
+      </div>
+
+      <!-- ═══════ فاز ۴ ═══════ -->
+      <div class="phase-header phase-4"><span class="phase-icon">📱</span> فاز ۴: موبایل و ریسپانسیو</div>
+
+      <div class="task-card red">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۶ — رفع مشکل منوی موبایل</span>
+          <span class="task-badge badge-fix">رفع باگ</span>
+        </div>
+        <div class="task-body">
+          <p>منوی ساندویچی در موبایل کار نمی‌کرد. ریشه مشکل: کد تکراری در script.js — نسخه قدیمی خارج از DOMContentLoaded اجرا می‌شد.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> حذف کد تکراری (۱۱۷ خط)، بازنویسی کامل منو با overlay تیره، انیمیشن slide-down، دکمه بستن</div>
+          <div class="task-files"><span class="task-file">script.js</span><span class="task-file">styles.css</span></div>
+        </div>
+      </div>
+
+      <div class="task-card red">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۷ — رفع مشکل نمایش دسکتاپ</span>
+          <span class="task-badge badge-fix">رفع باگ</span>
+        </div>
+        <div class="task-body">
+          <p>بخش Hero در دسکتاپ خراب بود. ریشه: <code>.hero-mobile-wrapper</code> بدون <code>display:none</code> پیش‌فرض، در دسکتاپ نمایش داده می‌شد.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> اضافه شدن display:none به .hero-mobile-wrapper در حالت پیش‌فرض</div>
+          <div class="task-files"><span class="task-file">styles.css</span></div>
+        </div>
+      </div>
+
+      <div class="task-card red">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۸ — رفع مشکل تب وبلاگ در موبایل</span>
+          <span class="task-badge badge-fix">رفع باگ</span>
+        </div>
+        <div class="task-body">
+          <p>تب وبلاگ در موبایل نمایش درستی نداشت. sub-tabs باید wrap شوند نه scroll. جدول باید کارتی شود.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> flex-wrap برای sub-tabs، overflow visible برای editor، word-break برای جداول</div>
+          <div class="task-files"><span class="task-file">admin-styles.css</span></div>
+        </div>
+      </div>
+
+      <div class="task-card red">
+        <div class="task-header">
+          <span class="task-title">تسک ۱۹ — منوی موبایل با طراحی شیک</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>منوی موبایل بازطراحی شد: overlay تیره ۸۰٪ شفافیت، blur ۲۴px، لینک‌ها وسط‌چین با underline در hover، انیمیشن slide-down از بالا.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> بازنویسی کامل CSS منوی موبایل، اضافه شدن دکمه بستن، focus trap</div>
+          <div class="task-files"><span class="task-file">styles.css</span><span class="task-file">script.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card red">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۰ — Hero موبایل جذاب</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>بخش ابتدایی هوم‌پیج موبایل با پس‌زمینه تمام‌عرض، overlay gradient، بادج «مشاوره رایگان»، آمار (۱۰+ سال، MBA، ۱۰۰+ پروژه)، و انیمیشن fadeSlideUp.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> hero-mobile-wrapper، hero-mobile-overlay، hero-mobile-stats، کلید animation</div>
+          <div class="task-files"><span class="task-file">index.html</span><span class="task-file">styles.css</span></div>
+        </div>
+      </div>
+
+      <div class="task-card red">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۱ — ریسپانسیو پنل مدیریت</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>تمام جداول در موبایل به layout کارتی تبدیل شدند. Modals از پایین slide می‌کنند. Sub-tabs wrap می‌شوند. Quill editor فشرده می‌شود.</p>
+          <div class="task-changes"><strong>تغییرات:</strong> data-label برای جداول، responsive rules در admin-styles.css</div>
+          <div class="task-files"><span class="task-file">admin-styles.css</span><span class="task-file">admin.html</span></div>
+        </div>
+      </div>
+
+      <!-- ═══════ فاز ۵ ═══════ -->
+      <div class="phase-header phase-5"><span class="phase-icon">🗄️</span> فاز ۵: بک‌اند و پایگاه داده</div>
+
+      <div class="task-card gold">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۲ — طراحی database و اسکیما</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>اسکیمای کامل MySQL با ۱۵ جدول: users, pages, posts, categories, tags, post_tags, banners, media, files, plugins, social_accounts, social_schedules, settings, contact_submissions, activity_log.</p>
+          <div class="task-files"><span class="task-file">database.sql</span><span class="task-file">server/schema.sql</span></div>
+        </div>
+      </div>
+
+      <div class="task-card gold">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۳ — ساخت سرور Express</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>سرور Node.js با Express، اتصال MySQL (mysql2/promise)، احراز هویت JWT + bcrypt، آپلود فایل با multer، CORS فعال.</p>
+          <div class="task-files"><span class="task-file">server/server.js</span><span class="task-file">server/db.js</span><span class="task-file">server/package.json</span><span class="task-file">server/.env</span></div>
+        </div>
+      </div>
+
+      <div class="task-card gold">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۴ — ۱۰ ماژور Route</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>۱۰ ماژور API: auth, users, posts, pages, banners, media, files, plugins, social, settings. تمام endpointها با async/await و MySQL.</p>
+          <div class="task-files"><span class="task-file">server/routes/*.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card gold">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۵ — نصب و راه‌اندازی MySQL</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>MySQL از طریق Homebrew نصب شد. دیتابیس <code>mahbod_site</code> ایجاد و اسکیما وارد شد. داده‌های پیش‌فرض (مدیر، صفحات، بنرها، شبکه‌ها) seed شد.</p>
+        </div>
+      </div>
+
+      <!-- ═══════ فاز ۶ ═══════ -->
+      <div class="phase-header phase-6"><span class="phase-icon">🔗</span> فاز ۶: اتصال فرانت‌اند به بک‌اند</div>
+
+      <div class="task-card teal">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۶ — ساخت ماژول api.js</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>ماژول مرکزی API client با ۳۰+ متد. مدیریت JWT token. تشخیص آفلاین بودن بک‌اند و fallback به localStorage.</p>
+          <div class="task-files"><span class="task-file">api.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card teal">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۷ — اتصال احراز هویت</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>ورود، ثبت‌نام و بازیابی رمز از طریق API. ذخیره JWT token. بررسی وضعیت لاگین در هدر.</p>
+          <div class="task-files"><span class="task-file">admin.js</span><span class="task-file">register.html</span><span class="task-file">reset-password.html</span></div>
+        </div>
+      </div>
+
+      <div class="task-card teal">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۸ — اتصال مدیریت کاربران</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>لیست مدیران و اعضای سایت از API خوانده می‌شود. افزودن، ویرایش رمز، حذف از طریق API.</p>
+          <div class="task-files"><span class="task-file">admin.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card teal">
+        <div class="task-header">
+          <span class="task-title">تسک ۲۹ — اتصال وبلاگ</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>لیست پست‌ها از API خوانده می‌شود. ایجاد، ویرایش، حذف از طریق API. انتشار زمان‌دار.</p>
+          <div class="task-files"><span class="task-file">admin.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card teal">
+        <div class="task-header">
+          <span class="task-title">تسک ۳۰ — اتصال تنظیمات</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>بارگذاری و ذخیره تنظیمات (SEO، Analytics، Tag Manager، تماس) از طریق API.</p>
+          <div class="task-files"><span class="task-file">admin.js</span></div>
+        </div>
+      </div>
+
+      <!-- ═══════ فاز ۷ ═══════ -->
+      <div class="phase-header phase-7"><span class="phase-icon">🎨</span> فاز ۷: ابزارهای پیشرفته</div>
+
+      <div class="task-card purple">
+        <div class="task-header">
+          <span class="task-title">تسک ۳۱ — ویرایشگر تصویر (Palleon-like)</span>
+          <span class="task-badge badge-new">جدید</span>
+        </div>
+        <div class="task-body">
+          <p>ویرایشگر Canvas با ابزارهای: برش، چرخش، flips، zoom. اسلایدرهای روشنایی/کنتراست/اشباع/شفافیت. ۶ فیلتر. اطلاعات تصویر. دانلود و ذخیره در گالری.</p>
+          <div class="task-files"><span class="task-file">admin.html</span><span class="task-file">admin.js</span><span class="task-file">admin-styles.css</span></div>
+        </div>
+      </div>
+
+      <div class="task-card purple">
+        <div class="task-header">
+          <span class="task-title">تسک ۳۲ — راهنمای ساخت پلاگین</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>فایل HTML زیبا و RTL با آموزش کامل ساخت پلاگین: ساختار فایل، manifest، database، hook‌ها، امنیت، نصب.</p>
+          <div class="task-files"><span class="task-file">PLUGIN-GUIDE.html</span></div>
+        </div>
+      </div>
+
+      <div class="task-card purple">
+        <div class="task-header">
+          <span class="task-title">تسک ۳۳ — مستندات کامل پرامپت‌ها</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>فایل <code>SITE-PROMPTS.html</code> با ۱۱ بخش کامل: معماری، API، database، احراز هویت، صفحات، پنل مدیریت، راه‌اندازی.</p>
+          <div class="task-files"><span class="task-file">SITE-PROMPTS.html</span></div>
+        </div>
+      </div>
+
+      <!-- ═══════ فاز ۸ ═══════ -->
+      <div class="phase-header phase-8"><span class="phase-icon">🚀</span> فاز ۸: استقرار، تست و بهینه‌سازی</div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۳۴ — بهینه‌سازی Accessible/Performance/SEO</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>Skip-link، ARIA landmarks، focus-visible، prefers-reduced-motion. Lazy loading تصاویر. Open Graph، JSON-LD، canonical، sitemap.xml، robots.txt.</p>
+          <div class="task-files"><span class="task-file">styles.css</span><span class="task-file">sitemap.xml</span><span class="task-file">robots.txt</span></div>
+        </div>
+      </div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۳۵ — تست جامع (۵۹/۵۹)</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>اسکریپت اعتبارسنجی <code>test-validate.js</code> با ۵۹ تست: HTML structure, CSS syntax, JS syntax, SEO, accessibility, file existence.</p>
+          <div class="task-files"><span class="task-file">test-validate.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۳۶ — استقرار روی Netlify</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>سایت روی Netlify deploy شد. مشکل API در hosting استاتیک با fallback به localStorage حل شد.</p>
+          <div class="task-files"><span class="task-file">api.js</span></div>
+        </div>
+      </div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۳۷ — راهنمای نصب</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>فایل <code>HOW-TO-INSTALL.txt</code> با راهنمای کامل راه‌اندازی محلی و استقرار.</p>
+          <div class="task-files"><span class="task-file">HOW-TO-INSTALL.txt</span></div>
+        </div>
+      </div>
+
+      <div class="task-card green">
+        <div class="task-header">
+          <span class="task-title">تسک ۳۸ — بررسی Copilot و PR</span>
+          <span class="task-badge badge-done">انجام شده</span>
+        </div>
+        <div class="task-body">
+          <p>Copilot کد را فرمت‌بندی کرد (prettier-style) و PR #2 ایجاد و مرج شد. ۵۹/۵۹ تست پاس شد.</p>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-shell footer-inner">
+        <span>© سایت شخصی مهبد نادری — تاریخچه کامل تسک‌ها</span>
+      </div>
+    </footer>
+    <script defer src="script.js"></script>
+  </body>
+</html>
