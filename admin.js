@@ -296,7 +296,37 @@ var DEFAULT_PAGES = {
   },
 };
 function getPages() {
-  return Store.get("pages", DEFAULT_PAGES);
+  var pages = Store.get("pages", DEFAULT_PAGES);
+  // Migrate old format to Elementor sections
+  for (var key in pages) {
+    var p = pages[key];
+    if (!p.sections || !p.sections.length) {
+      p.sections = [];
+      if (p.h1) {
+        var sec1 = { cols: [{ w: [] }], bg: "#ffffff" };
+        sec1.cols[0].w.push({ t: "heading", d: { text: p.h1, tag: "h1" } });
+        if (p.lead) sec1.cols[0].w.push({ t: "text", d: { content: p.lead } });
+        if (p.btn1Text) sec1.cols[0].w.push({ t: "spacer", d: { h: "20" } });
+        if (p.btn1Text) sec1.cols[0].w.push({ t: "button", d: { text: p.btn1Text, link: p.btn1Link || "#", bg: "#2271b1", tc: "#fff" } });
+        p.sections.push(sec1);
+      }
+      if (p.image) {
+        var sec2 = { cols: [{ w: [] }], bg: "#ffffff" };
+        sec2.cols[0].w.push({ t: "image", d: { src: p.image, alt: p.imageAlt || "", w: "100%" } });
+        p.sections.push(sec2);
+      }
+    }
+    // Normalize column structure
+    (p.sections || []).forEach(function (sec) {
+      if (!sec.cols) sec.cols = sec.columns || [{ w: [] }];
+      delete sec.columns;
+      sec.cols.forEach(function (col) {
+        if (!col.w) col.w = col.widgets || [];
+        delete col.widgets;
+      });
+    });
+  }
+  return pages;
 }
 function savePages(pages) {
   Store.set("pages", pages);
@@ -1370,10 +1400,378 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ════════════════════════════════════════════════
-  //  PAGE EDITOR — Elementor-like
+  //  ELEMENTOR PAGE BUILDER — Clean Implementation
   // ════════════════════════════════════════════════
-  //  ELEMENTOR PAGE BUILDER
-  // ════════════════════════════════════════════════
+
+  var pages = getPages();
+  var editingPage = null;
+  var ebHistory = [];
+  var ebHistoryIdx = -1;
+  var ebSelected = null;
+  var ebDevice = "desktop";
+  var ebWidgetTarget = { sec: 0, col: 0 };
+
+  var WIDGETS = {
+    heading:   { name:"عنوان",   icon:"H",  f:[{k:"text",l:"متن",t:"text",d:"عنوان جدید"},{k:"tag",l:"اندازه",t:"sel",o:["h1","h2","h3","h4"],d:"h2"}] },
+    text:      { name:"متن",     icon:"T",  f:[{k:"content",l:"محتوا",t:"area",d:"متن نمونه"}] },
+    image:     { name:"تصویر",   icon:"🖼", f:[{k:"src",l:"آدرس",t:"text"},{k:"alt",l:"alt",t:"text"},{k:"w",l:"عرض",t:"text",d:"100%"}] },
+    video:     { name:"ویدئو",   icon:"▶",  f:[{k:"url",l:"آدرس ویدئو",t:"text"}] },
+    button:    { name:"دکمه",    icon:"⬜", f:[{k:"text",l:"متن",t:"text",d:"کلیک"},{k:"link",l:"لینک",t:"text"},{k:"bg",l:"رنگ",t:"color",d:"#2271b1"},{k:"tc",l:"متن",t:"color",d:"#fff"}] },
+    icon:      { name:"آیکون",   icon:"★",  f:[{k:"name",l:"آیکون",t:"text",d:"★"},{k:"sz",l:"اندازه",t:"text",d:"48px"},{k:"color",l:"رنگ",t:"color",d:"#2271b1"}] },
+    divider:   { name:"خط",      icon:"—",  f:[{k:"w",l:"عرض",t:"text",d:"100%"},{k:"color",l:"رنگ",t:"color",d:"#e0e0e0"}] },
+    spacer:    { name:"فاصله",   icon:"↕",  f:[{k:"h",l:"ارتفاع",t:"text",d:"40"}] },
+    gallery:   { name:"گالری",   icon:"⊞",  f:[{k:"cols",l:"ستون",t:"sel",o:["2","3","4"],d:"3"}] },
+    quote:     { name:"نقل‌قول", icon:"❝",  f:[{k:"text",l:"متن",t:"area"},{k:"author",l:"نویسنده",t:"text"}] },
+    counter:   { name:"شمارنده", icon:"#",  f:[{k:"num",l:"عدد",t:"text",d:"100"},{k:"sfx",l:"پسوند",t:"text",d:"+"},{k:"label",l:"عنوان",t:"text"}] },
+    progress:  { name:"نوار پیشرفت",icon:"▰",f:[{k:"pct",l:"درصد",t:"text",d:"75"},{k:"label",l:"برچسب",t:"text"},{k:"color",l:"رنگ",t:"color",d:"#2271b1"}] },
+    tabs:      { name:"تب‌ها",   icon:"⊟", f:[{k:"items",l:"عنوان:محتوا (کاما)",t:"area"}] },
+    accordion: { name:"آکاردئون",icon:"☰", f:[{k:"items",l:"عنوان:محتوا (کاما)",t:"area"}] },
+    toggle:    { name:"تگل",     icon:"▽", f:[{k:"title",l:"عنوان",t:"text"},{k:"content",l:"محتوا",t:"area"}] },
+    map:       { name:"نقشه",   icon:"🗺", f:[{k:"html",l:"کد embed",t:"area"}] },
+    code:      { name:"کد",      icon:"{}", f:[{k:"code",l:"کد",t:"area"}] },
+    html:      { name:"HTML",    icon:"</>",f:[{k:"html",l:"کد HTML",t:"area"}] },
+    imageBox:  { name:"باکس تصویر",icon:"▣",f:[{k:"src",l:"تصویر",t:"text"},{k:"title",l:"عنوان",t:"text"},{k:"desc",l:"توضیحات",t:"area"}] },
+    iconBox:   { name:"باکس آیکون",icon:"◈",f:[{k:"icon",l:"آیکون",t:"text",d:"★"},{k:"title",l:"عنوان",t:"text"},{k:"desc",l:"توضیحات",t:"area"},{k:"color",l:"رنگ",t:"color",d:"#2271b1"}] },
+    cta:       { name:"CTA",     icon:"📢",f:[{k:"title",l:"عنوان",t:"text"},{k:"desc",l:"توضیحات",t:"area"},{k:"btn",l:"دکمه",t:"text",d:"همین الان"},{k:"link",l:"لینک",t:"text"},{k:"bg",l:"رنگ",t:"color",d:"#2271b1"}] },
+  };
+
+  function initPageEditor() {
+    pages = getPages();
+    renderPagesList();
+    bind("btn-new-page", "click", function () {
+      var n = prompt("نام صفحه (انگلیسی):");
+      if (!n) return;
+      n = n.toLowerCase().replace(/[^a-z0-9-]/g, "");
+      if (!n) { alert("نام نامعتبر."); return; }
+      if (pages[n]) { alert("تکراری."); return; }
+      pages[n] = { title: n, sections: [] };
+      savePages(pages);
+      openBuilder(n);
+    });
+    bind("eb-back-pages", "click", function () {
+      show("content-pages"); hide("content-editor");
+      editingPage = null; renderPagesList();
+    });
+    bind("eb-save-btn", "click", function () {
+      if (!editingPage) return;
+      savePages(pages);
+      showToast("ذخیره شد");
+    });
+    bind("eb-undo", "click", function () { ebUndo(); });
+    bind("eb-redo", "click", function () { ebRedo(); });
+    bind("eb-navigator-toggle", "click", function () { toggle("eb-navigator"); });
+    bind("eb-navigator-close", "click", function () { hide("eb-navigator"); });
+    bind("eb-settings-close", "click", function () { hide("eb-settings"); });
+    bind("eb-add-section", "click", function () { addSection(); });
+    bind("eb-add-section-empty", "click", function () { addSection(); });
+    bind("eb-widget-panel-close", "click", function () { hide("eb-widget-panel"); });
+    document.querySelectorAll(".eb-res-btn").forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll(".eb-res-btn").forEach(function (x) { x.classList.remove("active"); });
+        this.classList.add("active");
+        ebDevice = this.getAttribute("data-device");
+        var c = $("eb-canvas");
+        c.className = "eb-canvas" + (ebDevice !== "desktop" ? " device-" + ebDevice : "");
+      });
+    });
+    bind("eb-widget-search", "input", function () {
+      var q = this.value.toLowerCase();
+      document.querySelectorAll(".eb-widget-item").forEach(function (x) {
+        x.style.display = (x.getAttribute("data-name") || "").includes(q) ? "" : "none";
+      });
+    });
+    buildWidgetGrid();
+  }
+
+  function buildWidgetGrid() {
+    var g = $("eb-widget-grid");
+    if (!g) return;
+    g.innerHTML = "";
+    for (var k in WIDGETS) {
+      var w = WIDGETS[k];
+      var d = document.createElement("div");
+      d.className = "eb-widget-item";
+      d.setAttribute("data-w", k);
+      d.setAttribute("data-name", w.name);
+      d.innerHTML = '<div class="eb-widget-item-icon">' + w.icon + '</div><div class="eb-widget-item-name">' + w.name + '</div>';
+      d.onclick = function () { addWidget(this.getAttribute("data-w")); hide("eb-widget-panel"); };
+      g.appendChild(d);
+    }
+  }
+
+  function renderPagesList() {
+    var tb = $("pages-table-body");
+    if (!tb) return;
+    tb.innerHTML = "";
+    for (var k in pages) {
+      var p = pages[k];
+      var wc = countWidgets(p);
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td>' + esc(p.title || k) + '</td><td>' + k + '.html</td><td>' + pn(wc) + ' ویجت</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm btn-edit-page" data-p="' + k + '">ویرایش</button></td>';
+      tb.appendChild(tr);
+    }
+    tb.querySelectorAll(".btn-edit-page").forEach(function (b) {
+      b.onclick = function () { openBuilder(this.getAttribute("data-p")); };
+    });
+  }
+
+  function countWidgets(p) {
+    return (p.sections || []).reduce(function (s, sec) {
+      return s + (sec.cols || []).reduce(function (s2, c) { return s2 + (c.w || []).length; }, 0);
+    }, 0);
+  }
+
+  function openBuilder(key) {
+    editingPage = key;
+    var p = pages[key];
+    if (!p) return;
+    if (!p.sections) p.sections = [];
+    $("eb-page-title-display").textContent = p.title || key;
+    show("content-editor"); hide("content-pages");
+    ebHistory = [JSON.parse(JSON.stringify(p.sections))];
+    ebHistoryIdx = 0;
+    ebSelected = null;
+    renderCanvas();
+    renderNav();
+    renderSettings();
+  }
+
+  function renderCanvas() {
+    var cv = $("eb-canvas");
+    var emp = $("eb-canvas-empty");
+    var p = pages[editingPage];
+    if (!p || !p.sections || !p.sections.length) {
+      cv.innerHTML = "";
+      if (emp) { cv.appendChild(emp); emp.style.display = "flex"; }
+      return;
+    }
+    if (emp) emp.style.display = "none";
+    cv.innerHTML = "";
+    p.sections.forEach(function (sec, si) {
+      var se = document.createElement("div");
+      se.className = "eb-section" + (selEq("section", si) ? " selected" : "");
+      se.setAttribute("data-si", si);
+      var h = document.createElement("div");
+      h.className = "eb-section-handle";
+      h.innerHTML = '<button data-act="add-col">+</button><button data-act="del-sec">✕</button>';
+      h.querySelector('[data-act="add-col"]').onclick = function (e) {
+        e.stopPropagation();
+        if (!sec.cols) sec.cols = [];
+        sec.cols.push({ w: [] });
+        save(); renderCanvas(); renderNav();
+      };
+      h.querySelector('[data-act="del-sec"]').onclick = function (e) {
+        e.stopPropagation();
+        p.sections.splice(si, 1);
+        save(); renderCanvas(); renderNav();
+      };
+      se.appendChild(h);
+      var cols = document.createElement("div");
+      cols.className = "eb-columns";
+      cols.style.gridTemplateColumns = "repeat(" + Math.max(1, (sec.cols || []).length) + ", 1fr)";
+      (sec.cols || []).forEach(function (col, ci) {
+        var ce = document.createElement("div");
+        ce.className = "eb-column" + (selEq("col", si, ci) ? " selected" : "");
+        ce.setAttribute("data-si", si);
+        ce.setAttribute("data-ci", ci);
+        ce.onclick = function (e) { if (e.target === ce) selectEl("col", si, ci); };
+        (col.w || []).forEach(function (wgt, wi) {
+          var we = document.createElement("div");
+          we.className = "eb-widget" + (selEq("widget", si, ci, wi) ? " selected" : "");
+          we.draggable = true;
+          we.innerHTML = '<div class="eb-widget-handle">⋮⋮</div><div class="eb-widget-delete">✕</div><div class="eb-widget-content">' + renderW(wgt) + '</div>';
+          we.onclick = function (e) { e.stopPropagation(); selectEl("widget", si, ci, wi); };
+          we.querySelector(".eb-widget-delete").onclick = function (e) { e.stopPropagation(); col.w.splice(wi, 1); save(); renderCanvas(); renderNav(); };
+          we.ondragstart = function (e) { e.dataTransfer.setData("text", JSON.stringify({s:si,c:ci,w:wi})); we.classList.add("eb-dragging"); };
+          we.ondragend = function () { we.classList.remove("eb-dragging"); };
+          ce.appendChild(we);
+        });
+        var ab = document.createElement("button");
+        ab.className = "eb-add-widget-btn";
+        ab.textContent = "+ ویجت";
+        ab.onclick = function (e) { e.stopPropagation(); ebWidgetTarget = {sec:si,col:ci}; show("eb-widget-panel"); };
+        ce.appendChild(ab);
+        ce.ondragover = function (e) { e.preventDefault(); ce.classList.add("eb-drop-target"); };
+        ce.ondragleave = function () { ce.classList.remove("eb-drop-target"); };
+        ce.ondrop = function (e) {
+          e.preventDefault(); ce.classList.remove("eb-drop-target");
+          try {
+            var d = JSON.parse(e.dataTransfer.getData("text"));
+            var sc = p.sections[d.s].cols[d.c];
+            var w = sc.w.splice(d.w, 1)[0];
+            col.w.push(w);
+            save(); renderCanvas(); renderNav();
+          } catch(ex) {}
+        };
+        cols.appendChild(ce);
+      });
+      se.appendChild(cols);
+      cv.appendChild(se);
+    });
+  }
+
+  function renderW(wgt) {
+    var d = wgt.d || {};
+    switch (wgt.t) {
+      case "heading": return "<" + (d.tag||"h2") + ">" + esc(d.text||"عنوان") + "</" + (d.tag||"h2") + ">";
+      case "text": return "<p>" + (d.content||"متن") + "</p>";
+      case "image": return '<img src="'+esc(d.src||'')+'" alt="'+esc(d.alt||'')+'" style="width:'+(d.w||'100%')+';border-radius:4px" />';
+      case "video": return '<div style="background:#000;padding:40px;text-align:center;border-radius:4px;color:#fff">▶ ویدئو</div>';
+      case "button": return '<a href="'+esc(d.link||'#')+'" style="display:inline-block;padding:10px 24px;background:'+(d.bg||'#2271b1')+';color:'+(d.tc||'#fff')+';border-radius:6px;text-decoration:none;font-weight:700">'+esc(d.text||'کلیک')+'</a>';
+      case "icon": return '<div style="font-size:'+(d.sz||'48px')+';color:'+(d.color||'#2271b1')+';text-align:center">'+esc(d.name||'★')+'</div>';
+      case "divider": return '<hr style="width:'+(d.w||'100%')+';background:'+(d.color||'#e0e0e0')+';border:none;height:1px" />';
+      case "spacer": return '<div style="height:'+(d.h||'40')+'px"></div>';
+      case "gallery": return '<div style="display:grid;grid-template-columns:repeat('+(d.cols||3)+',1fr);gap:8px"><div style="background:#f0f0f0;padding:30px;text-align:center;border-radius:4px;color:#999">گالری</div></div>';
+      case "quote": return '<blockquote style="border-right:3px solid #2271b1;padding:16px;background:#f8f9fa;border-radius:0 6px 6px 0"><p>'+(d.text||'')+'</p><cite>— '+(d.author||'')+'</cite></blockquote>';
+      case "counter": return '<div style="text-align:center"><div style="font-size:2.5rem;font-weight:900;color:#2271b1">'+esc(d.num||'0')+esc(d.sfx||'')+'</div><div>'+(d.label||'')+'</div></div>';
+      case "progress": return '<div><div style="display:flex;justify-content:space-between;font-size:0.85rem"><span>'+(d.label||'')+'</span><span>'+(d.pct||'0')+'%</span></div><div style="background:#e0e0e0;border-radius:4px;height:8px"><div style="width:'+(d.pct||0)+'%;background:'+(d.color||'#2271b1')+';height:100%;border-radius:4px"></div></div></div>';
+      case "tabs": return '<div style="display:flex;gap:4px;border-bottom:2px solid #e0e0e0"><div style="padding:8px 16px;border-bottom:2px solid #2271b1;color:#2271b1;font-weight:700">تب ۱</div><div style="padding:8px 16px;color:#999">تب ۲</div></div>';
+      case "accordion": return '<div style="border:1px solid #e0e0e0;border-radius:4px"><div style="padding:12px;background:#f8f9fa">عنوان ▾</div></div>';
+      case "toggle": return '<div style="border:1px solid #e0e0e0;border-radius:4px;padding:12px;display:flex;justify-content:space-between"><span>'+(d.title||'تگل')+'</span><span>▼</span></div>';
+      case "map": return '<div style="background:#e8e8e8;padding:40px;text-align:center;border-radius:4px;color:#999">🗺 نقشه</div>';
+      case "code": return '<pre style="background:#1e1e2e;color:#cdd6f4;padding:12px;border-radius:4px;font-size:0.82rem;direction:ltr;text-align:left">'+esc(d.code||'')+'</pre>';
+      case "html": return '<div>'+( d.html||'')+'</div>';
+      case "imageBox": return '<div style="text-align:center"><img src="'+esc(d.src||'')+'" style="max-width:100%;border-radius:4px" /><h3 style="margin:8px 0">'+esc(d.title||'')+'</h3><p style="color:#666">'+esc(d.desc||'')+'</p></div>';
+      case "iconBox": return '<div style="text-align:center;padding:16px"><div style="font-size:2rem;color:'+(d.color||'#2271b1')+'">'+esc(d.icon||'★')+'</div><h3 style="margin:8px 0">'+esc(d.title||'')+'</h3><p style="color:#666">'+esc(d.desc||'')+'</p></div>';
+      case "cta": return '<div style="background:'+(d.bg||'#2271b1')+';color:#fff;padding:32px;text-align:center;border-radius:8px"><h2 style="margin:0 0 8px;color:#fff">'+esc(d.title||'')+'</h2><p style="margin:0 0 16px;opacity:0.9">'+(d.desc||'')+'</p><a href="'+esc(d.link||'#')+'" style="display:inline-block;padding:12px 32px;background:#fff;color:'+(d.bg||'#2271b1')+';border-radius:6px;text-decoration:none;font-weight:700">'+esc(d.btn||'همین الان')+'</a></div>';
+      default: return '<div style="padding:20px;text-align:center;color:#ccc;border:1px dashed #ddd;border-radius:4px">ویجت</div>';
+    }
+  }
+
+  function selectEl(type, si, ci, wi) {
+    ebSelected = { type:type, si:si, ci:ci, wi:wi };
+    renderCanvas(); renderSettings(); renderNav();
+  }
+
+  function selEq(type, si, ci, wi) {
+    if (!ebSelected || ebSelected.type !== type) return false;
+    if (type === "section") return ebSelected.si === si;
+    if (type === "col") return ebSelected.si === si && ebSelected.ci === ci;
+    if (type === "widget") return ebSelected.si === si && ebSelected.ci === ci && ebSelected.wi === wi;
+    return false;
+  }
+
+  function renderSettings() {
+    var b = $("eb-settings-body");
+    var t = $("eb-settings-title");
+    show("eb-settings");
+    if (!ebSelected) { b.innerHTML = '<p class="eb-settings-empty">یک عنصر انتخاب کنید</p>'; t.textContent = "تنظیمات"; return; }
+    if (ebSelected.type === "widget") {
+      var wgt = pages[editingPage].sections[ebSelected.si].cols[ebSelected.ci].w[ebSelected.wi];
+      var def = WIDGETS[wgt.t];
+      t.textContent = "تنظیمات: " + (def ? def.name : wgt.t);
+      var h = "";
+      if (def && def.f) def.f.forEach(function (f) {
+        var v = (wgt.d||{})[f.k] || f.d || "";
+        if (f.t === "area") h += '<div class="field"><label>'+f.l+'</label><textarea id="ef-'+f.k+'">'+esc(v)+'</textarea></div>';
+        else if (f.t === "sel") h += '<div class="field"><label>'+f.l+'</label><select id="ef-'+f.k+'">'+f.o.map(function(o){return '<option value="'+o+'"'+(v===o?' selected':'')+'>'+o+'</option>';}).join('')+'</select></div>';
+        else if (f.t === "color") h += '<div class="field"><label>'+f.l+'</label><input type="color" id="ef-'+f.k+'" value="'+v+'" /></div>';
+        else h += '<div class="field"><label>'+f.l+'</label><input type="text" id="ef-'+f.k+'" value="'+esc(v)+'" /></div>';
+      });
+      b.innerHTML = h;
+      b.querySelectorAll("input,textarea,select").forEach(function (el) {
+        el.oninput = function () {
+          var k = this.id.replace("ef-","");
+          if (!wgt.d) wgt.d = {};
+          wgt.d[k] = this.value;
+          save();
+          var wc = document.querySelector('[data-si="'+ebSelected.si+'"][data-ci="'+ebSelected.ci+'"] .eb-widget:nth-child('+(ebSelected.wi+1)+') .eb-widget-content');
+          if (wc) wc.innerHTML = renderW(wgt);
+        };
+      });
+    } else {
+      t.textContent = ebSelected.type === "section" ? "تنظیمات بخش" : "تنظیمات ستون";
+      b.innerHTML = '<p class="eb-settings-empty">انتخاب شده</p>';
+    }
+  }
+
+  function renderNav() {
+    var tree = $("eb-navigator-tree");
+    var p = pages[editingPage];
+    if (!p || !p.sections || !p.sections.length) { tree.innerHTML = '<p style="color:#666;padding:12px;font-size:0.82rem">بدون بخش</p>'; return; }
+    var h = "";
+    p.sections.forEach(function (sec, si) {
+      h += '<div class="eb-nav-item'+(selEq("section",si)?' active':'')+'" data-sel="section-'+si+'"><span>▦</span><span>بخش '+pn(si+1)+'</span><span class="eb-nav-delete" data-del="'+si+'">✕</span></div>';
+      (sec.cols||[]).forEach(function (col, ci) {
+        h += '<div class="eb-nav-children"><div class="eb-nav-item" data-sel="col-'+si+'-'+ci+'"><span>▫</span><span>ستون '+pn(ci+1)+'</span></div>';
+        (col.w||[]).forEach(function (wgt, wi) {
+          var def = WIDGETS[wgt.t];
+          h += '<div class="eb-nav-item" data-sel="widget-'+si+'-'+ci+'-'+wi+'"><span>'+(def?def.icon:'?')+'</span><span>'+(def?def.name:wgt.t)+'</span></div>';
+        });
+        h += '</div>';
+      });
+      h += '</div>';
+    });
+    tree.innerHTML = h;
+    tree.querySelectorAll(".eb-nav-item[data-sel]").forEach(function (el) {
+      el.onclick = function () {
+        var p2 = this.getAttribute("data-sel").split("-");
+        if (p2[0]==="section") selectEl("section",+p2[1]);
+        else if (p2[0]==="col") selectEl("col",+p2[1],+p2[2]);
+        else if (p2[0]==="widget") selectEl("widget",+p2[1],+p2[2],+p2[3]);
+      };
+    });
+    tree.querySelectorAll(".eb-nav-delete[data-del]").forEach(function (el) {
+      el.onclick = function (e) {
+        e.stopPropagation();
+        pages[editingPage].sections.splice(+this.getAttribute("data-del"),1);
+        save(); renderCanvas(); renderNav();
+      };
+    });
+  }
+
+  function addSection() {
+    var p = pages[editingPage];
+    if (!p) return;
+    if (!p.sections) p.sections = [];
+    p.sections.push({ cols: [{ w: [] }] });
+    save(); renderCanvas(); renderNav();
+  }
+
+  function addWidget(type) {
+    var p = pages[editingPage];
+    if (!p || !p.sections[ebWidgetTarget.sec]) return;
+    var col = p.sections[ebWidgetTarget.sec].cols[ebWidgetTarget.col];
+    if (!col) return;
+    if (!col.w) col.w = [];
+    var def = WIDGETS[type];
+    var d = {};
+    if (def && def.f) def.f.forEach(function (f) { if (f.d) d[f.k] = f.d; });
+    col.w.push({ t: type, d: d });
+    save(); renderCanvas(); renderNav();
+  }
+
+  function save() {
+    var p = pages[editingPage];
+    if (!p) return;
+    savePages(pages);
+    ebHistory = ebHistory.slice(0, ebHistoryIdx + 1);
+    ebHistory.push(JSON.parse(JSON.stringify(p.sections)));
+    ebHistoryIdx = ebHistory.length - 1;
+  }
+
+  function ebUndo() {
+    if (ebHistoryIdx <= 0) return;
+    ebHistoryIdx--;
+    pages[editingPage].sections = JSON.parse(JSON.stringify(ebHistory[ebHistoryIdx]));
+    savePages(pages); renderCanvas(); renderNav();
+  }
+
+  function ebRedo() {
+    if (ebHistoryIdx >= ebHistory.length - 1) return;
+    ebHistoryIdx++;
+    pages[editingPage].sections = JSON.parse(JSON.stringify(ebHistory[ebHistoryIdx]));
+    savePages(pages); renderCanvas(); renderNav();
+  }
+
+  // ── Helpers ──
+  function $(id) { return document.getElementById(id); }
+  function show(id) { var e = $(id); if (e) e.classList.add("active"); }
+  function hide(id) { var e = $(id); if (e) e.classList.remove("active"); }
+  function toggle(id) { var e = $(id); if (e) e.classList.toggle("hidden"); }
+  function esc(s) { return escapeHTML(String(s || "")); }
+  function pn(n) { return toPersianNumbers(String(n)); }
+
 
   var pages = getPages();
   var editingPage = null;
