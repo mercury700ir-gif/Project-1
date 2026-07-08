@@ -383,7 +383,6 @@ document.addEventListener("DOMContentLoaded", function () {
     initBlog();
     initSocial();
     initPageEditor();
-    initBanners();
     initUsers();
     initGallery();
     initFiles();
@@ -1373,303 +1372,541 @@ document.addEventListener("DOMContentLoaded", function () {
   // ════════════════════════════════════════════════
   //  PAGE EDITOR — Elementor-like
   // ════════════════════════════════════════════════
+  //  ELEMENTOR PAGE BUILDER
+  // ════════════════════════════════════════════════
 
   var pages = getPages();
   var editingPage = null;
-  var pageBodyQuill = null;
+  var ebHistory = [];
+  var ebHistoryIndex = -1;
+  var ebSelectedElement = null;
+  var ebCurrentDevice = "desktop";
+
+  // Widget definitions
+  var WIDGETS = {
+    heading:    { name: "عنوان", icon: "H", fields: [{key:"text",label:"متن",type:"text",default:"عنوان جدید"},{key:"tag",label:"اندازه",type:"select",options:["h1","h2","h3","h4","h5","h6"],default:"h2"}] },
+    text:       { name: "متن", icon: "T", fields: [{key:"content",label:"محتوا",type:"textarea",default:"متن نمونه"}] },
+    image:      { name: "تصویر", icon: "🖼", fields: [{key:"src",label:"آدرس",type:"text"},{key:"alt",label:"متن جایگزین",type:"text"},{key:"width",label:"عرض",type:"text",default:"100%"}] },
+    video:      { name: "ویدئو", icon: "▶", fields: [{key:"url",label:"آدرس ویدئو",type:"text"},{key:"poster",label:"تصویر پوستر",type:"text"}] },
+    button:     { name: "دکمه", icon: "⬜", fields: [{key:"text",label:"متن",type:"text",default:"کلیک کنید"},{key:"link",label:"لینک",type:"text"},{key:"color",label:"رنگ پس‌زمینه",type:"color",default:"#2271b1"},{key:"textColor",label:"رنگ متن",type:"color",default:"#ffffff"},{key:"align",label:"تراز",type:"select",options:["center","left","right"],default:"center"}] },
+    icon:       { name: "آیکون", icon: "★", fields: [{key:"name",label:"نام آیکون",type:"text",default:"★"},{key:"size",label:"اندازه",type:"text",default:"48px"},{key:"color",label:"رنگ",type:"color",default:"#2271b1"}] },
+    divider:    { name: "جداکننده", icon: "—", fields: [{key:"width",label:"عرض",type:"text",default:"100%"},{key:"height",label:"ارتفاع",type:"text",default:"1px"},{key:"color",label:"رنگ",type:"color",default:"#e0e0e0"},{key:"style",label:"نوع",type:"select",options:["solid","dashed","dotted"],default:"solid"}] },
+    spacer:     { name: "فاصله", icon: "↕", fields: [{key:"height",label:"ارتفاع (px)",type:"text",default:"40"}] },
+    gallery:    { name: "گالری", icon: "⊞", fields: [{key:"images",label:"تصاویر (با کاما)",type:"textarea"},{key:"columns",label:"تعداد ستون",type:"select",options:["2","3","4"],default:"3"}] },
+    testimonial:{ name: "نظر مشتری", icon: "❝", fields: [{key:"quote",label:"نقل‌قول",type:"textarea"},{key:"author",label:"نویسنده",type:"text"},{key:"avatar",label:"آواتار",type:"text"}] },
+    counter:    { name: "شمارنده", icon: "#", fields: [{key:"number",label:"عدد",type:"text",default:"100"},{key:"suffix",label:"پسوند",type:"text",default:"+"},{key:"title",label:"عنوان",type:"text"}] },
+    progress:   { name: "نوار پیشرفت", icon: "▰", fields: [{key:"percent",label:"درصد",type:"text",default:"75"},{key:"label",label:"برچسب",type:"text"},{key:"color",label:"رنگ",type:"color",default:"#2271b1"}] },
+    tabs:       { name: "تب‌ها", icon: "⊟", fields: [{key:"items",label:"تب‌ها (عنوان:محتوا با کاما)",type:"textarea"}] },
+    accordion:  { name: "آکاردئون", icon: "☰", fields: [{key:"items",label:"آیتم‌ها (عنوان:محتوا با کاما)",type:"textarea"}] },
+    toggle:     { name: "تگل", icon: "▽", fields: [{key:"title",label:"عنوان",type:"text"},{key:"content",label:"محتوا",type:"textarea"}] },
+    map:        { name: "نقشه", icon: "🗺", fields: [{key:"embed",label:"کد embed",type:"textarea"}] },
+    code:       { name: "کد", icon: "{ }", fields: [{key:"code",label:"کد",type:"textarea"},{key:"language",label:"زبان",type:"text",default:"html"}] },
+    html:       { name: "HTML", icon: "</>", fields: [{key:"html",label:"کد HTML",type:"textarea"}] },
+    imageBox:   { name: "باکس تصویر", icon: "▣", fields: [{key:"src",label:"تصویر",type:"text"},{key:"title",label:"عنوان",type:"text"},{key:"desc",label:"توضیحات",type:"textarea"}] },
+    iconBox:    { name: "باکس آیکون", icon: "◈", fields: [{key:"icon",label:"آیکون",type:"text",default:"★"},{key:"title",label:"عنوان",type:"text"},{key:"desc",label:"توضیحات",type:"textarea"},{key:"color",label:"رنگ",type:"color",default:"#2271b1"}] },
+    cta:        { name: "دعوت به اقدام", icon: "📢", fields: [{key:"title",label:"عنوان",type:"text"},{key:"desc",label:"توضیحات",type:"textarea"},{key:"btnText",label:"متن دکمه",type:"text",default:"همین الان"},{key:"btnLink",label:"لینک دکمه",type:"text"},{key:"bgColor",label:"رنگ پس‌زمینه",type:"color",default:"#2271b1"}] },
+  };
 
   function initPageEditor() {
     pages = getPages();
+    renderPagesList();
 
-    // Section toggle
-    document.querySelectorAll(".btn-toggle-section").forEach(function (btn) {
+    document.getElementById("btn-new-page").addEventListener("click", function () {
+      var name = prompt("نام صفحه جدید (انگلیسی):");
+      if (!name) return;
+      name = name.toLowerCase().replace(/[^a-z0-9-]/g, "");
+      if (!name || pages[name]) { alert("نام نامعتبر یا تکراری."); return; }
+      pages[name] = { title: name, sections: [], seoTitle: "", seoDesc: "", seoKeywords: "" };
+      savePages(pages);
+      openPageBuilder(name);
+    });
+
+    document.getElementById("eb-back-pages").addEventListener("click", function () {
+      document.getElementById("content-pages").classList.add("active");
+      document.getElementById("content-editor").classList.remove("active");
+      editingPage = null;
+      renderPagesList();
+    });
+
+    document.getElementById("eb-save-btn").addEventListener("click", function () {
+      if (!editingPage) return;
+      savePages(pages);
+      alert("صفحه ذخیره شد.");
+    });
+
+    document.getElementById("eb-undo").addEventListener("click", function () { ebUndo(); });
+    document.getElementById("eb-redo").addEventListener("click", function () { ebRedo(); });
+
+    document.getElementById("eb-navigator-toggle").addEventListener("click", function () {
+      document.getElementById("eb-navigator").classList.toggle("hidden");
+    });
+
+    document.getElementById("eb-navigator-close").addEventListener("click", function () {
+      document.getElementById("eb-navigator").classList.add("hidden");
+    });
+
+    document.getElementById("eb-settings-close").addEventListener("click", function () {
+      document.getElementById("eb-settings").classList.add("hidden");
+    });
+
+    document.getElementById("eb-add-section").addEventListener("click", function () { ebAddSection(); });
+    document.getElementById("eb-add-section-empty").addEventListener("click", function () { ebAddSection(); });
+
+    // Responsive toggle
+    document.querySelectorAll(".eb-res-btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        var target = document.getElementById(this.getAttribute("data-target"));
-        if (target) {
-          var isOpen = target.style.display !== "none";
-          target.style.display = isOpen ? "none" : "block";
-          this.textContent = isOpen ? "ویرایش" : "بستن";
-        }
+        document.querySelectorAll(".eb-res-btn").forEach(function (b) { b.classList.remove("active"); });
+        this.classList.add("active");
+        ebCurrentDevice = this.getAttribute("data-device");
+        var canvas = document.getElementById("eb-canvas");
+        canvas.className = "eb-canvas" + (ebCurrentDevice !== "desktop" ? " device-" + ebCurrentDevice : "");
       });
     });
 
-    // Back to pages list
-    document
-      .getElementById("btn-back-pages")
-      .addEventListener("click", function () {
-        document.getElementById("content-pages").classList.add("active");
-        document.getElementById("content-editor").classList.remove("active");
-        editingPage = null;
-      });
+    // Widget panel
+    document.getElementById("eb-widget-panel-close").addEventListener("click", function () {
+      document.getElementById("eb-widget-panel").style.display = "none";
+    });
 
-    // Save page
-    document
-      .getElementById("btn-save-page")
-      .addEventListener("click", function () {
-        if (!editingPage) return;
-        var p = pages[editingPage];
-        if (!p) return;
-        p.h1 = document.getElementById("page-h1").value;
-        p.lead = document.getElementById("page-lead").value;
-        p.kicker = document.getElementById("page-kicker").value;
-        p.btn1Text = document.getElementById("page-btn1-text").value;
-        p.btn1Link = document.getElementById("page-btn1-link").value;
-        p.btn2Text = document.getElementById("page-btn2-text").value;
-        p.btn2Link = document.getElementById("page-btn2-link").value;
-        p.section1Title = document.getElementById("page-section1-title").value;
-        p.section1Body = pageBodyQuill
-          ? pageBodyQuill.root.innerHTML
-          : document.getElementById("page-section1-body").value;
-        p.section2Title = document.getElementById("page-section2-title").value;
-        p.section2Body = document.getElementById("page-section2-body").value;
-        p.seoTitle = document.getElementById("page-seo-title").value;
-        p.seoDesc = document.getElementById("page-seo-desc").value;
-        p.seoKeywords = document.getElementById("page-seo-keywords").value;
-        p.seoCanonical = document.getElementById("page-seo-canonical").value;
-        p.image = document.getElementById("page-image").value;
-        p.imageAlt = document.getElementById("page-image-alt").value;
-        p.imageCaption = document.getElementById("page-image-caption").value;
-        savePages(pages);
-        alert("تغییرات صفحه ذخیره شد.");
-      });
-
-    // Edit page buttons
-    document.querySelectorAll(".btn-edit-page").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var pageKey = this.getAttribute("data-page");
-        openPageEditor(pageKey);
+    document.getElementById("eb-widget-search").addEventListener("input", function () {
+      var q = this.value.toLowerCase();
+      document.querySelectorAll(".eb-widget-item").forEach(function (item) {
+        var name = item.getAttribute("data-widget-name") || "";
+        item.style.display = name.includes(q) ? "" : "none";
       });
     });
 
-    // New page
-    document
-      .getElementById("btn-new-page")
-      .addEventListener("click", function () {
-        var name = prompt("نام صفحه جدید (انگلیسی، مثلاً services):");
-        if (!name) return;
-        name = name.toLowerCase().replace(/[^a-z0-9-]/g, "");
-        if (pages[name]) {
-          alert("این نام قبلاً استفاده شده.");
-          return;
-        }
-        pages[name] = {
-          title: name,
-          h1: "",
-          lead: "",
-          kicker: "",
-          btn1Text: "",
-          btn1Link: "",
-          btn2Text: "",
-          btn2Link: "",
-          section1Title: "",
-          section1Body: "",
-          section2Title: "",
-          section2Body: "",
-          seoTitle: "",
-          seoDesc: "",
-          seoKeywords: "",
-          seoCanonical: "",
-          image: "",
-          imageAlt: "",
-          imageCaption: "",
-        };
-        savePages(pages);
-        openPageEditor(name);
-      });
+    // Populate widget grid
+    renderWidgetGrid();
+  }
 
-    // Init Quill for page body
-    if (
-      typeof Quill !== "undefined" &&
-      document.getElementById("page-body-editor")
-    ) {
-      pageBodyQuill = new Quill("#page-body-editor", {
-        theme: "snow",
-        placeholder: "محتوای بخش اصلی...",
-        direction: "rtl",
-        modules: {
-          toolbar: [
-            [{ header: [2, 3, false] }],
-            ["bold", "italic", "underline"],
-            [{ list: "ordered" }, { list: "bullet" }],
-            ["blockquote", "link", "image"],
-            ["clean"],
-          ],
-        },
+  function renderWidgetGrid() {
+    var grid = document.getElementById("eb-widget-grid");
+    grid.innerHTML = "";
+    for (var key in WIDGETS) {
+      var w = WIDGETS[key];
+      var item = document.createElement("div");
+      item.className = "eb-widget-item";
+      item.setAttribute("data-widget", key);
+      item.setAttribute("data-widget-name", w.name);
+      item.innerHTML = '<div class="eb-widget-item-icon">' + w.icon + '</div><div class="eb-widget-item-name">' + w.name + '</div>';
+      item.addEventListener("click", function () {
+        var widgetKey = this.getAttribute("data-widget");
+        ebAddWidget(widgetKey);
+        document.getElementById("eb-widget-panel").style.display = "none";
       });
+      grid.appendChild(item);
     }
   }
 
-  function openPageEditor(key) {
+  function renderPagesList() {
+    var tbody = document.getElementById("pages-table-body");
+    tbody.innerHTML = "";
+    for (var key in pages) {
+      var p = pages[key];
+      var widgetCount = (p.sections || []).reduce(function (sum, s) { return sum + (s.columns || []).reduce(function (s2, c) { return s2 + (c.widgets || []).length; }, 0); }, 0);
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td>' + escapeHTML(p.title || key) + '</td>' +
+        '<td>' + key + '.html</td>' +
+        '<td>' + toPersianNumbers(String(widgetCount)) + ' ویجت</td>' +
+        '<td><span class="badge badge-success">فعال</span></td>' +
+        '<td><button class="btn-sm btn-edit-page" data-page="' + key + '">ویرایش</button></td>';
+      tbody.appendChild(tr);
+    }
+    tbody.querySelectorAll(".btn-edit-page").forEach(function (btn) {
+      btn.addEventListener("click", function () { openPageBuilder(this.getAttribute("data-page")); });
+    });
+  }
+
+  function openPageBuilder(key) {
     editingPage = key;
     var p = pages[key];
     if (!p) return;
+    if (!p.sections) p.sections = [];
 
-    document.getElementById("editor-page-title").textContent =
-      "ویرایش: " + (p.title || key);
-    document.getElementById("page-h1").value = p.h1 || "";
-    document.getElementById("page-lead").value = p.lead || "";
-    document.getElementById("page-kicker").value = p.kicker || "";
-    document.getElementById("page-btn1-text").value = p.btn1Text || "";
-    document.getElementById("page-btn1-link").value = p.btn1Link || "";
-    document.getElementById("page-btn2-text").value = p.btn2Text || "";
-    document.getElementById("page-btn2-link").value = p.btn2Link || "";
-    document.getElementById("page-section1-title").value =
-      p.section1Title || "";
-    if (pageBodyQuill) pageBodyQuill.root.innerHTML = p.section1Body || "";
-    document.getElementById("page-section2-title").value =
-      p.section2Title || "";
-    document.getElementById("page-section2-body").value = p.section2Body || "";
-    document.getElementById("page-seo-title").value = p.seoTitle || "";
-    document.getElementById("page-seo-desc").value = p.seoDesc || "";
-    document.getElementById("page-seo-keywords").value = p.seoKeywords || "";
-    document.getElementById("page-seo-canonical").value = p.seoCanonical || "";
-    document.getElementById("page-image").value = p.image || "";
-    document.getElementById("page-image-alt").value = p.imageAlt || "";
-    document.getElementById("page-image-caption").value = p.imageCaption || "";
-
-    // Open first section by default
-    document.querySelectorAll(".editor-section-body").forEach(function (b) {
-      b.style.display = "none";
-    });
-    document.querySelectorAll(".btn-toggle-section").forEach(function (b) {
-      b.textContent = "ویرایش";
-    });
-    var first = document.getElementById("hero-content");
-    if (first) {
-      first.style.display = "block";
-    }
-    var firstBtn = document.querySelector('[data-target="hero-content"]');
-    if (firstBtn) firstBtn.textContent = "بستن";
-
+    document.getElementById("eb-page-title-display").textContent = p.title || key;
     document.getElementById("content-pages").classList.remove("active");
     document.getElementById("content-editor").classList.add("active");
+
+    ebHistory = [JSON.parse(JSON.stringify(p.sections))];
+    ebHistoryIndex = 0;
+    ebSelectedElement = null;
+
+    renderCanvas();
+    renderNavigator();
   }
 
-  // ════════════════════════════════════════════════
-  //  BANNERS — Management
-  // ════════════════════════════════════════════════
+  // ── Canvas Rendering ──
 
-  var banners = getBanners();
-
-  function initBanners() {
-    banners = getBanners();
-    renderBanners();
-
-    document
-      .getElementById("btn-new-banner")
-      .addEventListener("click", function () {
-        var title = prompt("عنوان بنر جدید:");
-        if (!title) return;
-        var newB = {
-          id: uid(),
-          title: title,
-          image: "",
-          link: "",
-          active: true,
-          position: "custom",
-        };
-        banners.push(newB);
-        saveBanners(banners);
-        renderBanners();
-      });
-  }
-
-  function renderBanners() {
-    var grid = document.getElementById("banners-grid");
-    var empty = document.getElementById("banners-empty");
-    if (!banners.length) {
-      grid.innerHTML = "";
-      empty.style.display = "block";
+  function renderCanvas() {
+    var canvas = document.getElementById("eb-canvas");
+    var empty = document.getElementById("eb-canvas-empty");
+    var p = pages[editingPage];
+    if (!p || !p.sections || !p.sections.length) {
+      canvas.innerHTML = "";
+      canvas.appendChild(empty);
+      empty.style.display = "flex";
       return;
     }
     empty.style.display = "none";
+    canvas.innerHTML = "";
 
-    grid.innerHTML = banners
-      .map(function (b) {
-        var imgTag = b.image
-          ? '<img src="' +
-            b.image +
-            '" alt="' +
-            escapeHTML(b.title) +
-            '" style="width:100%;height:100%;object-fit:cover" />'
-          : '<div class="banner-preview">بدون تصویر</div>';
-        var statusBadge = b.active
-          ? '<span class="badge badge-success">فعال</span>'
-          : '<span class="badge badge-secondary">غیرفعال</span>';
-        return (
-          '<div class="banner-card" data-id="' +
-          b.id +
-          '">' +
-          '<div style="aspect-ratio:16/7;overflow:hidden">' +
-          imgTag +
-          "</div>" +
-          '<div class="banner-info"><h4>' +
-          escapeHTML(b.title) +
-          "</h4><p>" +
-          statusBadge +
-          " — " +
-          escapeHTML(b.position || "custom") +
-          "</p></div>" +
-          '<div class="banner-actions">' +
-          '<button class="btn-sm btn-edit-banner" data-id="' +
-          b.id +
-          '">ویرایش</button>' +
-          '<button class="btn-sm btn-toggle-banner" data-id="' +
-          b.id +
-          '">' +
-          (b.active ? "غیرفعال" : "فعال") +
-          "</button>" +
-          '<button class="btn-sm btn-danger btn-delete-banner" data-id="' +
-          b.id +
-          '">حذف</button>' +
-          "</div></div>"
-        );
-      })
-      .join("");
+    p.sections.forEach(function (section, si) {
+      var secEl = document.createElement("div");
+      secEl.className = "eb-section" + (ebSelectedElement && ebSelectedElement.type === "section" && ebSelectedElement.index === si ? " selected" : "");
+      secEl.setAttribute("data-section-index", si);
 
-    grid.querySelectorAll(".btn-edit-banner").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var id = this.getAttribute("data-id");
-        var b = banners.find(function (x) {
-          return x.id === id;
-        });
-        if (!b) return;
-        var newTitle = prompt("عنوان بنر:", b.title);
-        if (newTitle !== null) b.title = newTitle;
-        var newImage = prompt("آدرس تصویر:", b.image);
-        if (newImage !== null) b.image = newImage;
-        var newLink = prompt("لینک:", b.link);
-        if (newLink !== null) b.link = newLink;
-        saveBanners(banners);
-        renderBanners();
+      // Handle bar
+      var handle = document.createElement("div");
+      handle.className = "eb-section-handle";
+      handle.innerHTML = '<button title="افزودن ستون" data-action="add-column">+</button>' +
+        '<button title="حذف بخش" data-action="delete-section">✕</button>';
+      secEl.appendChild(handle);
+
+      handle.querySelector('[data-action="add-column"]').addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (!section.columns) section.columns = [];
+        section.columns.push({ widgets: [] });
+        ebSave();
+        renderCanvas();
+        renderNavigator();
       });
-    });
 
-    grid.querySelectorAll(".btn-toggle-banner").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var id = this.getAttribute("data-id");
-        var b = banners.find(function (x) {
-          return x.id === id;
+      handle.querySelector('[data-action="delete-section"]').addEventListener("click", function (e) {
+        e.stopPropagation();
+        p.sections.splice(si, 1);
+        ebSave();
+        renderCanvas();
+        renderNavigator();
+      });
+
+      // Columns container
+      var colsEl = document.createElement("div");
+      colsEl.className = "eb-columns";
+      colsEl.style.gridTemplateColumns = "repeat(" + Math.max(1, (section.columns || []).length) + ", 1fr)";
+
+      (section.columns || []).forEach(function (column, ci) {
+        var colEl = document.createElement("div");
+        colEl.className = "eb-column" + (ebSelectedElement && ebSelectedElement.type === "column" && ebSelectedElement.secIndex === si && ebSelectedElement.colIndex === ci ? " selected" : "");
+        colEl.setAttribute("data-sec-index", si);
+        colEl.setAttribute("data-col-index", ci);
+
+        colEl.addEventListener("click", function (e) {
+          if (e.target === colEl) {
+            ebSelectElement({ type: "column", secIndex: si, colIndex: ci });
+          }
         });
-        if (b) {
-          b.active = !b.active;
-          saveBanners(banners);
-          renderBanners();
+
+        // Render widgets
+        (column.widgets || []).forEach(function (widget, wi) {
+          var wEl = document.createElement("div");
+          wEl.className = "eb-widget" + (ebSelectedElement && ebSelectedElement.type === "widget" && ebSelectedElement.secIndex === si && ebSelectedElement.colIndex === ci && ebSelectedElement.widgetIndex === wi ? " selected" : "");
+          wEl.setAttribute("data-sec-index", si);
+          wEl.setAttribute("data-col-index", ci);
+          wEl.setAttribute("data-widget-index", wi);
+          wEl.draggable = true;
+
+          var handleEl = document.createElement("div");
+          handleEl.className = "eb-widget-handle";
+          handleEl.textContent = "⋮⋮";
+          wEl.appendChild(handleEl);
+
+          var deleteEl = document.createElement("div");
+          deleteEl.className = "eb-widget-delete";
+          deleteEl.textContent = "✕";
+          wEl.appendChild(deleteEl);
+
+          var contentEl = document.createElement("div");
+          contentEl.className = "eb-widget-content";
+          contentEl.innerHTML = ebRenderWidget(widget);
+          wEl.appendChild(contentEl);
+
+          wEl.addEventListener("click", function (e) {
+            e.stopPropagation();
+            ebSelectElement({ type: "widget", secIndex: si, colIndex: ci, widgetIndex: wi });
+          });
+
+          deleteEl.addEventListener("click", function (e) {
+            e.stopPropagation();
+            column.widgets.splice(wi, 1);
+            ebSave();
+            renderCanvas();
+            renderNavigator();
+          });
+
+          // Drag start
+          wEl.addEventListener("dragstart", function (e) {
+            e.dataTransfer.setData("text/plain", JSON.stringify({ secIndex: si, colIndex: ci, widgetIndex: wi }));
+            wEl.classList.add("eb-dragging");
+          });
+          wEl.addEventListener("dragend", function () { wEl.classList.remove("eb-dragging"); });
+
+          colEl.appendChild(wEl);
+        });
+
+        // Add widget button
+        var addBtn = document.createElement("button");
+        addBtn.className = "eb-add-widget-btn";
+        addBtn.textContent = "+ افزودن ویجت";
+        addBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          ebCurrentSection = si;
+          ebCurrentColumn = ci;
+          document.getElementById("eb-widget-panel").style.display = "block";
+        });
+        colEl.appendChild(addBtn);
+
+        // Drop target
+        colEl.addEventListener("dragover", function (e) { e.preventDefault(); colEl.classList.add("eb-drop-target"); });
+        colEl.addEventListener("dragleave", function () { colEl.classList.remove("eb-drop-target"); });
+        colEl.addEventListener("drop", function (e) {
+          e.preventDefault();
+          colEl.classList.remove("eb-drop-target");
+          try {
+            var data = JSON.parse(e.dataTransfer.getData("text/plain"));
+            var srcCol = p.sections[data.secIndex].columns[data.colIndex];
+            var widget = srcCol.widgets.splice(data.widgetIndex, 1)[0];
+            column.widgets.push(widget);
+            ebSave();
+            renderCanvas();
+            renderNavigator();
+          } catch (err) {}
+        });
+
+        colsEl.appendChild(colEl);
+      });
+
+      secEl.appendChild(colsEl);
+      canvas.appendChild(secEl);
+    });
+  }
+
+  var ebCurrentSection = 0;
+  var ebCurrentColumn = 0;
+
+  function ebRenderWidget(widget) {
+    var d = widget.data || {};
+    switch (widget.type) {
+      case "heading": return "<" + (d.tag || "h2") + ">" + escapeHTML(d.text || "عنوان") + "</" + (d.tag || "h2") + ">";
+      case "text": return "<p>" + (d.content || "متن نمونه") + "</p>";
+      case "image": return '<img src="' + escapeHTML(d.src || "") + '" alt="' + escapeHTML(d.alt || "") + '" style="width:' + (d.width || "100%") + ';border-radius:4px" />';
+      case "video": return '<div style="background:#000;padding:40px;text-align:center;border-radius:4px;color:#fff">▶ ویدئو</div>';
+      case "button": return '<a href="' + escapeHTML(d.link || "#") + '" style="display:inline-block;padding:10px 24px;background:' + (d.color || "#2271b1") + ';color:' + (d.textColor || "#fff") + ';border-radius:6px;text-decoration:none;font-weight:700;text-align:' + (d.align || "center") + '">' + escapeHTML(d.text || "کلیک") + '</a>';
+      case "icon": return '<div style="font-size:' + (d.size || "48px") + ';color:' + (d.color || "#2271b1") + ';text-align:center">' + escapeHTML(d.name || "★") + '</div>';
+      case "divider": return '<hr style="width:' + (d.width || "100%") + ';height:' + (d.height || "1px") + ';background:' + (d.color || "#e0e0e0") + ';border:none;border-style:' + (d.style || "solid") + '" />';
+      case "spacer": return '<div style="height:' + (d.height || "40") + 'px"></div>';
+      case "gallery": return '<div style="display:grid;grid-template-columns:repeat(' + (d.columns || 3) + ',1fr);gap:8px"><div style="background:#f0f0f0;padding:30px;text-align:center;border-radius:4px;color:#999">گالری تصاویر</div></div>';
+      case "testimonial": return '<blockquote style="border-right:3px solid #2271b1;padding:16px;background:#f8f9fa;border-radius:0 6px 6px 0;margin:0"><p>' + escapeHTML(d.quote || "") + '</p><cite>— ' + escapeHTML(d.author || "") + '</cite></blockquote>';
+      case "counter": return '<div style="text-align:center"><div style="font-size:2.5rem;font-weight:900;color:#2271b1">' + escapeHTML(d.number || "0") + escapeHTML(d.suffix || "") + '</div><div>' + escapeHTML(d.title || "") + '</div></div>';
+      case "progress": return '<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.85rem"><span>' + escapeHTML(d.label || "") + '</span><span>' + escapeHTML(d.percent || "0") + '%</span></div><div style="background:#e0e0e0;border-radius:4px;height:8px"><div style="width:' + (d.percent || 0) + '%;background:' + (d.color || "#2271b1") + ';height:100%;border-radius:4px"></div></div></div>';
+      case "tabs": return '<div style="display:flex;gap:4px;border-bottom:2px solid #e0e0e0;margin-bottom:12px"><div style="padding:8px 16px;border-bottom:2px solid #2271b1;color:#2271b1;font-weight:700">تب ۱</div><div style="padding:8px 16px;color:#999">تب ۲</div></div><div style="padding:12px;background:#f8f9fa;border-radius:4px">محتوای تب فعال</div>';
+      case "accordion": return '<div style="border:1px solid #e0e0e0;border-radius:4px"><div style="padding:12px 16px;background:#f8f9fa;border-bottom:1px solid #e0e0e0;cursor:pointer;display:flex;justify-content:space-between"><span>عنوان آیتم</span><span>▼</span></div><div style="padding:12px 16px;color:#666">محتوای آیتم</div></div>';
+      case "toggle": return '<div style="border:1px solid #e0e0e0;border-radius:4px;padding:12px 16px;display:flex;justify-content:space-between;cursor:pointer"><span>' + escapeHTML(d.title || "تگل") + '</span><span>▼</span></div>';
+      case "map": return '<div style="background:#e8e8e8;padding:40px;text-align:center;border-radius:4px;color:#999">🗺 نقشه گوگل</div>';
+      case "code": return '<pre style="background:#1e1e2e;color:#cdd6f4;padding:12px;border-radius:4px;font-size:0.82rem;overflow-x:auto;direction:ltr;text-align:left">' + escapeHTML(d.code || "") + '</pre>';
+      case "html": return '<div>' + (d.html || "") + '</div>';
+      case "imageBox": return '<div style="text-align:center"><img src="' + escapeHTML(d.src || "") + '" style="max-width:100%;border-radius:4px" /><h3 style="margin:8px 0">' + escapeHTML(d.title || "") + '</h3><p style="color:#666">' + escapeHTML(d.desc || "") + '</p></div>';
+      case "iconBox": return '<div style="text-align:center;padding:16px"><div style="font-size:2rem;color:' + (d.color || "#2271b1") + '">' + escapeHTML(d.icon || "★") + '</div><h3 style="margin:8px 0">' + escapeHTML(d.title || "") + '</h3><p style="color:#666">' + escapeHTML(d.desc || "") + '</p></div>';
+      case "cta": return '<div style="background:' + (d.bgColor || "#2271b1") + ';color:#fff;padding:32px;text-align:center;border-radius:8px"><h2 style="margin:0 0 8px;color:#fff">' + escapeHTML(d.title || "") + '</h2><p style="margin:0 0 16px;opacity:0.9">' + escapeHTML(d.desc || "") + '</p><a href="' + escapeHTML(d.btnLink || "#") + '" style="display:inline-block;padding:12px 32px;background:#fff;color:' + (d.bgColor || "#2271b1") + ';border-radius:6px;text-decoration:none;font-weight:700">' + escapeHTML(d.btnText || "همین الان") + '</a></div>';
+      default: return '<div class="eb-placeholder">ویجت ناشناخته</div>';
+    }
+  }
+
+  // ── Element Selection ──
+
+  function ebSelectElement(el) {
+    ebSelectedElement = el;
+    renderCanvas();
+    renderSettingsPanel();
+    renderNavigator();
+  }
+
+  function renderSettingsPanel() {
+    var body = document.getElementById("eb-settings-body");
+    var title = document.getElementById("eb-settings-title");
+    document.getElementById("eb-settings").classList.remove("hidden");
+
+    if (!ebSelectedElement) {
+      body.innerHTML = '<p class="eb-settings-empty">یک عنصر را انتخاب کنید</p>';
+      title.textContent = "تنظیمات";
+      return;
+    }
+
+    if (ebSelectedElement.type === "section") {
+      title.textContent = "تنظیمات بخش";
+      body.innerHTML = '<div class="field"><label>تعداد ستون</label><select id="eb-sec-cols">' +
+        '<option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option>' +
+        '</select></div><div class="field"><label>پس‌زمینه</label><input type="color" id="eb-sec-bg" value="#ffffff" /></div>';
+      var p = pages[editingPage];
+      var sec = p.sections[ebSelectedElement.index];
+      document.getElementById("eb-sec-cols").value = (sec.columns || []).length || 1;
+      document.getElementById("eb-sec-bg").value = sec.bg || "#ffffff";
+      document.getElementById("eb-sec-cols").addEventListener("change", function () {
+        var target = parseInt(this.value);
+        while (sec.columns.length < target) sec.columns.push({ widgets: [] });
+        while (sec.columns.length > target) sec.columns.pop();
+        ebSave(); renderCanvas(); renderNavigator();
+      });
+      document.getElementById("eb-sec-bg").addEventListener("input", function () {
+        sec.bg = this.value;
+        var secEl = document.querySelector('[data-section-index="' + ebSelectedElement.index + '"]');
+        if (secEl) secEl.style.background = this.value;
+      });
+    } else if (ebSelectedElement.type === "widget") {
+      var widget = pages[editingPage].sections[ebSelectedElement.secIndex].columns[ebSelectedElement.colIndex].widgets[ebSelectedElement.widgetIndex];
+      var wDef = WIDGETS[widget.type];
+      title.textContent = "تنظیمات: " + (wDef ? wDef.name : widget.type);
+      var html = "";
+      if (wDef && wDef.fields) {
+        wDef.fields.forEach(function (f) {
+          var val = (widget.data || {})[f.key] || f.default || "";
+          if (f.type === "textarea") {
+            html += '<div class="field"><label>' + f.label + '</label><textarea id="eb-f-' + f.key + '">' + escapeHTML(val) + '</textarea></div>';
+          } else if (f.type === "select") {
+            html += '<div class="field"><label>' + f.label + '</label><select id="eb-f-' + f.key + '">' +
+              f.options.map(function (o) { return '<option value="' + o + '"' + (val === o ? ' selected' : '') + '>' + o + '</option>'; }).join("") +
+              '</select></div>';
+          } else if (f.type === "color") {
+            html += '<div class="field"><label>' + f.label + '</label><input type="color" id="eb-f-' + f.key + '" value="' + val + '" /></div>';
+          } else {
+            html += '<div class="field"><label>' + f.label + '</label><input type="text" id="eb-f-' + f.key + '" value="' + escapeHTML(val) + '" /></div>';
+          }
+        });
+      }
+      body.innerHTML = html;
+
+      // Bind change events
+      body.querySelectorAll("input, textarea, select").forEach(function (el) {
+        el.addEventListener("input", function () {
+          var key = this.id.replace("eb-f-", "");
+          if (!widget.data) widget.data = {};
+          widget.data[key] = this.value;
+          ebSave();
+          // Update canvas widget content
+          var wEl = document.querySelector('[data-sec-index="' + ebSelectedElement.secIndex + '"][data-col-index="' + ebSelectedElement.colIndex + '"][data-widget-index="' + ebSelectedElement.widgetIndex + '"] .eb-widget-content');
+          if (wEl) wEl.innerHTML = ebRenderWidget(widget);
+        });
+      });
+    } else {
+      title.textContent = "تنظیمات ستون";
+      body.innerHTML = '<p class="eb-settings-empty">ستون انتخاب شده</p>';
+    }
+  }
+
+  // ── Navigator ──
+
+  function renderNavigator() {
+    var tree = document.getElementById("eb-navigator-tree");
+    var p = pages[editingPage];
+    if (!p || !p.sections) { tree.innerHTML = '<p style="color:#666;padding:12px;font-size:0.82rem">بخشی وجود ندارد</p>'; return; }
+
+    var html = "";
+    p.sections.forEach(function (section, si) {
+      var isActive = ebSelectedElement && ebSelectedElement.type === "section" && ebSelectedElement.index === si;
+      html += '<div class="eb-nav-section"><div class="eb-nav-item' + (isActive ? " active" : "") + '" data-select="section-' + si + '">' +
+        '<span class="eb-nav-icon">▦</span><span class="eb-nav-label">بخش ' + toPersianNumbers(String(si + 1)) + '</span>' +
+        '<span class="eb-nav-delete" data-delete="section-' + si + '">✕</span></div>';
+      html += '<div class="eb-nav-children">';
+      (section.columns || []).forEach(function (column, ci) {
+        html += '<div class="eb-nav-column"><div class="eb-nav-item" data-select="column-' + si + '-' + ci + '">' +
+          '<span class="eb-nav-icon">▫</span><span class="eb-nav-label">ستون ' + toPersianNumbers(String(ci + 1)) + '</span></div>';
+        (column.widgets || []).forEach(function (widget, wi) {
+          var wDef = WIDGETS[widget.type];
+          html += '<div class="eb-nav-item" data-select="widget-' + si + '-' + ci + '-' + wi + '">' +
+            '<span class="eb-nav-icon">' + (wDef ? wDef.icon : "?") + '</span>' +
+            '<span class="eb-nav-label">' + (wDef ? wDef.name : widget.type) + '</span></div>';
+        });
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    tree.innerHTML = html;
+
+    // Bind navigator clicks
+    tree.querySelectorAll(".eb-nav-item[data-select]").forEach(function (item) {
+      item.addEventListener("click", function () {
+        var parts = this.getAttribute("data-select").split("-");
+        if (parts[0] === "section") {
+          ebSelectElement({ type: "section", index: parseInt(parts[1]) });
+        } else if (parts[0] === "column") {
+          ebSelectElement({ type: "column", secIndex: parseInt(parts[1]), colIndex: parseInt(parts[2]) });
+        } else if (parts[0] === "widget") {
+          ebSelectElement({ type: "widget", secIndex: parseInt(parts[1]), colIndex: parseInt(parts[2]), widgetIndex: parseInt(parts[3]) });
         }
       });
     });
 
-    grid.querySelectorAll(".btn-delete-banner").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        if (!confirm("آیا از حذف این بنر مطمئن هستید؟")) return;
-        var id = this.getAttribute("data-id");
-        banners = banners.filter(function (x) {
-          return x.id !== id;
-        });
-        saveBanners(banners);
-        renderBanners();
+    tree.querySelectorAll(".eb-nav-delete[data-delete]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var parts = this.getAttribute("data-delete").split("-");
+        var p = pages[editingPage];
+        if (parts[0] === "section") {
+          p.sections.splice(parseInt(parts[1]), 1);
+          ebSave(); renderCanvas(); renderNavigator();
+        }
       });
     });
+  }
+
+  // ── Add Section ──
+
+  function ebAddSection() {
+    var p = pages[editingPage];
+    if (!p) return;
+    if (!p.sections) p.sections = [];
+    p.sections.push({ columns: [{ widgets: [] }], bg: "#ffffff" });
+    ebSave();
+    renderCanvas();
+    renderNavigator();
+  }
+
+  // ── Add Widget ──
+
+  function ebAddWidget(type) {
+    var p = pages[editingPage];
+    if (!p || !p.sections[ebCurrentSection]) return;
+    var col = p.sections[ebCurrentSection].columns[ebCurrentColumn];
+    if (!col) return;
+    if (!col.widgets) col.widgets = [];
+    var wDef = WIDGETS[type];
+    var data = {};
+    if (wDef && wDef.fields) {
+      wDef.fields.forEach(function (f) { if (f.default) data[f.key] = f.default; });
+    }
+    col.widgets.push({ type: type, data: data });
+    ebSave();
+    renderCanvas();
+    renderNavigator();
+  }
+
+  // ── History ──
+
+  function ebSave() {
+    var p = pages[editingPage];
+    if (!p) return;
+    savePages(pages);
+    ebHistory = ebHistory.slice(0, ebHistoryIndex + 1);
+    ebHistory.push(JSON.parse(JSON.stringify(p.sections)));
+    ebHistoryIndex = ebHistory.length - 1;
+  }
+
+  function ebUndo() {
+    if (ebHistoryIndex <= 0) return;
+    ebHistoryIndex--;
+    pages[editingPage].sections = JSON.parse(JSON.stringify(ebHistory[ebHistoryIndex]));
+    savePages(pages);
+    renderCanvas();
+    renderNavigator();
+  }
+
+  function ebRedo() {
+    if (ebHistoryIndex >= ebHistory.length - 1) return;
+    ebHistoryIndex++;
+    pages[editingPage].sections = JSON.parse(JSON.stringify(ebHistory[ebHistoryIndex]));
+    savePages(pages);
+    renderCanvas();
+    renderNavigator();
   }
 
   // ════════════════════════════════════════════════

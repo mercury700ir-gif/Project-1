@@ -50,7 +50,7 @@
           </a>
           <a href="#" class="sidebar-link" data-tab="content">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            <span>مدیریت محتوا</span>
+            <span>مدیریت صفحات</span>
           </a>
           <a href="#" class="sidebar-link" data-tab="users">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -190,14 +190,9 @@
             </div>
           </section>
 
-          <!-- ════ 2. Content Management ════ -->
+          <!-- ════ 2. Page Management (Elementor Builder) ════ -->
           <section id="tab-content" class="tab-pane">
-            <div class="sub-tabs">
-              <button class="sub-tab active" data-subtab="content-pages">صفحات</button>
-              <button class="sub-tab" data-subtab="content-banners">بنرها و تصاویر</button>
-            </div>
-
-            <!-- Pages List -->
+            <!-- Page List View -->
             <div id="content-pages" class="sub-pane active">
               <div class="tab-header">
                 <h3>مدیریت صفحات سایت</h3>
@@ -205,97 +200,91 @@
               </div>
               <table class="data-table">
                 <thead>
-                  <tr><th>عنوان صفحه</th><th>فایل</th><th>وضعیت</th><th>عملیات</th></tr>
+                  <tr><th>عنوان صفحه</th><th>فایل</th><th>ویجت‌ها</th><th>وضعیت</th><th>عملیات</th></tr>
                 </thead>
-                <tbody id="pages-table-body">
-                  <tr data-page="index"><td>صفحه اصلی</td><td>index.html</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm btn-edit-page" data-page="index">ویرایش</button></td></tr>
-                  <tr data-page="about"><td>درباره من</td><td>about.html</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm btn-edit-page" data-page="about">ویرایش</button></td></tr>
-                  <tr data-page="contact"><td>تماس با من</td><td>contact.html</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm btn-edit-page" data-page="contact">ویرایش</button></td></tr>
-                  <tr data-page="blog"><td>نوشته‌ها</td><td>blog.html</td><td><span class="badge badge-success">فعال</span></td><td><button class="btn-sm btn-edit-page" data-page="blog">ویرایش</button></td></tr>
-                </tbody>
+                <tbody id="pages-table-body"></tbody>
               </table>
             </div>
 
-            <!-- Page Editor -->
+            <!-- Elementor Page Builder -->
             <div id="content-editor" class="sub-pane">
-              <div class="tab-header">
-                <h3 id="editor-page-title">ویرایش صفحه</h3>
-                <div style="display:flex;gap:8px">
-                  <button class="button" id="btn-back-pages">بازگشت به لیست</button>
-                  <button class="button primary" id="btn-save-page">ذخیره تغییرات</button>
+              <!-- Editor Toolbar -->
+              <div class="eb-toolbar">
+                <div class="eb-toolbar-right">
+                  <button class="eb-tool-btn" id="eb-undo" title="بازگشت"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></button>
+                  <button class="eb-tool-btn" id="eb-redo" title="بازگشت به جلو"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+                  <div class="eb-toolbar-sep"></div>
+                  <button class="eb-tool-btn" id="eb-navigator-toggle" title="ناوبر"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 12 9 12 12 3 12 21 15 12 21 12"/></svg></button>
+                </div>
+                <div class="eb-toolbar-center">
+                  <span id="eb-page-title-display" class="eb-page-name">صفحه اصلی</span>
+                </div>
+                <div class="eb-toolbar-left">
+                  <div class="eb-responsive-toggle">
+                    <button class="eb-res-btn active" data-device="desktop" title="دسکتاپ"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></button>
+                    <button class="eb-res-btn" data-device="tablet" title="تبلت"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></button>
+                    <button class="eb-res-btn" data-device="mobile" title="موبایل"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></button>
+                  </div>
+                  <div class="eb-toolbar-sep"></div>
+                  <button class="eb-tool-btn" id="eb-preview-btn" title="پیش‌نمایش"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="eb-tool-btn primary" id="eb-save-btn" title="ذخیره"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></button>
+                  <button class="eb-tool-btn" id="eb-back-pages" title="بازگشت"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
                 </div>
               </div>
 
-              <!-- Elementor-like Section Editor -->
-              <div class="page-editor-canvas">
-                <div class="editor-section" data-section="hero">
-                  <div class="editor-section-header">
-                    <span class="editor-section-icon">🎯</span>
-                    <span>بخش Hero / بنر اصلی</span>
-                    <button class="btn-sm btn-toggle-section" data-target="hero-content">ویرایش</button>
+              <!-- Editor Layout -->
+              <div class="eb-layout">
+                <!-- Navigator Panel (Left) -->
+                <div class="eb-navigator" id="eb-navigator">
+                  <div class="eb-navigator-header">
+                    <span>ناوبر ساختار</span>
+                    <button class="eb-navigator-close" id="eb-navigator-close">&times;</button>
                   </div>
-                  <div class="editor-section-body" id="hero-content" style="display:none">
-                    <div class="field"><label>عنوان اصلی (h1)</label><input type="text" id="page-h1" placeholder="عنوان اصلی صفحه" /></div>
-                    <div class="field"><label>زیرعنوان (lead)</label><textarea rows="2" id="page-lead" placeholder="متن زیرعنوان"></textarea></div>
-                    <div class="field"><label>متن kicker</label><input type="text" id="page-kicker" placeholder="مثلاً: معمار رشد دیجیتال" /></div>
-                    <div class="field"><label>متن دکمه اول</label><input type="text" id="page-btn1-text" placeholder="متن دکمه" /></div>
-                    <div class="field"><label>لینک دکمه اول</label><input type="text" id="page-btn1-link" placeholder="contact.html" /></div>
-                    <div class="field"><label>متن دکمه دوم</label><input type="text" id="page-btn2-text" placeholder="متن دکمه" /></div>
-                    <div class="field"><label>لینک دکمه دوم</label><input type="text" id="page-btn2-link" placeholder="about.html" /></div>
+                  <div class="eb-navigator-tree" id="eb-navigator-tree"></div>
+                  <div class="eb-navigator-footer">
+                    <button class="btn-sm" id="eb-add-section">+ بخش جدید</button>
                   </div>
                 </div>
 
-                <div class="editor-section" data-section="body">
-                  <div class="editor-section-header">
-                    <span class="editor-section-icon">📝</span>
-                    <span>محتوای اصلی صفحه</span>
-                    <button class="btn-sm btn-toggle-section" data-target="body-content">ویرایش</button>
-                  </div>
-                  <div class="editor-section-body" id="body-content" style="display:none">
-                    <div class="field"><label>بخش ۱ — عنوان</label><input type="text" id="page-section1-title" placeholder="عنوان بخش" /></div>
-                    <div class="field"><label>بخش ۱ — محتوا</label><div id="page-body-editor"></div></div>
-                    <div class="field" style="margin-top:16px"><label>بخش ۲ — عنوان</label><input type="text" id="page-section2-title" placeholder="عنوان بخش" /></div>
-                    <div class="field"><label>بخش ۲ — محتوا</label><textarea rows="4" id="page-section2-body" placeholder="متن بخش دوم"></textarea></div>
+                <!-- Canvas (Center) -->
+                <div class="eb-canvas-wrapper">
+                  <div class="eb-canvas" id="eb-canvas">
+                    <div class="eb-canvas-empty" id="eb-canvas-empty">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                      <p>برای شروع، یک بخش جدید اضافه کنید</p>
+                      <button class="button primary" id="eb-add-section-empty">+ افزودن بخش</button>
+                    </div>
                   </div>
                 </div>
 
-                <div class="editor-section" data-section="seo">
-                  <div class="editor-section-header">
-                    <span class="editor-section-icon">🔍</span>
-                    <span>تنظیمات SEO</span>
-                    <button class="btn-sm btn-toggle-section" data-target="seo-content">ویرایش</button>
+                <!-- Settings Panel (Right) -->
+                <div class="eb-settings" id="eb-settings">
+                  <div class="eb-settings-header">
+                    <span id="eb-settings-title">تنظیمات</span>
+                    <button class="eb-settings-close" id="eb-settings-close">&times;</button>
                   </div>
-                  <div class="editor-section-body" id="seo-content" style="display:none">
-                    <div class="field"><label>عنوان صفحه (title)</label><input type="text" id="page-seo-title" placeholder="عنوان برای موتور جستجو" /></div>
-                    <div class="field"><label>توضیحات متا (meta description)</label><textarea rows="2" id="page-seo-desc" placeholder="توضیحات برای موتورهای جستجو"></textarea></div>
-                    <div class="field"><label>کلمات کلیدی</label><input type="text" id="page-seo-keywords" placeholder="کلمات کلیدی با کاما" /></div>
-                    <div class="field"><label>آدرس canonical</label><input type="text" id="page-seo-canonical" placeholder="https://mahbodnaderi.com/index.html" dir="ltr" /></div>
+                  <div class="eb-settings-tabs">
+                    <button class="eb-settings-tab active" data-stab="content">محتوا</button>
+                    <button class="eb-settings-tab" data-stab="style">سبک</button>
+                    <button class="eb-settings-tab" data-stab="advanced">پیشرفته</button>
                   </div>
-                </div>
-
-                <div class="editor-section" data-section="image">
-                  <div class="editor-section-header">
-                    <span class="editor-section-icon">🖼️</span>
-                    <span>تصویر بنر / پرتره</span>
-                    <button class="btn-sm btn-toggle-section" data-target="image-content">ویرایش</button>
-                  </div>
-                  <div class="editor-section-body" id="image-content" style="display:none">
-                    <div class="field"><label>آدرس تصویر</label><input type="text" id="page-image" placeholder="assets/profile-formal.jpeg" /></div>
-                    <div class="field"><label>متن جایگزین (alt)</label><input type="text" id="page-image-alt" placeholder="توضیح تصویر" /></div>
-                    <div class="field"><label>کپشن تصویر</label><input type="text" id="page-image-caption" placeholder="متن زیر تصویر" /></div>
+                  <div class="eb-settings-body" id="eb-settings-body">
+                    <p class="eb-settings-empty">یک عنصر را انتخاب کنید</p>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Banner Management -->
-            <div id="content-banners" class="sub-pane">
-              <div class="tab-header">
-                <h3>مدیریت بنرها و تصاویر سایت</h3>
-                <button class="button primary" id="btn-new-banner">+ بنر جدید</button>
+              <!-- Widget Panel (Overlay) -->
+              <div class="eb-widget-panel" id="eb-widget-panel" style="display:none">
+                <div class="eb-widget-panel-header">
+                  <span>کتابخانه ویجت‌ها</span>
+                  <button class="eb-widget-panel-close" id="eb-widget-panel-close">&times;</button>
+                </div>
+                <div class="eb-widget-search">
+                  <input type="text" id="eb-widget-search" placeholder="جستجوی ویجت..." />
+                </div>
+                <div class="eb-widget-grid" id="eb-widget-grid"></div>
               </div>
-              <div class="banners-grid" id="banners-grid"></div>
-              <div id="banners-empty" class="empty-state" style="display:none"><p>هنوز بنری تعریف نشده است.</p></div>
             </div>
           </section>
 
