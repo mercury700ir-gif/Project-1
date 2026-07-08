@@ -358,6 +358,28 @@ function saveBanners(b) {
   Store.set("banners", b);
 }
 
+var DEFAULT_POPUPS = [
+  {
+    id: "pop1",
+    title: "دعوت به مشاوره",
+    content: "برای بررسی مسیر رشد دیجیتال، یک جلسه مشاوره رزرو کنید.",
+    ctaText: "درخواست مشاوره",
+    ctaLink: "contact.html",
+    trigger: "exit-intent",
+    target: "همه صفحات",
+    schedule: "همیشه فعال",
+    active: true,
+    views: 386,
+    conversions: 28,
+  },
+];
+function getPopups() {
+  return Store.get("popups", DEFAULT_POPUPS);
+}
+function savePopups(p) {
+  Store.set("popups", p);
+}
+
 // ────────────────── DOM Ready ──────────────────
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -413,6 +435,7 @@ document.addEventListener("DOMContentLoaded", function () {
     initBlog();
     initSocial();
     initPageEditor();
+    initCampaignContent();
     initUsers();
     initGallery();
     initFiles();
@@ -652,28 +675,47 @@ document.addEventListener("DOMContentLoaded", function () {
     empty.style.display = "none";
     tbody.innerHTML = blogPosts
       .map(function (p) {
+        var author = p.author || p.author_name || "مدیر";
+        var writtenAt = p.created_at || p.createdAt || p.date || "";
+        var publishedAt = p.published_at || p.publishedAt || (p.status === "published" ? (p.date || writtenAt) : "");
+        var category = p.category || p.category_name || p.category_id || "بدون دسته";
         var statusBadge =
           p.status === "published"
             ? '<span class="badge badge-success">منتشر</span>'
-            : '<span class="badge badge-warning">پیش‌نویس</span>';
+            : p.status === "scheduled"
+              ? '<span class="badge badge-info">زمان‌دار</span>'
+              : p.status === "pending"
+                ? '<span class="badge badge-warning">در انتظار</span>'
+                : '<span class="badge badge-warning">پیش‌نویس</span>';
         return (
           "<tr>" +
           '<td data-label="عنوان">' +
           escapeHTML(p.title) +
           "</td>" +
           '<td data-label="نویسنده">' +
-          escapeHTML(p.author) +
+          escapeHTML(author) +
           "</td>" +
-          '<td data-label="تاریخ">' +
-          persianDateShort(p.date) +
+          '<td data-label="تاریخ نگارش">' +
+          persianDateShort(writtenAt) +
           "</td>" +
-          '<td data-label="دسته">' +
-          escapeHTML(p.category) +
+          '<td data-label="تاریخ انتشار">' +
+          persianDateShort(publishedAt) +
+          "</td>" +
+          '<td data-label="دسته‌بندی">' +
+          escapeHTML(category) +
           "</td>" +
           '<td data-label="وضعیت">' +
           statusBadge +
           "</td>" +
           '<td data-label="عملیات">' +
+          '<div class="quick-actions">' +
+          '<button class="btn-sm btn-post-action" data-action="pending" data-id="' + p.id + '">در انتظار</button>' +
+          '<button class="btn-sm btn-post-action" data-action="published" data-id="' + p.id + '">انتشار</button>' +
+          '<button class="btn-sm btn-post-action" data-action="scheduled" data-id="' + p.id + '">زمان‌دار</button>' +
+          '<button class="btn-sm btn-danger btn-delete" data-id="' + p.id + '">پاک کردن</button>' +
+          "</div>" +
+          "</td>" +
+          '<td data-label="">' +
           '<button class="btn-sm btn-edit" data-id="' +
           p.id +
           '">ویرایش</button> ' +
@@ -695,8 +737,148 @@ document.addEventListener("DOMContentLoaded", function () {
         deletePost(this.getAttribute("data-id"));
       });
     });
+    tbody.querySelectorAll(".btn-post-action").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        quickUpdatePostStatus(this.getAttribute("data-id"), this.getAttribute("data-action"));
+      });
+    });
 
     convertNumbersInScope(tbody);
+  }
+
+  async function quickUpdatePostStatus(id, status) {
+    var data = { status: status };
+    if (status === "scheduled") {
+      var dt = prompt("تاریخ و زمان انتشار زمان‌دار را وارد کنید (YYYY-MM-DD HH:mm):");
+      if (!dt) return;
+      data.scheduled_at = dt.replace(" ", "T");
+    }
+    try {
+      await api.updatePost(id, data);
+      await loadBlogPosts();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  function initCampaignContent() {
+    var bannerBtn = document.getElementById("btn-new-campaign-banner");
+    var popupBtn = document.getElementById("btn-new-popup");
+    if (bannerBtn && !bannerBtn.dataset.bound) {
+      bannerBtn.dataset.bound = "1";
+      bannerBtn.addEventListener("click", function () {
+        var items = getBanners();
+        items.unshift({
+          id: "b" + uid(),
+          title: "بنر جدید",
+          image: "assets/consulting-room.jpeg",
+          link: "contact.html",
+          caption: "متن بنر را ویرایش کنید",
+          position: "sitewide",
+          target: "همه بازدیدکنندگان",
+          trigger: "نمایش در بارگذاری صفحه",
+          schedule: "همیشه فعال",
+          active: true,
+          views: 0,
+          conversions: 0,
+        });
+        saveBanners(items);
+        renderCampaignContent();
+      });
+    }
+    if (popupBtn && !popupBtn.dataset.bound) {
+      popupBtn.dataset.bound = "1";
+      popupBtn.addEventListener("click", function () {
+        var items = getPopups();
+        items.unshift({
+          id: "pop" + uid(),
+          title: "PopUp جدید",
+          content: "متن پاپ‌آپ را وارد کنید",
+          ctaText: "اقدام",
+          ctaLink: "contact.html",
+          trigger: "scroll-depth",
+          target: "بازدیدکنندگان جدید",
+          schedule: "همیشه فعال",
+          active: true,
+          views: 0,
+          conversions: 0,
+        });
+        savePopups(items);
+        renderCampaignContent();
+      });
+    }
+    renderCampaignContent();
+  }
+
+  function renderCampaignContent() {
+    renderCampaignList("campaign-banners-board", getBanners(), "banner");
+    renderCampaignList("campaign-popups-board", getPopups(), "popup");
+    var all = getBanners().concat(getPopups());
+    var views = all.reduce(function (s, x) { return s + Number(x.views || 0); }, 0);
+    var conversions = all.reduce(function (s, x) { return s + Number(x.conversions || 0); }, 0);
+    var rate = views ? Math.round((conversions / views) * 1000) / 10 : 0;
+    setText("campaign-views", toPersianNumbers(views));
+    setText("campaign-conversions", toPersianNumbers(conversions));
+    setText("campaign-rate", toPersianNumbers(rate) + "٪");
+  }
+
+  function renderCampaignList(id, items, type) {
+    var board = document.getElementById(id);
+    if (!board) return;
+    if (!items.length) {
+      board.innerHTML = '<div class="empty-state"><p>هنوز آیتمی ساخته نشده است.</p></div>';
+      return;
+    }
+    board.innerHTML = items.map(function (item) {
+      var rate = item.views ? Math.round((Number(item.conversions || 0) / Number(item.views || 1)) * 1000) / 10 : 0;
+      return '<article class="campaign-card" data-id="' + item.id + '" data-type="' + type + '">' +
+        '<div class="campaign-preview">' + (type === "banner" ? '<img src="' + escapeHTML(item.image || item.image_path || "assets/logo.png") + '" alt="">' : '<div class="popup-preview"><strong>' + escapeHTML(item.title) + '</strong><span>' + escapeHTML(item.content || "") + '</span></div>') + '</div>' +
+        '<div class="campaign-fields">' +
+        '<label>عنوان<input data-field="title" value="' + escapeHTML(item.title || "") + '"></label>' +
+        '<label>متن<textarea data-field="' + (type === "banner" ? "caption" : "content") + '">' + escapeHTML(item.caption || item.content || "") + '</textarea></label>' +
+        '<label>لینک CTA<input data-field="' + (type === "banner" ? "link" : "ctaLink") + '" value="' + escapeHTML(item.link || item.link_url || item.ctaLink || "") + '"></label>' +
+        '<div class="campaign-row"><label>محل نمایش<input data-field="position" value="' + escapeHTML(item.position || "sitewide") + '"></label><label>هدف‌گیری<input data-field="target" value="' + escapeHTML(item.target || "همه کاربران") + '"></label></div>' +
+        '<div class="campaign-row"><label>نحوه نمایش<input data-field="trigger" value="' + escapeHTML(item.trigger || "page-load") + '"></label><label>زمان‌بندی<input data-field="schedule" value="' + escapeHTML(item.schedule || "همیشه فعال") + '"></label></div>' +
+        '<div class="campaign-metrics"><span>نمایش: ' + toPersianNumbers(item.views || 0) + '</span><span>تبدیل: ' + toPersianNumbers(item.conversions || 0) + '</span><span>نرخ: ' + toPersianNumbers(rate) + '٪</span></div>' +
+        '<div class="campaign-actions"><button class="btn-sm btn-campaign-toggle">' + (item.active ? "غیرفعال کردن" : "فعال کردن") + '</button><button class="btn-sm btn-danger btn-campaign-delete">حذف</button></div>' +
+        '</div></article>';
+    }).join("");
+    board.querySelectorAll("input, textarea").forEach(function (el) {
+      el.addEventListener("change", function () {
+        updateCampaignField(this.closest(".campaign-card"), this.getAttribute("data-field"), this.value);
+      });
+    });
+    board.querySelectorAll(".btn-campaign-toggle").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var card = this.closest(".campaign-card");
+        var list = card.dataset.type === "banner" ? getBanners() : getPopups();
+        var item = list.find(function (x) { return String(x.id) === card.dataset.id; });
+        if (item) item.active = !item.active;
+        card.dataset.type === "banner" ? saveBanners(list) : savePopups(list);
+        renderCampaignContent();
+      });
+    });
+    board.querySelectorAll(".btn-campaign-delete").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (!confirm("این آیتم حذف شود؟")) return;
+        var card = this.closest(".campaign-card");
+        var list = (card.dataset.type === "banner" ? getBanners() : getPopups()).filter(function (x) { return String(x.id) !== card.dataset.id; });
+        card.dataset.type === "banner" ? saveBanners(list) : savePopups(list);
+        renderCampaignContent();
+      });
+    });
+  }
+
+  function updateCampaignField(card, field, value) {
+    var list = card.dataset.type === "banner" ? getBanners() : getPopups();
+    var item = list.find(function (x) { return String(x.id) === card.dataset.id; });
+    if (item) item[field] = value;
+    card.dataset.type === "banner" ? saveBanners(list) : savePopups(list);
+  }
+
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
   }
 
   function newPost() {
@@ -753,6 +935,8 @@ document.addEventListener("DOMContentLoaded", function () {
       content_type: document.getElementById("editor-content-type").value,
       video_url: document.getElementById("editor-video-url").value.trim(),
       tags: document.getElementById("editor-tags").value.trim(),
+      author: document.getElementById("editor-author").value.trim(),
+      category: document.getElementById("editor-category").value,
       status: status,
     };
 
@@ -1803,6 +1987,10 @@ document.addEventListener("DOMContentLoaded", function () {
     imageBox:   { name: "باکس تصویر", icon: "▣", fields: [{key:"src",label:"تصویر",type:"text"},{key:"title",label:"عنوان",type:"text"},{key:"desc",label:"توضیحات",type:"textarea"}] },
     iconBox:    { name: "باکس آیکون", icon: "◈", fields: [{key:"icon",label:"آیکون",type:"text",default:"★"},{key:"title",label:"عنوان",type:"text"},{key:"desc",label:"توضیحات",type:"textarea"},{key:"color",label:"رنگ",type:"color",default:"#2271b1"}] },
     cta:        { name: "دعوت به اقدام", icon: "📢", fields: [{key:"title",label:"عنوان",type:"text"},{key:"desc",label:"توضیحات",type:"textarea"},{key:"btnText",label:"متن دکمه",type:"text",default:"همین الان"},{key:"btnLink",label:"لینک دکمه",type:"text"},{key:"bgColor",label:"رنگ پس‌زمینه",type:"color",default:"#2271b1"}] },
+    banner:     { name: "بنر کمپین", icon: "▰", fields: [{key:"title",label:"عنوان",type:"text",default:"بنر جدید"},{key:"image",label:"تصویر",type:"text",default:"assets/consulting-room.jpeg"},{key:"caption",label:"متن",type:"textarea"},{key:"link",label:"لینک",type:"text",default:"contact.html"}] },
+    form:       { name: "فرم تماس", icon: "▤", fields: [{key:"title",label:"عنوان فرم",type:"text",default:"درخواست مشاوره"},{key:"fields",label:"فیلدها با کاما",type:"textarea",default:"نام,ایمیل,شماره تماس,پیام"},{key:"button",label:"متن دکمه",type:"text",default:"ارسال"}] },
+    pricing:    { name: "جدول قیمت", icon: "₪", fields: [{key:"plan",label:"نام پلن",type:"text",default:"مشاوره رشد"},{key:"price",label:"قیمت",type:"text",default:"تماس بگیرید"},{key:"features",label:"امکانات با کاما",type:"textarea",default:"تحلیل وضعیت,نقشه راه,جلسه اجرایی"}] },
+    postsGrid:  { name: "شبکه پست‌ها", icon: "▦", fields: [{key:"title",label:"عنوان",type:"text",default:"آخرین نوشته‌ها"},{key:"count",label:"تعداد",type:"text",default:"3"}] },
   };
 
   function initPageEditor() {
@@ -2106,6 +2294,10 @@ document.addEventListener("DOMContentLoaded", function () {
       case "imageBox": return '<div style="text-align:center"><img src="' + escapeHTML(d.src || "") + '" style="max-width:100%;border-radius:4px" /><h3 style="margin:8px 0">' + escapeHTML(d.title || "") + '</h3><p style="color:#666">' + escapeHTML(d.desc || "") + '</p></div>';
       case "iconBox": return '<div style="text-align:center;padding:16px"><div style="font-size:2rem;color:' + (d.color || "#2271b1") + '">' + escapeHTML(d.icon || "★") + '</div><h3 style="margin:8px 0">' + escapeHTML(d.title || "") + '</h3><p style="color:#666">' + escapeHTML(d.desc || "") + '</p></div>';
       case "cta": return '<div style="background:' + (d.bgColor || "#2271b1") + ';color:#fff;padding:32px;text-align:center;border-radius:8px"><h2 style="margin:0 0 8px;color:#fff">' + escapeHTML(d.title || "") + '</h2><p style="margin:0 0 16px;opacity:0.9">' + escapeHTML(d.desc || "") + '</p><a href="' + escapeHTML(d.btnLink || "#") + '" style="display:inline-block;padding:12px 32px;background:#fff;color:' + (d.bgColor || "#2271b1") + ';border-radius:6px;text-decoration:none;font-weight:700">' + escapeHTML(d.btnText || "همین الان") + '</a></div>';
+      case "banner": return '<section style="min-height:220px;background:url(' + escapeHTML(d.image || "") + ') center/cover;border-radius:8px;display:grid;align-content:end;padding:24px;color:#fff;overflow:hidden"><h2 style="color:#fff;margin:0 0 6px">' + escapeHTML(d.title || "") + '</h2><p style="max-width:520px">' + escapeHTML(d.caption || "") + '</p><a href="' + escapeHTML(d.link || "#") + '" style="color:#fff;font-weight:800">مشاهده</a></section>';
+      case "form": return '<form style="display:grid;gap:10px;border:1px solid #e0e0e0;padding:18px;border-radius:8px"><strong>' + escapeHTML(d.title || "") + '</strong>' + String(d.fields || "").split(",").map(function (f) { return '<input placeholder="' + escapeHTML(f.trim()) + '" style="padding:10px;border:1px solid #ddd;border-radius:6px">'; }).join("") + '<button type="button" style="padding:10px 18px;background:#2271b1;color:#fff;border:0;border-radius:6px;font-weight:800">' + escapeHTML(d.button || "ارسال") + '</button></form>';
+      case "pricing": return '<div style="border:1px solid #e0e0e0;border-radius:8px;padding:20px"><h3>' + escapeHTML(d.plan || "") + '</h3><strong style="font-size:1.4rem;color:#2271b1">' + escapeHTML(d.price || "") + '</strong><ul>' + String(d.features || "").split(",").map(function (f) { return '<li>' + escapeHTML(f.trim()) + '</li>'; }).join("") + '</ul></div>';
+      case "postsGrid": return '<div><h3>' + escapeHTML(d.title || "") + '</h3><div style="display:grid;grid-template-columns:repeat(' + Math.min(4, Math.max(1, parseInt(d.count || 3))) + ',1fr);gap:12px"><article style="border:1px solid #e0e0e0;border-radius:8px;padding:14px">نمونه پست</article><article style="border:1px solid #e0e0e0;border-radius:8px;padding:14px">نمونه پست</article><article style="border:1px solid #e0e0e0;border-radius:8px;padding:14px">نمونه پست</article></div></div>';
       default: return '<div class="eb-placeholder">ویجت ناشناخته</div>';
     }
   }
@@ -3424,7 +3616,7 @@ document.addEventListener("DOMContentLoaded", function () {
     grid.querySelectorAll(".btn-gallery-edit").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var idx = parseInt(this.getAttribute("data-idx"));
-        openImageEditor(galleryImages[idx].src);
+        openGalleryInlineEditor(idx);
       });
     });
 
@@ -3437,6 +3629,37 @@ document.addEventListener("DOMContentLoaded", function () {
         renderGalleryImages();
       });
     });
+  }
+
+  function openGalleryInlineEditor(idx) {
+    var panel = document.getElementById("gallery-inline-editor");
+    if (!panel || !galleryImages[idx]) return;
+    var img = galleryImages[idx];
+    var sizeStr = img.size ? formatSize(img.size) : "نامشخص";
+    var dimStr = img.width && img.height ? img.width + "×" + img.height : "نامشخص";
+    panel.style.display = "grid";
+    panel.innerHTML =
+      '<div class="gallery-editor-preview"><img src="' + img.src + '" alt="' + escapeHTML(img.name) + '"></div>' +
+      '<div class="gallery-editor-fields">' +
+      '<h3>ویرایش تصویر</h3>' +
+      '<div class="gallery-meta large"><span>فرمت: ' + escapeHTML(img.format || "نامشخص") + '</span><span>حجم: ' + sizeStr + '</span><span>ابعاد: ' + dimStr + '</span></div>' +
+      '<div class="field"><label>نام تصویر</label><input id="gallery-edit-name" value="' + escapeHTML(img.name || "") + '"></div>' +
+      '<div class="field"><label>تگ عکس</label><input id="gallery-edit-tags" value="' + escapeHTML(img.tags || "") + '" placeholder="مثلاً پرتره، مشاوره، برند"></div>' +
+      '<div class="field"><label>آدرس فایل</label><input value="' + escapeHTML(img.src || "") + '" dir="ltr" readonly></div>' +
+      '<div class="editor-actions"><button class="button primary" id="gallery-edit-save">ذخیره اطلاعات</button><button class="button" id="gallery-edit-close">بستن</button></div>' +
+      '</div>';
+    document.getElementById("gallery-edit-save").onclick = function () {
+      galleryImages[idx].name = document.getElementById("gallery-edit-name").value.trim() || galleryImages[idx].name;
+      galleryImages[idx].tags = document.getElementById("gallery-edit-tags").value.trim();
+      localStorage.setItem("admin_gallery", JSON.stringify(galleryImages));
+      renderGalleryImages();
+      openGalleryInlineEditor(idx);
+    };
+    document.getElementById("gallery-edit-close").onclick = function () {
+      panel.style.display = "none";
+      panel.innerHTML = "";
+    };
+    panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   // File Manager for selecting from gallery

@@ -140,7 +140,8 @@ const api = {
     try { return await this.request('POST', '/posts', data); } catch (e) {
       if (e.message === 'BACKEND_OFFLINE') {
         const posts = JSON.parse(localStorage.getItem('admin_blog_posts') || '[]');
-        const newPost = { id: 'local_' + Date.now(), ...data, author: data.author || 'مدیر', date: new Date().toISOString().split('T')[0] };
+        const now = new Date().toISOString();
+        const newPost = { id: 'local_' + Date.now(), ...data, author: data.author || 'مدیر', category: data.category || 'استراتژی', date: now, created_at: now, published_at: data.status === 'published' ? now : null };
         posts.unshift(newPost);
         localStorage.setItem('admin_blog_posts', JSON.stringify(posts));
         return newPost;
@@ -153,7 +154,12 @@ const api = {
       if (e.message === 'BACKEND_OFFLINE') {
         const posts = JSON.parse(localStorage.getItem('admin_blog_posts') || '[]');
         const idx = posts.findIndex(p => p.id == id);
-        if (idx !== -1) { Object.assign(posts[idx], data); localStorage.setItem('admin_blog_posts', JSON.stringify(posts)); }
+        if (idx !== -1) {
+          Object.assign(posts[idx], data);
+          if (data.status === 'published') posts[idx].published_at = new Date().toISOString();
+          if (data.status === 'scheduled' && data.scheduled_at) posts[idx].published_at = data.scheduled_at;
+          localStorage.setItem('admin_blog_posts', JSON.stringify(posts));
+        }
         return { message: 'ذخیره شد' };
       }
       throw e;

@@ -1101,6 +1101,12 @@
 }
 
 @media (max-width: 768px) {
+  .campaign-card,
+  .gallery-inline-editor,
+  .campaign-analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
   .admin-sidebar {
     transform: translateX(100%);
   }
@@ -2274,6 +2280,137 @@
 
 .publish-option:hover {
   background: var(--admin-body-bg);
+}
+
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.campaign-board {
+  display: grid;
+  gap: 14px;
+}
+
+.campaign-card {
+  display: grid;
+  grid-template-columns: minmax(180px, 260px) 1fr;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-card-bg);
+}
+
+.campaign-preview {
+  min-height: 150px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  overflow: hidden;
+  background: #f6f7f7;
+}
+
+.campaign-preview img {
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  object-fit: cover;
+  display: block;
+}
+
+.popup-preview {
+  min-height: 150px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 18px;
+  text-align: center;
+}
+
+.campaign-fields label {
+  display: grid;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--admin-text-muted);
+}
+
+.campaign-fields input,
+.campaign-fields textarea {
+  width: 100%;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: 9px 10px;
+  background: var(--admin-card-bg);
+  color: var(--admin-text);
+  font: inherit;
+}
+
+.campaign-fields textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.campaign-row,
+.campaign-metrics,
+.campaign-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.campaign-row label {
+  flex: 1 1 220px;
+}
+
+.campaign-metrics span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(34, 113, 177, 0.09);
+  color: var(--admin-primary);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.campaign-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.muted {
+  color: var(--admin-text-muted);
+}
+
+.gallery-inline-editor {
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: 18px;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-card-bg);
+}
+
+.gallery-editor-preview img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: #f6f7f7;
+}
+
+.gallery-editor-fields h3 {
+  margin-bottom: 10px;
+}
+
+.gallery-meta.large {
+  justify-content: flex-start;
+  margin-bottom: 12px;
 }
 
 /* ══ Code Editor ══ */
