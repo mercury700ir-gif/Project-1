@@ -52,6 +52,10 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             <span>مدیریت صفحات</span>
           </a>
+          <a href="#" class="sidebar-link" data-tab="campaign-content">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v14H4z"/><path d="M8 9h8"/><path d="M8 13h5"/><path d="M20 9l2-2v10l-2-2"/></svg>
+            <span>مدیریت محتوا</span>
+          </a>
           <a href="#" class="sidebar-link" data-tab="users">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <span>مدیریت کاربران</span>
@@ -288,7 +292,44 @@
             </div>
           </section>
 
-          <!-- ════ 3. User Management ════ -->
+          <!-- ════ 3. Content Campaign Management ════ -->
+          <section id="tab-campaign-content" class="tab-pane">
+            <div class="sub-tabs">
+              <button class="sub-tab active" data-subtab="campaign-banners">بنرها</button>
+              <button class="sub-tab" data-subtab="campaign-popups">PopUps</button>
+              <button class="sub-tab" data-subtab="campaign-analytics">آنالیتیکز</button>
+            </div>
+
+            <div id="campaign-banners" class="sub-pane active">
+              <div class="tab-header">
+                <h3>مدیریت حرفه‌ای بنرها</h3>
+                <button class="button primary" id="btn-new-campaign-banner">+ بنر جدید</button>
+              </div>
+              <div class="campaign-board" id="campaign-banners-board"></div>
+            </div>
+
+            <div id="campaign-popups" class="sub-pane">
+              <div class="tab-header">
+                <h3>مدیریت PopUps</h3>
+                <button class="button primary" id="btn-new-popup">+ پاپ‌آپ جدید</button>
+              </div>
+              <div class="campaign-board" id="campaign-popups-board"></div>
+            </div>
+
+            <div id="campaign-analytics" class="sub-pane">
+              <div class="campaign-analytics-grid">
+                <div class="stat-card"><div class="stat-info"><span class="stat-number" id="campaign-views">۰</span><span class="stat-label">نمایش کمپین‌ها</span></div></div>
+                <div class="stat-card"><div class="stat-info"><span class="stat-number" id="campaign-conversions">۰</span><span class="stat-label">تبدیل‌ها</span></div></div>
+                <div class="stat-card"><div class="stat-info"><span class="stat-number" id="campaign-rate">۰٪</span><span class="stat-label">نرخ تبدیل</span></div></div>
+              </div>
+              <div class="dash-card">
+                <h3>قابلیت‌های تحلیلی</h3>
+                <p class="muted">نمایش، کلیک، تبدیل، نرخ تبدیل، وضعیت فعال بودن، محل نمایش، قانون هدف‌گیری و زمان‌بندی برای بنرها و PopUps در همین پنل مدیریت می‌شود.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ════ 4. User Management ════ -->
           <section id="tab-users" class="tab-pane">
             <div class="sub-tabs">
               <button class="sub-tab active" data-subtab="users-admin">مدیریت سایت</button>
@@ -332,7 +373,7 @@
             </div>
           </section>
 
-          <!-- ════ 4. Gallery ════ -->
+          <!-- ════ 5. Gallery ════ -->
           <section id="tab-gallery" class="tab-pane">
             <div class="sub-tabs">
               <button class="sub-tab active" data-subtab="gallery-images">تصاویر</button>
@@ -358,6 +399,7 @@
               </div>
 
               <div class="gallery-grid" id="gallery-images-grid"></div>
+              <div class="gallery-inline-editor" id="gallery-inline-editor" style="display:none"></div>
               <div id="gallery-images-empty" class="empty-state" style="display:none"><p>هنوز تصویری آپلود نشده است.</p></div>
             </div>
 
@@ -388,13 +430,6 @@
                 <h3>پست‌های وبلاگ</h3>
                 <div style="display:flex;gap:8px;flex-wrap:wrap">
                   <button class="button primary" id="btn-new-post">+ پست جدید</button>
-                  <div class="publish-dropdown" id="publish-dropdown">
-                    <button class="button primary" id="btn-publish-dropdown">انتشار ▾</button>
-                    <div class="publish-menu" id="publish-menu" style="display:none">
-                      <button class="publish-option" data-action="instant">انتشار فوری</button>
-                      <button class="publish-option" data-action="scheduled">انتشار زمان‌دار</button>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div id="scheduled-publish-section" style="display:none;margin-bottom:16px;padding:16px;border:1px solid var(--admin-border);border-radius:var(--admin-radius);background:var(--admin-card-bg)">
@@ -411,7 +446,7 @@
               </div>
               <table class="data-table" id="blog-table">
                 <thead>
-                  <tr><th>عنوان</th><th>نویسنده</th><th>تاریخ</th><th>وضعیت</th><th>عملیات</th></tr>
+                  <tr><th>عنوان</th><th>نویسنده</th><th>تاریخ نگارش</th><th>تاریخ انتشار</th><th>دسته‌بندی</th><th>وضعیت</th><th>عملیات</th><th></th></tr>
                 </thead>
                 <tbody id="blog-table-body"></tbody>
               </table>

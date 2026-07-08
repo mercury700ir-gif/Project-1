@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How To Build A Website</title>
+  <style>
+    body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f5f1ea;color:#18201d;line-height:1.9}
+    header{padding:56px 7vw;background:#17342f;color:#fff}
+    h1{margin:0;font-size:clamp(28px,5vw,56px)}
+    main{max-width:1100px;margin:auto;padding:34px 7vw}
+    section{padding:24px 0;border-bottom:1px solid #d8d0c3}
+    h2{color:#17342f}
+    pre{direction:ltr;text-align:left;white-space:pre-wrap;background:#17211f;color:#e8f1ed;border-radius:8px;padding:18px;overflow:auto}
+    code{font-family:Consolas,monospace}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+    .card{background:#fff;border:1px solid #ded6c9;border-radius:8px;padding:18px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>How To Build A Website</h1>
+    <p>راهنمای کامل ساخت سایت شخصی فارسی با پنل مدیریت، backend، blog، gallery، page builder، banners و PopUps.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Prompt اصلی</h2>
+      <pre><code>یک وب‌سایت شخصی فارسی راست‌به‌چپ برای مشاور بازاریابی بساز. سایت شامل صفحه اصلی، درباره من، تماس، وبلاگ، ثبت‌نام، ورود، پنل مدیریت، مدیریت صفحات با page builder، مدیریت محتوا برای بنر و PopUp، گالری، فایل‌ها، کاربران، تنظیمات و backend API باشد. طراحی باید حرفه‌ای، سریع، responsive و user friendly باشد.</code></pre>
+    </section>
+    <section>
+      <h2>معماری پیشنهادی</h2>
+      <div class="grid">
+        <div class="card"><strong>Frontend</strong><br>HTML, CSS, JavaScript، پنل tab-based، فارسی RTL.</div>
+        <div class="card"><strong>Backend</strong><br>Express routeها برای auth، posts، pages، banners، media و settings.</div>
+        <div class="card"><strong>Storage</strong><br>دیتابیس برای داده‌های پایدار و localStorage فقط برای fallback محیط استاتیک.</div>
+      </div>
+    </section>
+    <section>
+      <h2>Prompt طراحی پنل مدیریت</h2>
+      <pre><code>یک پنل مدیریت فارسی شبیه ابزارهای حرفه‌ای CMS بساز. Sidebar، topbar، جدول‌های واکنش‌گرا، فرم‌های قابل فهم، حالت empty، پیام خطا، و عملیات سریع روی هر ردیف داشته باشد. UI باید برای کاربر غیرتخصصی قابل فهم باشد.</code></pre>
+    </section>
+    <section>
+      <h2>Prompt ساخت Page Builder</h2>
+      <pre><code>در پنل مدیریت، بخش مدیریت صفحات بساز. لیست صفحات، ایجاد صفحه، canvas، navigator، پنل تنظیمات، undo/redo، responsive preview و ویجت‌های عنوان، متن، تصویر، ویدئو، دکمه، فرم، CTA، بنر، گالری، جدول قیمت و شبکه پست‌ها را اضافه کن.</code></pre>
+    </section>
+    <section>
+      <h2>Prompt مدیریت محتوا</h2>
+      <pre><code>یک تب مدیریت محتوا بساز که شامل بنرها، PopUps و آنالیتیکز باشد. هر آیتم title، content، CTA، display position، targeting rule، trigger، schedule، active state، views، conversions و conversion rate داشته باشد.</code></pre>
+    </section>
+    <section>
+      <h2>Prompt تست</h2>
+      <pre><code>همه مسیرهای UI و backend را تست کن: ورود، تغییر تب‌ها، ساخت صفحه، ذخیره builder، مدیریت بنر، مدیریت PopUp، ویرایش گالری، جدول وبلاگ، تغییر وضعیت پست، responsive موبایل و خطاهای JavaScript.</code></pre>
+    </section>
+  </main>
+</body>
+</html>
+

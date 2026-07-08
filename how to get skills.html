@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How To Get Skills</title>
+  <style>
+    body{margin:0;background:#101614;color:#edf2ef;font-family:Tahoma,Arial,sans-serif;line-height:1.9}
+    header{padding:52px 7vw;background:#d9b45f;color:#101614}
+    h1{margin:0;font-size:clamp(28px,5vw,52px)}
+    main{max-width:1050px;margin:auto;padding:34px 7vw}
+    section{background:#18211e;border:1px solid #304139;border-radius:8px;padding:22px;margin:18px 0}
+    h2{margin-top:0;color:#f1d58d}
+    pre{direction:ltr;text-align:left;white-space:pre-wrap;background:#0b0f0e;color:#d8efe5;border-radius:8px;padding:16px;overflow:auto}
+    ul{padding-right:22px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>How To Get Skills</h1>
+    <p>راهنمای استفاده از فایل‌های Skill Markdown در هوش‌های مصنوعی مختلف.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Skill چیست؟</h2>
+      <p>Skill یک فایل Markdown است که دستورالعمل تخصصی، workflow، محدودیت‌ها، مثال‌ها و مسیر فایل‌های کمکی را برای یک AI Agent تعریف می‌کند.</p>
+    </section>
+    <section>
+      <h2>ساختار پیشنهادی SKILL.md</h2>
+      <pre><code>---
+name: frontend-design
+description: Use when building polished production frontend interfaces.
+---
+
+# Workflow
+1. Read the project structure.
+2. Follow the existing design system.
+3. Implement the UI.
+4. Test responsive behavior.
+
+# Rules
+- Keep changes scoped.
+- Prefer existing helpers.
+- Verify before final response.</code></pre>
+    </section>
+    <section>
+      <h2>استفاده در Codex یا Agentهای فایل‌محور</h2>
+      <ul>
+        <li>فایل را در مسیر skills یا کنار پروژه قرار دهید.</li>
+        <li>در prompt بنویسید: از skill با نام موردنظر استفاده کن.</li>
+        <li>Agent باید ابتدا فایل Skill را بخواند و فقط بخش‌های مرتبط را اجرا کند.</li>
+      </ul>
+      <pre><code>از skill frontend-design استفاده کن و صفحه مدیریت محتوای پروژه را مطابق دستورالعمل آن طراحی و پیاده‌سازی کن.</code></pre>
+    </section>
+    <section>
+      <h2>استفاده در ChatGPT، Claude، Gemini و مدل‌های مشابه</h2>
+      <ul>
+        <li>محتوای SKILL.md را در ابتدای گفتگو یا به عنوان attachment بدهید.</li>
+        <li>درخواست کنید که مدل آن را به عنوان دستورالعمل پروژه در نظر بگیرد.</li>
+        <li>برای جلوگیری از شلوغی، فقط Skill مرتبط با همان کار را وارد کنید.</li>
+      </ul>
+      <pre><code>این فایل SKILL.md دستورالعمل انجام کار است. آن را بخوان، خلاصه کن، سپس فقط بر اساس همین workflow تغییرات پروژه را انجام بده.</code></pre>
+    </section>
+    <section>
+      <h2>نکات کیفیت</h2>
+      <ul>
+        <li>Skill را کوتاه، دقیق و task-oriented بنویسید.</li>
+        <li>قوانین غیرقابل مذاکره را جدا کنید.</li>
+        <li>مثال prompt و مثال خروجی اضافه کنید.</li>
+        <li>اطلاعات محرمانه را داخل Skill قرار ندهید.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
