@@ -259,19 +259,11 @@ img {
   -webkit-backdrop-filter: blur(24px);
   opacity: 0;
   visibility: hidden;
-<<<<<<< HEAD
   transform: translateY(-100%);
   transition:
     opacity 320ms cubic-bezier(0.4, 0, 0.2, 1),
     visibility 320ms cubic-bezier(0.4, 0, 0.2, 1),
     transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
-=======
-  transform: translateY(-10px);
-  transition:
-    opacity 260ms ease,
-    visibility 260ms ease,
-    transform 260ms ease;
->>>>>>> Whole_New_Personal_Website
 }
 
 .mobile-menu.is-open {
