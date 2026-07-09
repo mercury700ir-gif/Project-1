@@ -1,2 +1,14 @@
-about.html
 .DS_Store
+*.log
+.env
+.env.*
+node_modules/
+server/node_modules/
+*.db
+*.db-shm
+*.db-wal
+uploads/
+server/uploads/
+
+# Local Netlify folder
+.netlify
